@@ -32,6 +32,16 @@ $route['user-access/manage/(:num)'] = 'UserAccessController/manage/$1';
 $route['user-access/save'] = 'UserAccessController/save';
 $route['user-access/copy_access'] = 'UserAccessController/copy_access';
 
+/* ===================== SYSTEM UPDATE ===================== */
+$route['systemupdate'] = 'SystemUpdate/index';
+$route['systemupdate/check_update'] = 'SystemUpdate/check_update';
+$route['systemupdate/run_update'] = 'SystemUpdate/run_update';
+$route['systemupdate/get_changelog'] = 'SystemUpdate/get_changelog';
+$route['systemupdate/get_migrations'] = 'SystemUpdate/get_migrations';
+$route['systemupdate/run_migrations'] = 'SystemUpdate/run_migrations';
+$route['systemupdate/get_update_history'] = 'SystemUpdate/get_update_history';
+$route['systemupdate/get_system_info'] = 'SystemUpdate/get_system_info';
+
 /* ===================== ADMIN / LAPORAN DLL (AS IS) ===================== */
 $route['admin/piutangPasien'] = 'PiutangPasienController/index';
 $route['admin/piutangPasien/get_data'] = 'PiutangPasienController/get_data';

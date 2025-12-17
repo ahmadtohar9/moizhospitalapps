@@ -94,6 +94,47 @@ Pastikan di aaPanel PHP Settings:
 - **session.save_path** tidak di-override di php.ini
 - PHP version sesuai dengan requirement aplikasi
 
+## Masalah Case Sensitivity File
+
+### Error yang Muncul di Production
+```
+GET http://192.168.99.251/moizhospitalapps/assets/js/dokterRalan.js net::ERR_ABORTED 404 (Not Found)
+```
+
+### Penyebab Masalah
+
+**macOS/Windows** menggunakan **case-insensitive filesystem**, artinya:
+- `DokterRalan.js` = `dokterRalan.js` = `DOKTERRALAN.js` (dianggap sama)
+
+**Linux** (server aaPanel) menggunakan **case-sensitive filesystem**, artinya:
+- `DokterRalan.js` ≠ `dokterRalan.js` (dianggap berbeda!)
+
+Jika file di Git bernama `DokterRalan.js` tapi di view dipanggil dengan `dokterRalan.js`, maka di server Linux akan error 404.
+
+### Solusi yang Sudah Diterapkan
+
+File `assets/js/DokterRalan.js` sudah di-rename menjadi `assets/js/dokterRalan.js` untuk konsistensi dengan naming convention JavaScript (camelCase dengan huruf kecil di awal).
+
+### Cara Mencegah Masalah Ini
+
+1. **Gunakan naming convention yang konsisten:**
+   - JavaScript files: `camelCase.js` (huruf kecil di awal)
+   - PHP files: `PascalCase.php` atau `snake_case.php`
+   - CSS files: `kebab-case.css` atau `camelCase.css`
+
+2. **Test di environment yang sama dengan production:**
+   - Jika production menggunakan Linux, test juga di Linux (atau Docker)
+   - Atau selalu gunakan lowercase untuk semua nama file
+
+3. **Cek sebelum push ke Git:**
+   ```bash
+   # Cek nama file yang akan di-commit
+   git status
+   
+   # Cek nama file di Git vs filesystem
+   git ls-files assets/js/*.js
+   ```
+
 ## Update Konfigurasi Lainnya
 
 Jangan lupa update konfigurasi berikut di server production:

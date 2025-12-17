@@ -604,4 +604,39 @@ class RiwayatPasien_model extends CI_Model
         $this->db->order_by('r.jam_rawat', 'DESC');
         return $this->db->get()->result_array();
     }
+
+    public function get_penilaian_medis_mata_by_norawat($no_rawat)
+    {
+        $row = $this->db->select("
+            pm.*,
+            d.nm_dokter
+        ")
+            ->from('penilaian_medis_ralan_mata pm')
+            ->join('dokter d', 'd.kd_dokter = pm.kd_dokter', 'left')
+            ->where('pm.no_rawat', $no_rawat)
+            ->get()->row_array();
+
+        if ($row) {
+            // Format filename sama dengan controller: 2025_12_17_000001
+            $filename = str_replace('/', '_', $no_rawat);
+
+            // Gambar OD (Mata Kanan)
+            $path_od = 'assets/images/mata/' . $filename . '_od.png';
+            if (file_exists(FCPATH . $path_od)) {
+                $row['gambar_od_url'] = base_url($path_od);
+            } else {
+                $row['gambar_od_url'] = null;
+            }
+
+            // Gambar OS (Mata Kiri)
+            $path_os = 'assets/images/mata/' . $filename . '_os.png';
+            if (file_exists(FCPATH . $path_os)) {
+                $row['gambar_os_url'] = base_url($path_os);
+            } else {
+                $row['gambar_os_url'] = null;
+            }
+        }
+
+        return $row;
+    }
 }

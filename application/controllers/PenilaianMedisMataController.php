@@ -345,16 +345,19 @@ class PenilaianMedisMataController extends CI_Controller
             mkdir($upload_path, 0755, true);
         }
 
+        // Ganti slash jadi underscore untuk nama file
+        $filename = str_replace('/', '_', $no_rawat);
+
         // Save gambar OD (Mata Kanan)
         $gambar_od = $this->input->post('gambar_od_base64');
         if ($gambar_od) {
-            $this->save_base64_image($gambar_od, $upload_path . $no_rawat . '_od.png');
+            $this->save_base64_image($gambar_od, $upload_path . $filename . '_od.png');
         }
 
         // Save gambar OS (Mata Kiri)
         $gambar_os = $this->input->post('gambar_os_base64');
         if ($gambar_os) {
-            $this->save_base64_image($gambar_os, $upload_path . $no_rawat . '_os.png');
+            $this->save_base64_image($gambar_os, $upload_path . $filename . '_os.png');
         }
     }
 
@@ -377,9 +380,10 @@ class PenilaianMedisMataController extends CI_Controller
     private function delete_gambar_mata($no_rawat)
     {
         $upload_path = FCPATH . 'assets/images/mata/';
+        $filename = str_replace('/', '_', $no_rawat);
 
-        $file_od = $upload_path . $no_rawat . '_od.png';
-        $file_os = $upload_path . $no_rawat . '_os.png';
+        $file_od = $upload_path . $filename . '_od.png';
+        $file_os = $upload_path . $filename . '_os.png';
 
         if (file_exists($file_od)) {
             unlink($file_od);
@@ -395,13 +399,81 @@ class PenilaianMedisMataController extends CI_Controller
      */
     private function get_gambar_url($no_rawat, $type)
     {
-        $file_path = FCPATH . 'assets/images/mata/' . $no_rawat . '_' . $type . '.png';
+        $filename = str_replace('/', '_', $no_rawat);
+        $file_path = FCPATH . 'assets/images/mata/' . $filename . '_' . $type . '.png';
 
         if (file_exists($file_path)) {
-            return base_url('assets/images/mata/' . $no_rawat . '_' . $type . '.png?v=' . filemtime($file_path));
+            return base_url('assets/images/mata/' . $filename . '_' . $type . '.png?v=' . filemtime($file_path));
         }
 
         // Return template jika belum ada gambar
         return base_url('assets/images/mata/mata_' . $type . '_template.png');
+    }
+
+    /**
+     * Cetak PDF
+     */
+    public function cetak_pdf($no_rawat = null)
+    {
+        // Get no_rawat dari parameter atau dari GET
+        if (!$no_rawat) {
+            $no_rawat = $this->input->get('no_rawat');
+        }
+
+        // Decode no_rawat
+        $no_rawat = urldecode($no_rawat);
+
+        // Get data
+        $data['penilaian'] = $this->PenilaianMedisMataModel->get_by_no_rawat($no_rawat);
+
+        if (!$data['penilaian']) {
+            show_error('Data tidak ditemukan!', 404);
+            return;
+        }
+
+        // Get detail pasien lengkap
+        $this->load->model('RekamMedisRalanModel');
+        $data['detail_pasien'] = $this->RekamMedisRalanModel->get_patient_detail($no_rawat);
+
+        // Get setting RS
+        $data['setting'] = $this->PenilaianMedisMataModel->get_setting();
+
+        // Get gambar mata
+        $data['gambar_od'] = $this->get_gambar_path($no_rawat, 'od');
+        $data['gambar_os'] = $this->get_gambar_path($no_rawat, 'os');
+
+        // Load view untuk PDF
+        $html = $this->load->view('penilaian_medis_mata/pdf', $data, true);
+
+        // === Generate PDF pakai mPDF ===
+        require_once FCPATH . 'vendor/autoload.php';
+
+        $mpdf = new \Mpdf\Mpdf([
+            'format' => 'A4',
+            'orientation' => 'P',
+            'margin_left' => 10,
+            'margin_right' => 10,
+            'margin_top' => 10,
+            'margin_bottom' => 10
+        ]);
+
+        $mpdf->WriteHTML($html);
+        $mpdf->Output('Penilaian_Medis_Mata_' . str_replace('/', '_', $no_rawat) . '.pdf', 'I');
+    }
+
+    /**
+     * Get gambar path (untuk PDF)
+     */
+    private function get_gambar_path($no_rawat, $type)
+    {
+        $filename = str_replace('/', '_', $no_rawat);
+        $file_path = FCPATH . 'assets/images/mata/' . $filename . '_' . $type . '.png';
+
+        if (file_exists($file_path)) {
+            return $file_path;
+        }
+
+        // Return template jika belum ada gambar
+        return FCPATH . 'assets/images/mata/mata_' . $type . '_template.png';
     }
 }

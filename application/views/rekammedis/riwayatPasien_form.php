@@ -196,6 +196,7 @@
     RP_ASESMEN_ORTHO: '<?= site_url("admin/riwayatPasien/detail_asesmen_orthopedi") ?>',
     RP_FORMULIR_KFR: '<?= site_url("admin/riwayatPasien/detail_formulir_kfr") ?>',
     RP_PROGRAM_REHAB_MEDIK: '<?= site_url("admin/riwayatPasien/detail_program_rehab_medik") ?>',
+    RP_PENILAIAN_MATA: '<?= site_url("admin/riwayatPasien/detail_penilaian_medis_mata") ?>',
     RP_LAPORAN_TINDAKAN: '<?= site_url("admin/riwayatPasien/detail_laporan_tindakan") ?>',
     RP_INFO: '<?= site_url("admin/riwayatPasien/info") ?>'
   };

@@ -150,6 +150,7 @@ class RekamMedisRalanController extends CI_Controller
             ], // Assesmen Penyakit Dalam
 
             'AwalMedisDokterMataRalanController/index' => ['model' => 'awalMedisDokterMataRalanModel', 'view' => 'rekammedis/dokter/awalMedisDokterMata_view'],
+            'PenilaianMedisMataController/index' => ['model' => 'PenilaianMedisMataModel', 'view' => 'penilaian_medis_mata/form'],
             'SoapRalanController/index' => ['model' => 'SoapRalanModel', 'view' => 'rekammedis/soap_ralan'],
             'TindakanRalanDokterController/index' => ['model' => 'TindakanRalanDokterModel', 'view' => 'rekammedis/dokter/tindakanRalan'],
             'PermintaanResepRalan/index' => ['model' => 'PermintaanResepRalan_model', 'view' => 'rekammedis/dokter/permintaanResepRalan'],
@@ -239,6 +240,14 @@ class RekamMedisRalanController extends CI_Controller
             if ($decodedUrl === 'FormulirKfrRalanController/index') {
                 $this->load->model('FormulirKfrModel');
                 $data['dokters'] = $this->FormulirKfrModel->get_dokters();
+            }
+
+            // [PATCH] Inject data Penilaian Medis Mata
+            if ($decodedUrl === 'PenilaianMedisMataController/index') {
+                $this->load->model('PenilaianMedisMataModel');
+                date_default_timezone_set('Asia/Jakarta');
+                $data['tgl_sekarang'] = date('Y-m-d');
+                $data['jam_sekarang'] = date('H:i:s');
             }
 
             $this->load->view($entry['view'], $data);

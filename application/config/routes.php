@@ -51,6 +51,11 @@ $route['penilaian-medis-mata/delete'] = 'PenilaianMedisMataController/delete';
 $route['penilaian-medis-mata/get_data'] = 'PenilaianMedisMataController/get_data';
 $route['penilaian-medis-mata/get_riwayat'] = 'PenilaianMedisMataController/get_riwayat';
 $route['penilaian-medis-mata/copy_data'] = 'PenilaianMedisMataController/copy_data';
+$route['penilaian-medis-mata/cetak-pdf'] = 'PenilaianMedisMataController/cetak_pdf';
+
+
+
+
 
 /* ===================== ADMIN / LAPORAN DLL (AS IS) ===================== */
 $route['admin/piutangPasien'] = 'PiutangPasienController/index';
@@ -263,6 +268,7 @@ $route['admin/riwayatPasien/detail_asesmen_penyakit_dalam'] = 'RiwayatPasienCont
 $route['admin/riwayatPasien/detail_asesmen_orthopedi'] = 'RiwayatPasienController/detail_asesmen_orthopedi';
 $route['admin/riwayatPasien/detail_formulir_kfr'] = 'RiwayatPasienController/detail_formulir_kfr';
 $route['admin/riwayatPasien/detail_program_rehab_medik'] = 'RiwayatPasienController/detail_program_rehab_medik';
+$route['admin/riwayatPasien/detail_penilaian_medis_mata'] = 'RiwayatPasienController/detail_penilaian_medis_mata';
 $route['admin/riwayatPasien/info'] = 'RiwayatPasienController/info';
 $route['RiwayatPasien/get_detail'] = 'RiwayatPasienController/get_detail';
 

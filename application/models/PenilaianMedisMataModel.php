@@ -82,4 +82,12 @@ class PenilaianMedisMataModel extends CI_Model
         $this->db->order_by('penilaian_medis_ralan_mata.tanggal', 'DESC');
         return $this->db->get()->result_array();
     }
+
+    /**
+     * Get setting RS
+     */
+    public function get_setting()
+    {
+        return $this->db->get('setting')->row_array();
+    }
 }

@@ -1302,6 +1302,110 @@ $(function () {
             htmlAssess += renderDetailedSpesialisAssess(d.pd, 'ASESMEN SPESIALIS PENYAKIT DALAM', false);
         }
 
+        // Render Penilaian Medis Mata
+        if (hasData(d.mata)) {
+            const m = d.mata.data || d.mata || {};
+            if (m.keluhan_utama || m.diagnosis) {
+                let mataHtml = `
+                    <div style="margin-bottom:15px;">
+                        <div style="font-weight:bold; margin-bottom:10px; color:#374151; font-size:11px;">
+                            <i class="fa fa-history"></i> ANAMNESIS:
+                        </div>
+                        <table class="print-table" style="border:none; margin-bottom:10px;">
+                            <tr><td width="20%" style="border:none"><b>Keluhan Utama</b></td><td style="border:none">: ${txt(m.keluhan_utama)}</td></tr>
+                            <tr><td style="border:none"><b>RPS</b></td><td style="border:none">: ${txt(m.rps)}</td></tr>
+                            <tr><td style="border:none"><b>RPD</b></td><td style="border:none">: ${txt(m.rpd)}</td></tr>
+                            <tr><td style="border:none"><b>RPO</b></td><td style="border:none">: ${txt(m.rpo)}</td></tr>
+                            <tr><td style="border:none"><b>Alergi</b></td><td style="border:none">: ${txt(m.alergi)}</td></tr>
+                        </table>
+                    </div>
+                    
+                    <div style="margin-bottom:15px;">
+                        <div style="font-weight:bold; margin-bottom:10px; color:#374151; font-size:11px;">
+                            <i class="fa fa-heartbeat"></i> TANDA VITAL:
+                        </div>
+                        <table class="print-table" style="border:none;">
+                            <tr>
+                                <td style="border:none; padding:3px;"><b>TD:</b> ${txt(m.td)} mmHg</td>
+                                <td style="border:none; padding:3px;"><b>Nadi:</b> ${txt(m.nadi)} x/m</td>
+                                <td style="border:none; padding:3px;"><b>Suhu:</b> ${txt(m.suhu)} °C</td>
+                            </tr>
+                            <tr>
+                                <td style="border:none; padding:3px;"><b>RR:</b> ${txt(m.rr)} x/m</td>
+                                <td style="border:none; padding:3px;"><b>BB:</b> ${txt(m.bb)} Kg</td>
+                                <td style="border:none; padding:3px;"><b>Nyeri:</b> ${txt(m.nyeri)}</td>
+                            </tr>
+                        </table>
+                    </div>
+                    
+                    <div style="margin-bottom:15px;">
+                        <div style="font-weight:bold; margin-bottom:10px; color:#374151; font-size:11px;">
+                            <i class="fa fa-eye"></i> DIAGRAM MATA & STATUS OFTALMOLOGIS:
+                        </div>`;
+
+                // Gambar mata (jika ada) - TARUH DI ATAS
+                if (m.gambar_od_url || m.gambar_os_url) {
+                    mataHtml += `<div style="margin-bottom:15px; page-break-inside:avoid;">
+                        <div style="display:flex; gap:10px; justify-content:center;">`;
+
+                    if (m.gambar_od_url) {
+                        mataHtml += `<div style="text-align:center; border:2px solid #3c8dbc; padding:5px; border-radius:4px; width:25%;">
+                            <div style="font-weight:600; color:#3c8dbc; margin-bottom:5px; font-size:10px;">OD : Mata Kanan</div>
+                            <img src="${m.gambar_od_url}" style="width:100%; height:auto; border:1px solid #ccc;">
+                        </div>`;
+                    }
+
+                    if (m.gambar_os_url) {
+                        mataHtml += `<div style="text-align:center; border:2px solid #00a65a; padding:5px; border-radius:4px; width:25%;">
+                            <div style="font-weight:600; color:#00a65a; margin-bottom:5px; font-size:10px;">OS : Mata Kiri</div>
+                            <img src="${m.gambar_os_url}" style="width:100%; height:auto; border:1px solid #ccc;">
+                        </div>`;
+                    }
+
+                    mataHtml += `</div></div>`;
+                }
+
+                // Tabel Status Oftalmologis - SETELAH GAMBAR
+                mataHtml += `<table class="print-table">
+                            <thead>
+                                <tr style="background:#f8f8f8;">
+                                    <th style="padding:5px; text-align:left;">Pemeriksaan</th>
+                                    <th style="padding:5px; text-align:center; color:#3c8dbc;">OD (Kanan)</th>
+                                    <th style="padding:5px; text-align:center; color:#00a65a;">OS (Kiri)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td style="padding:3px;"><b>Visus SC</b></td><td style="padding:3px; text-align:center;">${txt(m.visuskanan)}</td><td style="padding:3px; text-align:center;">${txt(m.visuskiri)}</td></tr>
+                                <tr><td style="padding:3px;"><b>CC</b></td><td style="padding:3px; text-align:center;">${txt(m.cckanan)}</td><td style="padding:3px; text-align:center;">${txt(m.cckiri)}</td></tr>
+                                <tr><td style="padding:3px;"><b>Palpebra</b></td><td style="padding:3px; text-align:center;">${txt(m.palkanan)}</td><td style="padding:3px; text-align:center;">${txt(m.palkiri)}</td></tr>
+                                <tr><td style="padding:3px;"><b>Conjungtiva</b></td><td style="padding:3px; text-align:center;">${txt(m.conkanan)}</td><td style="padding:3px; text-align:center;">${txt(m.conkiri)}</td></tr>
+                                <tr><td style="padding:3px;"><b>Cornea</b></td><td style="padding:3px; text-align:center;">${txt(m.corneakanan)}</td><td style="padding:3px; text-align:center;">${txt(m.corneakiri)}</td></tr>
+                                <tr><td style="padding:3px;"><b>COA</b></td><td style="padding:3px; text-align:center;">${txt(m.coakanan)}</td><td style="padding:3px; text-align:center;">${txt(m.coakiri)}</td></tr>
+                                <tr><td style="padding:3px;"><b>Pupil</b></td><td style="padding:3px; text-align:center;">${txt(m.pupilkanan)}</td><td style="padding:3px; text-align:center;">${txt(m.pupilkiri)}</td></tr>
+                                <tr><td style="padding:3px;"><b>Lensa</b></td><td style="padding:3px; text-align:center;">${txt(m.lensakanan)}</td><td style="padding:3px; text-align:center;">${txt(m.lensakiri)}</td></tr>
+                                <tr><td style="padding:3px;"><b>TIO</b></td><td style="padding:3px; text-align:center;">${txt(m.tiokanan)}</td><td style="padding:3px; text-align:center;">${txt(m.tiokiri)}</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div style="margin-bottom:15px;">
+                        <div style="font-weight:bold; margin-bottom:10px; color:#374151; font-size:11px;">
+                            <i class="fa fa-stethoscope"></i> DIAGNOSIS & TATALAKSANA:
+                        </div>
+                        <table class="print-table" style="border:none;">
+                            <tr><td width="20%" style="border:none"><b>Diagnosis</b></td><td style="border:none">: ${txt(m.diagnosis)}</td></tr>
+                            ${m.diagnosisbdg ? `<tr><td style="border:none"><b>Diagnosis Banding</b></td><td style="border:none">: ${txt(m.diagnosisbdg)}</td></tr>` : ''}
+                            <tr><td style="border:none"><b>Terapi</b></td><td style="border:none">: ${txt(m.terapi)}</td></tr>
+                     <tr><td style="border:none"><b>Tindakan</b></td><td style="border:none">: ${txt(m.tindakan)}</td></tr>
+                            <tr><td style="border:none"><b>Edukasi:</b></td><td style="border:none">: ${txt(m.edukasi)}</td></tr>
+                        </table>
+                    </div>
+                `;
+
+                htmlAssess += wrapSection('PENILAIAN MEDIS MATA', mataHtml);
+            }
+        }
+
         // Combine all sections (Ordered: Asesmen, ICD/Diagnosa, Prosedur, SOAP, Tindakan, Resep, Lab, Rad, Berkas, dll, KFR, Rehab, Resume di akhir)
         const sectionsHtml = htmlAssess + htmlICD + htmlSoap + htmlTind + htmlLapTind + htmlResep + htmlLab + htmlRad + htmlBerkas + htmlPenunjang + htmlOperasi + htmlKfr + htmlRehab + htmlResume;
         const printTime = new Date().toLocaleString('id-ID');
@@ -1453,10 +1557,11 @@ $(function () {
             $.get(API_URLS.RP_ASESMEN_PD, { no_rawat: norawat }),
             $.get(API_URLS.RP_ASESMEN_ORTHO, { no_rawat: norawat }),
             $.get(API_URLS.RP_FORMULIR_KFR, { no_rawat: norawat }),
-            $.get(API_URLS.RP_PROGRAM_REHAB_MEDIK, { no_rawat: norawat })
+            $.get(API_URLS.RP_PROGRAM_REHAB_MEDIK, { no_rawat: norawat }),
+            $.get(API_URLS.RP_PENILAIAN_MATA, { no_rawat: norawat })
         ).done(function (
             summaryRes, soapRes, diagRes, procRes, tindRes, resepRes,
-            labRes, radRes, rdocsRes, berkasRes, operasiRes, penunjangRes, laptindRes, igdRes, pdRes, orthoRes, kfrRes, rehabRes
+            labRes, radRes, rdocsRes, berkasRes, operasiRes, penunjangRes, laptindRes, igdRes, pdRes, orthoRes, kfrRes, rehabRes, mataRes
         ) {
             // ================== PARSE JSON RESPONSE ==================
             const J = x => { try { return (typeof x[0] === 'string') ? JSON.parse(x[0]) : x[0]; } catch (_) { return {}; } };
@@ -1465,7 +1570,7 @@ $(function () {
             const diag = J(diagRes), proc = J(procRes), tind = J(tindRes), resep = J(resepRes);
             const lab = J(labRes), rad = J(radRes), rdocs = J(rdocsRes), berkas = J(berkasRes);
             const operasi = J(operasiRes), penunjang = J(penunjangRes), laptind = J(laptindRes);
-            const igd = J(igdRes), pd = J(pdRes), ortho = J(orthoRes), kfr = J(kfrRes), rehab = J(rehabRes);
+            const igd = J(igdRes), pd = J(pdRes), ortho = J(orthoRes), kfr = J(kfrRes), rehab = J(rehabRes), mata = J(mataRes);
 
             // Debug: Check if KFR and Rehab data exist
             console.log('KFR Data:', kfr);
@@ -1474,7 +1579,7 @@ $(function () {
             // SAVE DATA FOR PRINT (Localized & Global - Global updated just in case)
             const printPayload = {
                 summary, soapRaw, diag, proc, tind, resep, lab, rad,
-                rdocs, berkas, operasi, penunjang, laptind, igd, pd, ortho, kfr, rehab,
+                rdocs, berkas, operasi, penunjang, laptind, igd, pd, ortho, kfr, rehab, mata,
                 base: base
             };
             window.currentPrintData = printPayload;
@@ -1637,6 +1742,137 @@ $(function () {
 
             function renderAsesmenOrtho() { renderSpesialis(ortho, 'Asesmen Awal Orthopedi', 'fa-wheelchair', '#5e72e4', true); }
             function renderAsesmenPD() { renderSpesialis(pd, 'Asesmen Awal Penyakit Dalam', 'fa-stethoscope', '#11cdef', false); }
+
+            // === RENDER PENILAIAN MEDIS MATA ===
+            function renderPenilaianMata() {
+                const data = mata.data || mata || {};
+
+                if (hasKeys(data, ['keluhan_utama', 'diagnosis', 'visuskanan', 'visuskiri'])) {
+                    let html = '';
+
+                    // 1. ANAMNESIS
+                    html += `<div style="margin-bottom:20px;">
+                            <h5 style="font-size:12px; font-weight:700; color:#f59e0b; text-transform:uppercase; letter-spacing:1px; margin-bottom:12px; border-bottom:2px solid #f59e0b; display:inline-block; padding-bottom:4px;">
+                                <i class="fa fa-history"></i> Anamnesis
+                            </h5>
+                            <table style="width:100%; font-size:13px; border-collapse:collapse;">
+                                ${row('Keluhan Utama', data.keluhan_utama)}
+                                ${row('RPS', data.rps)}
+                                ${row('RPD', data.rpd)}
+                                ${row('RPO', data.rpo)}
+                                ${row('Alergi', data.alergi)}
+                            </table>
+                        </div>`;
+
+                    // 2. FISIK & VITAL
+                    html += `<div style="margin-bottom:20px;">
+                             <h5 style="font-size:12px; font-weight:700; color:#2dce89; text-transform:uppercase; letter-spacing:1px; margin-bottom:12px; border-bottom:2px solid #2dce89; display:inline-block; padding-bottom:4px;">
+                                <i class="fa fa-heartbeat"></i> Status Fisik
+                            </h5>
+                            <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(80px, 1fr)); gap:10px; margin-bottom:12px;">
+                                ${ttvBox('TD', data.td, 'mmHg')}
+                                ${ttvBox('Nadi', data.nadi, 'x/m')}
+                                ${ttvBox('Suhu', data.suhu, '°C')}
+                                ${ttvBox('RR', data.rr, 'x/m')}
+                                ${ttvBox('BB', data.bb, 'Kg')}
+                                ${ttvBox('Nyeri', data.nyeri)}
+                            </div>
+                        </div>`;
+
+
+                    // 3. STATUS OFTALMOLOGIS (dengan gambar di atas)
+                    html += `<div style="margin-bottom:20px;">
+                             <h5 style="font-size:12px; font-weight:700; color:#8b5cf6; text-transform:uppercase; letter-spacing:1px; margin-bottom:12px; border-bottom:2px solid #8b5cf6; display:inline-block; padding-bottom:4px;">
+                                <i class="fa fa-eye"></i> Diagram Mata
+                            </h5>`;
+
+                    // Gambar OD dan OS side by side
+                    if (data.gambar_od_url || data.gambar_os_url) {
+                        html += `<div style="display:grid; grid-template-columns: 1fr 1fr; gap:16px; margin-bottom:16px;">`;
+
+                        if (data.gambar_od_url) {
+                            html += `<div style="background:#fff; border:2px solid #3c8dbc; border-radius:8px; padding:8px; box-shadow:0 2px 4px rgba(0,0,0,.1);">
+                                <div style="font-weight:600; color:#3c8dbc; margin-bottom:6px; text-align:center; font-size:11px;">OD : Mata Kanan</div>
+                                <a href="${data.gambar_od_url}?t=${new Date().getTime()}" target="_blank" title="Klik untuk memperbesar">
+                                    <img src="${data.gambar_od_url}?t=${new Date().getTime()}" style="width:100%; height:auto; display:block; border-radius:4px;" alt="OD">
+                                </a>
+                            </div>`;
+                        }
+
+                        if (data.gambar_os_url) {
+                            html += `<div style="background:#fff; border:2px solid #00a65a; border-radius:8px; padding:8px; box-shadow:0 2px 4px rgba(0,0,0,.1);">
+                                <div style="font-weight:600; color:#00a65a; margin-bottom:6px; text-align:center; font-size:11px;">OS : Mata Kiri</div>
+                                <a href="${data.gambar_os_url}?t=${new Date().getTime()}" target="_blank" title="Klik untuk memperbesar">
+                                    <img src="${data.gambar_os_url}?t=${new Date().getTime()}" style="width:100%; height:auto; display:block; border-radius:4px;" alt="OS">
+                                </a>
+                            </div>`;
+                        }
+
+                        html += `</div>`;
+                    }
+
+                    // Tabel Status Oftalmologis
+                    html += `<h5 style="font-size:12px; font-weight:700; color:#8b5cf6; text-transform:uppercase; letter-spacing:1px; margin-bottom:12px; border-bottom:2px solid #8b5cf6; display:inline-block; padding-bottom:4px;">
+                                <i class="fa fa-eye"></i> Status Oftalmologis
+                            </h5>
+                            <table style="width:100%; font-size:11px; border-collapse:collapse; border:1px solid #e5e7eb;">
+                                <thead>
+                                    <tr style="background:#f3f4f6;">
+                                        <th style="border:1px solid #e5e7eb; padding:6px; text-align:left;">Pemeriksaan</th>
+                                        <th style="border:1px solid #e5e7eb; padding:6px; text-align:center; color:#3c8dbc;">OD (Kanan)</th>
+                                        <th style="border:1px solid #e5e7eb; padding:6px; text-align:center; color:#00a65a;">OS (Kiri)</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr><td style="border:1px solid #e5e7eb; padding:4px; font-weight:600;">Visus SC</td><td style="border:1px solid #e5e7eb; padding:4px; text-align:center;">${escHtml(data.visuskanan || '-')}</td><td style="border:1px solid #e5e7eb; padding:4px; text-align:center;">${escHtml(data.visuskiri || '-')}</td></tr>
+                                    <tr><td style="border:1px solid #e5e7eb; padding:4px; font-weight:600;">CC</td><td style="border:1px solid #e5e7eb; padding:4px; text-align:center;">${escHtml(data.cckanan || '-')}</td><td style="border:1px solid #e5e7eb; padding:4px; text-align:center;">${escHtml(data.cckiri || '-')}</td></tr>
+                                    <tr><td style="border:1px solid #e5e7eb; padding:4px; font-weight:600;">Palpebra</td><td style="border:1px solid #e5e7eb; padding:4px; text-align:center;">${escHtml(data.palkanan || '-')}</td><td style="border:1px solid #e5e7eb; padding:4px; text-align:center;">${escHtml(data.palkiri || '-')}</td></tr>
+                                    <tr><td style="border:1px solid #e5e7eb; padding:4px; font-weight:600;">Conjungtiva</td><td style="border:1px solid #e5e7eb; padding:4px; text-align:center;">${escHtml(data.conkanan || '-')}</td><td style="border:1px solid #e5e7eb; padding:4px; text-align:center;">${escHtml(data.conkiri || '-')}</td></tr>
+                                    <tr><td style="border:1px solid #e5e7eb; padding:4px; font-weight:600;">Cornea</td><td style="border:1px solid #e5e7eb; padding:4px; text-align:center;">${escHtml(data.corneakanan || '-')}</td><td style="border:1px solid #e5e7eb; padding:4px; text-align:center;">${escHtml(data.corneakiri || '-')}</td></tr>
+                                    <tr><td style="border:1px solid #e5e7eb; padding:4px; font-weight:600;">COA</td><td style="border:1px solid #e5e7eb; padding:4px; text-align:center;">${escHtml(data.coakanan || '-')}</td><td style="border:1px solid #e5e7eb; padding:4px; text-align:center;">${escHtml(data.coakiri || '-')}</td></tr>
+                                    <tr><td style="border:1px solid #e5e7eb; padding:4px; font-weight:600;">Pupil</td><td style="border:1px solid #e5e7eb; padding:4px; text-align:center;">${escHtml(data.pupilkanan || '-')}</td><td style="border:1px solid #e5e7eb; padding:4px; text-align:center;">${escHtml(data.pupilkiri || '-')}</td></tr>
+                                    <tr><td style="border:1px solid #e5e7eb; padding:4px; font-weight:600;">Lensa</td><td style="border:1px solid #e5e7eb; padding:4px; text-align:center;">${escHtml(data.lensakanan || '-')}</td><td style="border:1px solid #e5e7eb; padding:4px; text-align:center;">${escHtml(data.lensakiri || '-')}</td></tr>
+                                    <tr><td style="border:1px solid #e5e7eb; padding:4px; font-weight:600;">TIO</td><td style="border:1px solid #e5e7eb; padding:4px; text-align:center;">${escHtml(data.tiokanan || '-')}</td><td style="border:1px solid #e5e7eb; padding:4px; text-align:center;">${escHtml(data.tiokiri || '-')}</td></tr>
+                                </tbody>
+                            </table>
+                        </div>`;
+
+
+                    // 4. DIAGNOSIS & PLAN
+                    html += `<div>
+                            <h5 style="font-size:12px; font-weight:700; color:#f5365c; text-transform:uppercase; letter-spacing:1px; margin-bottom:12px; border-bottom:2px solid #f5365c; display:inline-block; padding-bottom:4px;">
+                                <i class="fa fa-stethoscope"></i> Diagnosis & Plan
+                            </h5>
+                            
+                            <div style="background:#fff5f5; border-left:4px solid #f5365c; padding:12px; border-radius:4px; margin-bottom:12px;">
+                                <div style="font-size:11px; color:#f5365c; font-weight:700; text-transform:uppercase; margin-bottom:4px;">Diagnosis Utama</div>
+                                <div style="font-size:14px; font-weight:600; color:#32325d;">${escHtml(data.diagnosis || '-')}</div>
+                                ${data.diagnosisbdg ? `<hr style="border-top:1px dashed #fcd34d; margin:8px 0;"><div style="font-size:11px; color:#888;"><b>Banding:</b> ${escHtml(data.diagnosisbdg)}</div>` : ''}
+                            </div>
+
+                            <div style="background:#f6f9fc; border-left:4px solid #f59e0b; padding:12px; border-radius:4px;">
+                                <div style="font-size:11px; color:#f59e0b; font-weight:700; text-transform:uppercase; margin-bottom:4px;">Tatalaksana</div>
+                                <ul style="margin:0; padding-left:16px; font-size:13px; color:#525f7f; line-height:1.6;">
+                                    ${data.terapi ? `<li><b>Terapi:</b> ${escHtml(data.terapi)}</li>` : ''}
+                                    ${data.tindakan ? `<li><b>Tindakan:</b> ${escHtml(data.tindakan)}</li>` : ''}
+                                    ${data.edukasi ? `<li><b>Edukasi:</b> ${escHtml(data.edukasi)}</li>` : ''}
+                                </ul>
+                            </div>
+                        </div>`;
+
+                    // Meta Footer
+                    html += `<div style="margin-top:20px; padding-top:10px; border-top:1px dashed #e9ecef; display:flex; justify-content:space-between; align-items:center;">
+                        <div style="font-size:12px; color:#525f7f;">
+                            <i class="fa fa-user-md"></i> <b>${escHtml(data.nm_dokter)}</b>
+                            <span style="color:#8898aa; margin:0 5px;">&bull;</span>
+                            <i class="fa fa-clock-o"></i> ${escHtml(data.tanggal)}
+                        </div>
+                    </div>`;
+
+                    cardsToShow.push(cardWrap('soap', 'Penilaian Medis Mata', html));
+                }
+            }
+
 
             // === 0. RENDER ASESMEN IGD PEMERIKSAAN MEDIS (CLEAN LAYOUT) ===
             function renderIGD() {
@@ -3021,6 +3257,7 @@ $(function () {
             // ================== EXECUTE ALL RENDER FUNCTIONS ==================
             renderAsesmenPD();
             renderAsesmenOrtho();
+            renderPenilaianMata();
             renderIGD();
             renderTandaVital();
             renderDiagnosa();

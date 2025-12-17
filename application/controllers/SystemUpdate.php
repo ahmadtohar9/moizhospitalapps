@@ -22,10 +22,15 @@ class SystemUpdate extends CI_Controller
             redirect('auth/login');
         }
 
-        // Cek role admin
+        // Cek role admin (support role_id atau role)
+        $role_id = $this->session->userdata('role_id');
         $role = $this->session->userdata('role');
-        if ($role !== 'admin' && $role !== 'superadmin') {
-            show_error('Anda tidak memiliki akses ke halaman ini', 403);
+
+        // Allow jika role_id = 1 (admin) atau role = admin/superadmin
+        $is_admin = ($role_id == 1) || ($role === 'admin') || ($role === 'superadmin');
+
+        if (!$is_admin) {
+            show_error('Anda tidak memiliki akses ke halaman ini. Hanya admin yang dapat mengakses System Update.', 403);
         }
 
         $this->load->library('GitUpdater');
@@ -37,6 +42,11 @@ class SystemUpdate extends CI_Controller
      */
     public function index()
     {
+        // Load menu data untuk sidebar
+        $this->load->model('MenuModel');
+        $data['menus'] = $this->MenuModel->get_menu_by_user($this->session->userdata('user_id'));
+        $data['nama_user'] = $this->session->userdata('nama');
+
         $data['title'] = 'System Update';
         $data['content'] = 'admin/system_update/index';
 
@@ -62,7 +72,7 @@ class SystemUpdate extends CI_Controller
         $data['update_history'] = $this->gitupdater->get_update_history();
 
         $this->load->view('templates/header', $data);
-        $this->load->view('templates/sidebar', $data);
+        $this->load->view('templates/menu', $data);
         $this->load->view($data['content'], $data);
         $this->load->view('templates/footer');
     }

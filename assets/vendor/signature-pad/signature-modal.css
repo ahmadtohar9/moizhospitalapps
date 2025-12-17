@@ -1,0 +1,30 @@
+/* signature-modal.css */
+#canvasTTD {
+  background: #fff;
+  border: 1px dashed #999;
+  border-radius: 6px;
+  width: 100%;
+  height: 280px;
+  touch-action: none;
+}
+
+.modal-body small {
+  display: block;
+  margin-top: 4px;
+  color: #666;
+}
+
+@media (max-width: 768px) {
+  .modal-dialog {
+    margin: 0;
+    max-width: 100%;
+    height: 100%;
+  }
+  .modal-content {
+    height: 100%;
+    border-radius: 0;
+  }
+  #canvasTTD {
+    height: 60vh !important;
+  }
+}

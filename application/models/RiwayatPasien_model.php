@@ -1,0 +1,607 @@
+<?php
+defined('BASEPATH') OR exit('No direct script access allowed');
+
+class RiwayatPasien_model extends CI_Model
+{
+    /* ================== MAIN QUERY - KUNJUNGAN ================== */
+    public function get_kunjungan_by_norm($no_rkm_medis, $filters = [], $page = 1, $per_page = 50)
+    {
+        // COUNT QUERY
+        $this->_build_base_query($no_rkm_medis, $filters);
+        $total = $this->db->count_all_results();
+
+        // DATA QUERY
+        $this->_build_base_query($no_rkm_medis, $filters);
+        $this->_build_select();
+
+        $offset = ($page - 1) * $per_page;
+        $this->db->limit($per_page, $offset);
+        $this->db->order_by('rp.tgl_registrasi', 'DESC');
+        $this->db->order_by('rp.jam_reg', 'DESC');
+
+        $rows = $this->db->get()->result_array();
+
+        return [
+            'rows' => $rows,
+            'total' => $total
+        ];
+    }
+
+    private function _build_base_query($no_rkm_medis, $filters)
+    {
+        $this->db->from('reg_periksa rp')
+            ->join('poliklinik p', 'p.kd_poli = rp.kd_poli', 'left')
+            ->join('dokter d', 'd.kd_dokter = rp.kd_dokter', 'left')
+            ->join('penjab pj', 'pj.kd_pj = rp.kd_pj', 'left')
+            ->join('diagnosa_pasien dp', 'dp.no_rawat = rp.no_rawat AND dp.prioritas = 1', 'left')
+            ->join('penyakit py', 'py.kd_penyakit = dp.kd_penyakit', 'left')
+            ->where('rp.no_rkm_medis', $no_rkm_medis);
+
+        // Apply filters
+        if (!empty($filters['date_from'])) {
+            $this->db->where('rp.tgl_registrasi >=', $filters['date_from']);
+        }
+        if (!empty($filters['date_to'])) {
+            $this->db->where('rp.tgl_registrasi <=', $filters['date_to']);
+        }
+
+        if (!empty($filters['q'])) {
+            $this->db->group_start()
+                ->like('rp.no_rawat', $filters['q'])
+                ->or_like('d.nm_dokter', $filters['q'])
+                ->or_like('p.nm_poli', $filters['q'])
+                ->or_like('pj.png_jawab', $filters['q'])
+                ->or_like('dp.kd_penyakit', $filters['q'])
+                ->or_like('py.nm_penyakit', $filters['q'])
+                ->group_end();
+        }
+
+        // Exists filters
+        $this->_apply_exists_filters($filters);
+    }
+
+    private function _build_select()
+    {
+        $this->db->select("
+            rp.no_rawat,
+            rp.tgl_registrasi,
+            rp.jam_reg,
+            p.nm_poli AS poli,
+            d.nm_dokter AS dokter,
+            pj.png_jawab AS penjamin,
+            CONCAT(COALESCE(dp.kd_penyakit, ''), '|', COALESCE(py.nm_penyakit, '')) AS diagnosa_utama,
+            EXISTS(SELECT 1 FROM pemeriksaan_ralan pr WHERE pr.no_rawat = rp.no_rawat) AS has_soap,
+            (EXISTS(SELECT 1 FROM rawat_jl_dr rjd WHERE rjd.no_rawat = rp.no_rawat) OR 
+             EXISTS(SELECT 1 FROM rawat_jl_pr rjp WHERE rjp.no_rawat = rp.no_rawat)) AS has_tind,
+            EXISTS(SELECT 1 FROM resep_obat ro WHERE ro.no_rawat = rp.no_rawat) AS has_resep,
+            EXISTS(SELECT 1 FROM periksa_lab pl WHERE pl.no_rawat = rp.no_rawat) AS has_lab,
+            EXISTS(SELECT 1 FROM periksa_radiologi pr WHERE pr.no_rawat = rp.no_rawat) AS has_rad,
+            EXISTS(SELECT 1 FROM berkas_digital_perawatan bdp WHERE bdp.no_rawat = rp.no_rawat) AS has_resume
+        ");
+    }
+
+    private function _apply_exists_filters($filters)
+    {
+        $exists_map = [
+            'has_soap' => 'pemeriksaan_ralan',
+            'has_tind' => ['rawat_jl_dr', 'rawat_jl_pr'],
+            'has_resep' => 'resep_obat',
+            'has_lab' => 'periksa_lab',
+            'has_rad' => 'periksa_radiologi',
+            'has_resume' => 'berkas_digital_perawatan'
+        ];
+
+        foreach ($exists_map as $filter => $table) {
+            if (isset($filters[$filter]) && $filters[$filter] === 1) {
+                if (is_array($table)) {
+                    $this->db->where("(
+                        EXISTS(SELECT 1 FROM {$table[0]} WHERE no_rawat = rp.no_rawat) OR 
+                        EXISTS(SELECT 1 FROM {$table[1]} WHERE no_rawat = rp.no_rawat)
+                    )");
+                } else {
+                    $this->db->where("EXISTS(SELECT 1 FROM {$table} WHERE no_rawat = rp.no_rawat)");
+                }
+            }
+        }
+    }
+
+    /* ================== DETAIL METHODS ================== */
+    /**
+     * Get basic visit info (for print header)
+     */
+    public function get_base_info($no_rawat)
+    {
+        return $this->db->select('
+            rp.no_rawat, rp.tgl_registrasi, rp.jam_reg,
+            p.nm_poli AS poli, pj.png_jawab AS penjamin, d.nm_dokter AS dokter
+        ')
+            ->from('reg_periksa rp')
+            ->join('poliklinik p', 'p.kd_poli = rp.kd_poli', 'left')
+            ->join('penjab pj', 'pj.kd_pj = rp.kd_pj', 'left')
+            ->join('dokter d', 'd.kd_dokter = rp.kd_dokter', 'left')
+            ->where('rp.no_rawat', $no_rawat)
+            ->get()->row_array() ?: [];
+    }
+
+    public function get_summary_by_norawat($no_rawat)
+    {
+        $header = $this->db->select('
+            rp.no_rawat, rp.tgl_registrasi, rp.jam_reg,
+            ps.no_rkm_medis, ps.nm_pasien, ps.jk,
+            p.nm_poli, pj.png_jawab, d.nm_dokter
+        ')
+            ->from('reg_periksa rp')
+            ->join('pasien ps', 'ps.no_rkm_medis = rp.no_rkm_medis')
+            ->join('poliklinik p', 'p.kd_poli = rp.kd_poli', 'left')
+            ->join('penjab pj', 'pj.kd_pj = rp.kd_pj', 'left')
+            ->join('dokter d', 'd.kd_dokter = rp.kd_dokter', 'left')
+            ->where('rp.no_rawat', $no_rawat)
+            ->get()->row_array();
+
+        // Fetch components
+        $resume = $this->_get_resume($no_rawat);
+        $ttv = $this->_get_ttv_terakhir($no_rawat);
+
+        // Merge TTV into Resume to facilitate frontend display
+        if (!empty($resume)) {
+            $resume['ttv'] = $ttv;
+        } elseif (!empty($ttv)) {
+            // Even if no resume record exists, we might want to show TTV in the Resume card context?
+            // Converting to array to allow display
+            $resume = ['ttv' => $ttv];
+        }
+
+        return [
+            'header' => $header ?: [],
+            'diagnosa_utama' => $this->_get_diagnosa_utama($no_rawat),
+            'ttv_terakhir' => $ttv, // Keep formatting for other uses
+            'resume' => $resume
+        ];
+    }
+
+    public function get_soap_by_norawat($no_rawat)
+    {
+        $items = $this->db->select('
+            pemeriksaan_ralan.keluhan,
+            pemeriksaan_ralan.pemeriksaan,
+            pemeriksaan_ralan.penilaian,
+            pemeriksaan_ralan.rtl,
+            pemeriksaan_ralan.tgl_perawatan,
+            pemeriksaan_ralan.jam_rawat,
+            pemeriksaan_ralan.tensi, 
+            pemeriksaan_ralan.nadi, 
+            pemeriksaan_ralan.respirasi, 
+            pemeriksaan_ralan.suhu_tubuh, 
+            pemeriksaan_ralan.spo2,
+            pemeriksaan_ralan.berat, 
+            pemeriksaan_ralan.tinggi, 
+            pemeriksaan_ralan.gcs, 
+            pemeriksaan_ralan.kesadaran,
+            pegawai.nama AS nm_petugas
+        ')
+            ->from('pemeriksaan_ralan')
+            ->join('pegawai', 'pemeriksaan_ralan.nip = pegawai.nik', 'left')
+            ->where('pemeriksaan_ralan.no_rawat', $no_rawat)
+            ->order_by('pemeriksaan_ralan.tgl_perawatan', 'DESC')
+            ->order_by('pemeriksaan_ralan.jam_rawat', 'DESC')
+            ->get()->result_array();
+
+        $last = !empty($items) ? $items[0] : [];
+
+        return [
+            'items' => $items,
+            'soap' => $last
+        ];
+    }
+
+    public function get_diagnosa_by_norawat($no_rawat)
+    {
+        return $this->db->select('dp.prioritas, dp.kd_penyakit, py.nm_penyakit, dp.status')
+            ->from('diagnosa_pasien dp')
+            ->join('penyakit py', 'py.kd_penyakit = dp.kd_penyakit')
+            ->where('dp.no_rawat', $no_rawat)
+            ->order_by('dp.prioritas', 'ASC')
+            ->get()->result_array();
+    }
+
+    public function get_prosedur_by_norawat($no_rawat)
+    {
+        return $this->db->select('pp.prioritas, pp.kode, icd9.deskripsi_panjang AS nama')
+            ->from('prosedur_pasien pp')
+            ->join('icd9', 'icd9.kode = pp.kode', 'left')
+            ->where('pp.no_rawat', $no_rawat)
+            ->order_by('pp.prioritas', 'ASC')
+            ->get()->result_array();
+    }
+
+    public function get_tindakan_by_norawat($no_rawat)
+    {
+        $sql = "
+            SELECT tgl_perawatan, jam_rawat, nm_perawatan, operator, biaya_rawat 
+            FROM (
+                SELECT rj.tgl_perawatan, rj.jam_rawat, jp.nm_perawatan, d.nm_dokter AS operator, rj.biaya_rawat
+                FROM rawat_jl_dr rj
+                JOIN jns_perawatan jp ON jp.kd_jenis_prw = rj.kd_jenis_prw
+                JOIN dokter d ON d.kd_dokter = rj.kd_dokter
+                WHERE rj.no_rawat = ?
+                
+                UNION ALL
+                
+                SELECT rj.tgl_perawatan, rj.jam_rawat, jp.nm_perawatan, pt.nama AS operator, rj.biaya_rawat
+                FROM rawat_jl_pr rj
+                JOIN jns_perawatan jp ON jp.kd_jenis_prw = rj.kd_jenis_prw
+                JOIN petugas pt ON pt.nip = rj.nip
+                WHERE rj.no_rawat = ?
+            ) combined
+            ORDER BY tgl_perawatan ASC, jam_rawat ASC
+        ";
+
+        return $this->db->query($sql, [$no_rawat, $no_rawat])->result_array();
+    }
+
+    public function get_resep_by_norawat($no_rawat)
+    {
+        return $this->db->select('
+            ro.no_resep, ro.tgl_perawatan, ro.jam,
+            d.nm_dokter,
+            db.nama_brng AS nama_obat,
+            db.ralan AS harga_satuan,
+            (db.ralan * rd.jml) AS total_biaya,
+            rd.jml, rd.aturan_pakai
+        ')
+            ->from('resep_obat ro')
+            ->join('resep_dokter rd', 'rd.no_resep = ro.no_resep')
+            ->join('databarang db', 'db.kode_brng = rd.kode_brng')
+            ->join('dokter d', 'd.kd_dokter = ro.kd_dokter', 'left')
+            ->where('ro.no_rawat', $no_rawat)
+            ->order_by('ro.tgl_perawatan', 'ASC')
+            ->order_by('ro.jam', 'ASC')
+            ->get()->result_array();
+    }
+
+    public function get_lab_by_norawat($no_rawat)
+    {
+        return $this->db->select('
+            pl.no_rawat, pl.tgl_periksa, pl.jam, pl.biaya, pl.dokter_perujuk,
+            d.nm_dokter,
+            jpl.nm_perawatan AS panel,
+            tl.Pemeriksaan AS pemeriksaan,
+            dpl.nilai AS hasil,
+            tl.satuan,
+            dpl.nilai_rujukan AS rujukan
+        ')
+            ->from('periksa_lab pl')
+            ->join(
+                'detail_periksa_lab dpl',
+                'dpl.no_rawat = pl.no_rawat AND dpl.tgl_periksa = pl.tgl_periksa AND dpl.jam = pl.jam AND dpl.kd_jenis_prw = pl.kd_jenis_prw'
+            )
+            ->join('jns_perawatan_lab jpl', 'jpl.kd_jenis_prw = dpl.kd_jenis_prw', 'left')
+            ->join('template_laboratorium tl', 'tl.id_template = dpl.id_template', 'left')
+            ->join('dokter d', 'd.kd_dokter = pl.kd_dokter', 'left')
+            ->where('pl.no_rawat', $no_rawat)
+            ->order_by('pl.tgl_periksa', 'ASC')
+            ->order_by('pl.jam', 'ASC')
+            ->get()->result_array();
+    }
+
+    public function get_radiologi_by_norawat($no_rawat)
+    {
+        return $this->db->select('
+            pr.kd_jenis_prw,
+            pr.tgl_periksa,
+            pr.jam,
+            pr.biaya,
+            jpr.nm_perawatan,
+            hr.hasil,
+            d.nm_dokter AS dokter
+        ')
+            ->from('periksa_radiologi pr')
+            ->join('jns_perawatan_radiologi jpr', 'jpr.kd_jenis_prw = pr.kd_jenis_prw', 'left')
+            ->join('hasil_radiologi hr', 'hr.no_rawat = pr.no_rawat AND hr.tgl_periksa = pr.tgl_periksa AND hr.jam = pr.jam', 'left')
+            ->join('dokter d', 'd.kd_dokter = pr.kd_dokter', 'left')
+            ->where('pr.no_rawat', $no_rawat)
+            ->order_by('pr.tgl_periksa', 'ASC')
+            ->order_by('pr.jam', 'ASC')
+            ->get()->result_array();
+    }
+
+    public function get_radiologi_docs($no_rawat)
+    {
+        $rows = $this->db->select('
+            no_rawat,
+            tgl_periksa,
+            jam,
+            lokasi_gambar AS path
+        ')
+            ->from('gambar_radiologi')
+            ->where('no_rawat', $no_rawat)
+            ->order_by('tgl_periksa', 'ASC')
+            ->order_by('jam', 'ASC')
+            ->get()->result_array();
+
+        $files = [];
+        foreach ($rows as $r) {
+            $raw = (string) ($r['path'] ?? '');
+
+            // GUNAKAN HELPER BERKAS
+            $rel = berkas_rel('radiologi', $raw);
+            $info = berkas_build('radiologi', $rel);
+
+            $files[] = [
+                'label' => trim(($r['tgl_periksa'] . ' ' . $r['jam'])) ?: basename($info['relative']),
+                'url' => $info['url'],
+                'exists' => (int) ($info['exists'] ?? 0),
+                'tgl' => trim(($r['tgl_periksa'] . ' ' . $r['jam'])),
+                'ext' => $info['ext'],
+                'relative' => $info['relative'],
+                'is_image' => $info['is_image'],
+            ];
+        }
+
+        return ['files' => $files];
+    }
+
+    public function get_berkas_digital($no_rawat)
+    {
+        $rows = $this->db->select('
+            no_rawat,
+            kode,
+            lokasi_file AS path
+        ')
+            ->from('berkas_digital_perawatan')
+            ->where('no_rawat', $no_rawat)
+            ->order_by('kode', 'ASC')
+            ->get()->result_array();
+
+        $files = [];
+        foreach ($rows as $r) {
+            $raw = (string) ($r['path'] ?? '');
+
+            // GUNAKAN HELPER BERKAS
+            $rel = berkas_rel('berkasrawat', $raw);
+            $info = berkas_build('berkasrawat', $rel);
+
+            $files[] = [
+                'label' => $r['kode'] ?: basename($info['relative']),
+                'url' => $info['url'],
+                'exists' => (int) ($info['exists'] ?? 0),
+                'tgl' => '',
+                'ext' => $info['ext'],
+                'relative' => $info['relative'],
+                'kode' => $r['kode'],
+            ];
+        }
+
+        return ['files' => $files];
+    }
+
+    public function get_operasi_by_no_rawat($no_rawat)
+    {
+        $this->db->select("
+            o.no_rawat,
+            o.tgl_operasi,
+            o.jenis_anasthesi,
+            o.kategori,
+            o.status,
+            o.operator1,
+            d1.nm_dokter AS nm_operator1,
+            o.operator2, 
+            d2.nm_dokter AS nm_operator2,
+            o.operator3,
+            d3.nm_dokter AS nm_operator3,
+            o.dokter_anestesi,
+            d4.nm_dokter AS nm_dokter_anestesi,
+            o.kode_paket,
+            p.nm_perawatan AS nm_paket_operasi,
+            (
+                COALESCE(o.biayaoperator1, 0) +
+                COALESCE(o.biayaoperator2, 0) +
+                COALESCE(o.biayaoperator3, 0) +
+                COALESCE(o.biayaasisten_operator1, 0) +
+                COALESCE(o.biayaasisten_operator2, 0) +
+                COALESCE(o.biayaasisten_operator3, 0) +
+                COALESCE(o.biayainstrumen, 0) +
+                COALESCE(o.biayadokter_anak, 0) +
+                COALESCE(o.biayaperawaat_resusitas, 0) +
+                COALESCE(o.biayadokter_anestesi, 0) +
+                COALESCE(o.biayaasisten_anestesi, 0) +
+                COALESCE(o.biayaasisten_anestesi2, 0) +
+                COALESCE(o.biayabidan, 0) +
+                COALESCE(o.biayabidan2, 0) +
+                COALESCE(o.biayabidan3, 0) +
+                COALESCE(o.biayaperawat_luar, 0) +
+                COALESCE(o.biayaalat, 0) +
+                COALESCE(o.biayasewaok, 0) +
+                COALESCE(o.akomodasi, 0) +
+                COALESCE(o.bagian_rs, 0) +
+                COALESCE(o.biaya_omloop, 0) +
+                COALESCE(o.biaya_omloop2, 0) +
+                COALESCE(o.biaya_omloop3, 0) +
+                COALESCE(o.biaya_omloop4, 0) +
+                COALESCE(o.biaya_omloop5, 0) +
+                COALESCE(o.biayasarpras, 0) +
+                COALESCE(o.biaya_dokter_pjanak, 0) +
+                COALESCE(o.biaya_dokter_umum, 0)
+            ) AS total_biaya,
+            lo.diagnosa_preop,
+            lo.diagnosa_postop,
+            lo.laporan_operasi,
+            lo.jaringan_dieksekusi,
+            lo.selesaioperasi,
+            lo.permintaan_pa,
+            lo.nomor_implan
+        ");
+
+        $this->db->from('operasi o');
+        $this->db->join('laporan_operasi lo', 'lo.no_rawat = o.no_rawat AND lo.tanggal = o.tgl_operasi', 'left');
+        $this->db->join('dokter d1', 'o.operator1 = d1.kd_dokter', 'left');
+        $this->db->join('dokter d2', 'o.operator2 = d2.kd_dokter', 'left');
+        $this->db->join('dokter d3', 'o.operator3 = d3.kd_dokter', 'left');
+        $this->db->join('dokter d4', 'o.dokter_anestesi = d4.kd_dokter', 'left');
+        $this->db->join('paket_operasi p', 'o.kode_paket = p.kode_paket', 'left');
+        $this->db->where('o.no_rawat', $no_rawat);
+        $this->db->order_by('o.tgl_operasi', 'DESC');
+
+        return $this->db->get()->result_array();
+    }
+
+    public function get_penunjang_by_norawat($no_rawat)
+    {
+        return $this->db->select("
+            pjd.*,
+            d.nm_dokter
+        ")
+            ->from('moiz_penunjang_dokter pjd')
+            ->join('dokter d', 'd.kd_dokter = pjd.kd_dokter', 'left')
+            ->where('pjd.no_rawat', $no_rawat)
+            ->order_by('pjd.tgl_periksa', 'DESC')
+            ->order_by('pjd.jam_periksa', 'DESC')
+            ->get()->result_array();
+    }
+
+    public function get_laporan_tindakan_by_norawat($no_rawat)
+    {
+        return $this->db->select("
+            lt.*,
+            d.nm_dokter
+        ")
+            ->from('moiz_laporan_tindakan_ralan lt')
+            ->join('dokter d', 'd.kd_dokter = lt.kd_dokter', 'left')
+            ->where('lt.no_rawat', $no_rawat)
+            ->get()->row_array();
+    }
+
+    public function get_asesmen_igd_by_norawat($no_rawat)
+    {
+        $row = $this->db->select("
+            pm.*,
+            d.nm_dokter
+        ")
+            ->from('penilaian_medis_igd pm')
+            ->join('dokter d', 'd.kd_dokter = pm.kd_dokter', 'left')
+            ->where('pm.no_rawat', $no_rawat)
+            ->get()->row_array();
+
+        if ($row) {
+            $clean_no_rawat = str_replace('/', '', $no_rawat);
+            $path = 'assets/images/lokalis_igd/lokalis_' . $clean_no_rawat . '.png';
+            if (file_exists(FCPATH . $path)) {
+                $row['lokalis_url'] = base_url($path);
+            } else {
+                $row['lokalis_url'] = null;
+            }
+        }
+
+        return $row;
+    }
+
+    public function get_awal_medis_penyakit_dalam_by_norawat($no_rawat)
+    {
+        return $this->db->select("
+            pd.*,
+            d.nm_dokter
+        ")
+            ->from('penilaian_medis_ralan_penyakit_dalam pd')
+            ->join('dokter d', 'd.kd_dokter = pd.kd_dokter', 'left')
+            ->where('pd.no_rawat', $no_rawat)
+            ->get()->row_array();
+    }
+
+    public function get_awal_medis_orthopedi_by_norawat($no_rawat)
+    {
+        $row = $this->db->select("
+            po.*,
+            d.nm_dokter
+        ")
+            ->from('penilaian_medis_ralan_orthopedi po')
+            ->join('dokter d', 'd.kd_dokter = po.kd_dokter', 'left')
+            ->where('po.no_rawat', $no_rawat)
+            ->get()->row_array();
+
+        if ($row) {
+            $clean_no_rawat = str_replace('/', '', $no_rawat);
+            $path = 'assets/images/lokalis_orthopedi/lokalis_' . $clean_no_rawat . '.png';
+            if (file_exists(FCPATH . $path)) {
+                $row['lokalis_url'] = base_url($path);
+            } else {
+                $row['lokalis_url'] = null;
+            }
+        }
+
+        return $row;
+    }
+
+    /* ================== HELPER METHODS ================== */
+    private function _get_diagnosa_utama($no_rawat)
+    {
+        return $this->db->select('dp.kd_penyakit, py.nm_penyakit, dp.prioritas')
+            ->from('diagnosa_pasien dp')
+            ->join('penyakit py', 'py.kd_penyakit = dp.kd_penyakit')
+            ->where('dp.no_rawat', $no_rawat)
+            ->where('dp.prioritas', 1)
+            ->get()->row_array() ?: [];
+    }
+
+    private function _get_ttv_terakhir($no_rawat)
+    {
+        return $this->db->select('tensi, nadi, respirasi, suhu_tubuh, spo2, berat, tinggi, gcs, kesadaran')
+            ->from('pemeriksaan_ralan')
+            ->where('no_rawat', $no_rawat)
+            ->order_by('tgl_perawatan', 'DESC')
+            ->order_by('jam_rawat', 'DESC')
+            ->limit(1)
+            ->get()->row_array() ?: [];
+    }
+
+    private function _get_resume($no_rawat)
+    {
+        return $this->db->select('*')
+            ->from('moiz_resume_pasien_ralan')
+            ->where('no_rawat', $no_rawat)
+            ->limit(1)
+            ->get()->row_array() ?: [];
+    }
+
+    public function get_hospital_setting()
+    {
+
+        // Fallback if setting table absent or fields different, but assuming standard Khanza
+        $q = $this->db->query("SELECT nama_instansi, alamat_instansi, kabupaten, propinsi, kontak, email, logo FROM setting LIMIT 1");
+        $ret = $q->row_array();
+        if ($ret && !empty($ret['logo'])) {
+            $ret['logo'] = base64_encode($ret['logo']);
+        }
+        return $ret;
+    }
+
+    public function get_patient_detail($no_rkm_medis)
+    {
+        $this->db->select('no_rkm_medis, nm_pasien, jk, tgl_lahir, alamat, no_tlp');
+        $this->db->from('pasien');
+        $this->db->where('no_rkm_medis', $no_rkm_medis);
+        return $this->db->get()->row_array();
+    }
+
+    public function get_formulir_kfr_by_norawat($no_rawat)
+    {
+        $this->db->select('k.*, d.nm_dokter');
+        $this->db->from('moizhospital_lembarKFR_rehabmedik k');
+        $this->db->join('dokter d', 'k.kd_dokter = d.kd_dokter', 'left');
+        $this->db->where('k.no_rawat', $no_rawat);
+        $this->db->order_by('k.tgl_perawatan', 'DESC');
+        $this->db->order_by('k.jam_rawat', 'DESC');
+        return $this->db->get()->result_array();
+    }
+
+    public function get_program_rehab_medik_by_norawat($no_rawat)
+    {
+        $this->db->select('r.*, d.nm_dokter, p.nama as nm_petugas');
+        $this->db->from('moizhospital_program_rehabmedik r');
+        $this->db->join('dokter d', 'r.kd_dokter = d.kd_dokter', 'left');
+        $this->db->join('petugas p', 'r.nip_tim_rehab = p.nip', 'left');
+        $this->db->where('r.no_rawat', $no_rawat);
+        $this->db->order_by('r.tgl_perawatan', 'DESC');
+        $this->db->order_by('r.jam_rawat', 'DESC');
+        return $this->db->get()->result_array();
+    }
+}

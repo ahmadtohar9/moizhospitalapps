@@ -1,0 +1,190 @@
+/* panelMenuRekamMedis.css - Updated Color Scheme */
+.menu-scroll-container {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    margin-bottom: 20px;
+}
+
+.menu-scroll-wrapper {
+    display: flex;
+    gap: 12px;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    padding: 15px 10px;
+    scrollbar-width: thin;
+    -ms-overflow-style: none;
+}
+
+.menu-scroll-wrapper::-webkit-scrollbar {
+    height: 6px;
+}
+
+.menu-scroll-wrapper::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 3px;
+}
+
+.menu-scroll-wrapper::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+.menu-item {
+    flex: 0 0 auto;
+    width: 130px;
+    height: 90px;
+    background: linear-gradient(135deg, #ff69b4 0%, #ff1493 100%); /* Pink gradient */
+    border: 2px solid #ff69b4;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    text-align: center;
+    padding: 10px 5px;
+    box-shadow: 0 4px 8px rgba(255, 105, 180, 0.3);
+}
+
+.menu-item:hover {
+    background: linear-gradient(135deg, #ff85c2 0%, #ff47a1 100%);
+    border-color: #ff47a1;
+    transform: translateY(-3px);
+    box-shadow: 0 6px 12px rgba(255, 105, 180, 0.4);
+}
+
+.menu-item.active {
+    background: linear-gradient(135deg, #2196f3 0%, #1976d2 100%); /* Blue gradient */
+    border-color: #1976d2;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(33, 150, 243, 0.4);
+}
+
+/* Text styling - always white */
+.menu-item .menu-icon,
+.menu-item .menu-text {
+    color: white !important;
+}
+
+.menu-item.active .menu-icon,
+.menu-item.active .menu-text {
+    color: white !important;
+}
+
+.menu-icon {
+    font-size: 24px;
+    margin-bottom: 8px;
+    color: white;
+    transition: all 0.3s ease;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+}
+
+.menu-text {
+    font-size: 12px;
+    font-weight: 600;
+    color: white;
+    line-height: 1.2;
+    transition: all 0.3s ease;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+}
+
+.menu-item:hover .menu-icon {
+    transform: scale(1.1);
+}
+
+.menu-item:hover .menu-text {
+    font-weight: 700;
+}
+
+.scroll-arrows {
+    position: absolute;
+    top: 50%;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    pointer-events: none;
+    transform: translateY(-50%);
+}
+
+.scroll-arrow {
+    background: rgba(255, 255, 255, 0.95);
+    border: 2px solid #ff69b4;
+    border-radius: 50%;
+    width: 35px;
+    height: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    pointer-events: all;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 6px rgba(255, 105, 180, 0.3);
+    color: #ff69b4;
+    font-weight: bold;
+}
+
+.scroll-arrow:hover {
+    background: #2196f3;
+    border-color: #2196f3;
+    color: white;
+    transform: scale(1.1);
+}
+
+.scroll-arrow:active {
+    transform: scale(0.95);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .menu-item {
+        width: 110px;
+        height: 80px;
+    }
+    
+    .menu-icon {
+        font-size: 20px;
+    }
+    
+    .menu-text {
+        font-size: 11px;
+    }
+    
+    .scroll-arrow {
+        width: 30px;
+        height: 30px;
+    }
+}
+
+/* Loading Animation */
+.loading-spinner {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid #f3f3f3;
+    border-top: 3px solid #2196f3;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Smooth transitions for all interactive elements */
+.menu-item, .scroll-arrow, .menu-icon, .menu-text {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Box header styling untuk konsistensi */
+.box-info .box-header {
+    background: linear-gradient(135deg, #2196f3 0%, #1976d2 100%);
+    color: white;
+    border-bottom: 2px solid #1976d2;
+}
+
+.box-info .box-title {
+    color: white;
+    font-weight: 600;
+}

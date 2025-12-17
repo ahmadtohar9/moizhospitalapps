@@ -1,0 +1,230 @@
+<?php defined('BASEPATH') OR exit('No direct script access allowed'); ?>
+<link rel="stylesheet" href="<?= base_url('assets/css/riwayatPasien.ui.css?v=4') ?>">
+
+<!-- Hidden keys -->
+<input type="hidden" id="rp_no_rawat" value="<?= isset($no_rawat) ? $no_rawat : '' ?>">
+<input type="hidden" id="rp_no_rkm_medis" value="<?= isset($no_rkm_medis) ? $no_rkm_medis : '' ?>"
+  data-list-url="<?= site_url('admin/riwayatPasien/list') ?>">
+<input type="hidden" id="rp_kd_dokter" value="<?= isset($kd_dokter) ? $kd_dokter : '' ?>">
+
+<div class="row rp-wrap">
+  <!-- ================= LEFT PANEL ================= -->
+  <div class="col-md-4 rp-left">
+    <div class="box box-purple box-solid rp-box">
+      <div class="box-header with-border rp-box-head">
+        <h3 class="box-title"><i class="fa fa-history"></i> Riwayat Pasien</h3>
+        <div class="box-tools pull-right">
+          <span class="label label-info" id="rp_count_rows">0 data</span>
+        </div>
+      </div>
+      <div class="box-body">
+
+        <!-- QUICK RANGE -->
+        <div class="rp-quick-range text-center">
+          <div class="btn-group btn-group-xs">
+            <button class="btn btn-primary rp-qrange" data-range="0">Hari Ini</button>
+            <button class="btn btn-default rp-qrange" data-range="7">7 Hari</button>
+            <button class="btn btn-default rp-qrange" data-range="30">30 Hari</button>
+            <button class="btn btn-default rp-qrange" data-range="90">90 Hari</button>
+            <button class="btn btn-default rp-qrange" data-range="all">Semua</button>
+          </div>
+        </div>
+
+        <!-- TANGGAL FILTER -->
+        <div class="row rp-row-gap" style="margin-top:8px">
+          <div class="col-sm-6">
+            <label class="control-label">Dari</label>
+            <input type="date" id="rp_date_from" class="form-control input-sm">
+          </div>
+          <div class="col-sm-6">
+            <label class="control-label">Sampai</label>
+            <input type="date" id="rp_date_to" class="form-control input-sm">
+          </div>
+        </div>
+
+        <!-- FILTER TAMBAHAN -->
+        <div class="row rp-row-gap">
+          <div class="col-sm-12">
+            <input type="text" id="rp_q" class="form-control input-sm"
+              placeholder="Cari poli/dokter/penjamin/diagnosa...">
+          </div>
+        </div>
+
+        <div class="rp-actions text-right" style="margin-top:8px">
+          <button class="btn btn-default btn-sm" id="rp_btn_reset">
+            <i class="fa fa-undo"></i> Reset
+          </button>
+          <button class="btn btn-primary btn-sm" id="rp_btn_apply">
+            <i class="fa fa-filter"></i> Terapkan
+          </button>
+        </div>
+
+        <hr class="rp-sep">
+
+        <!-- TIMELINE LIST -->
+        <div id="rp_list_container" class="rp-list-scroll">
+          <ul class="timeline rp-timeline" id="rp_timeline">
+            <li class="text-center text-muted">
+              <i class="fa fa-spinner fa-spin"></i> Memuat data riwayat...
+            </li>
+          </ul>
+        </div>
+
+        <!-- LOAD MORE BUTTON -->
+        <div class="text-center" id="rp_load_more_container" style="display:none; margin-top:10px">
+          <button class="btn btn-default btn-sm" id="rp_btn_load_more">
+            <i class="fa fa-refresh"></i> Muat Lebih Banyak
+          </button>
+        </div>
+
+        <!-- BUTTON SEMUA RIWAYAT -->
+        <div class="text-center" style="margin-top:10px">
+          <button class="btn btn-success btn-sm" id="rp_btn_all">
+            <i class="fa fa-list"></i> Lihat Seluruh Riwayat Periode Ini
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= RIGHT PANEL ================= -->
+  <div class="col-md-8 rp-right">
+    <!-- Mode tunggal -->
+    <div id="rp_detail_single" class="rp-mode-wrap">
+      <div class="box box-primary box-solid rp-box">
+        <div class="box-header with-border">
+          <h3 class="box-title"><i class="fa fa-clipboard"></i> Detail Kunjungan</h3>
+          <div class="box-tools pull-right">
+            <button class="btn btn-box-tool" onclick="window.printRiwayat(window.currentPrintData)" title="Cetak / PDF">
+              <i class="fa fa-print"></i>
+            </button>
+            <button class="btn btn-box-tool" onclick="loadFullDetail()" title="Muat Detail Lengkap">
+              <i class="fa fa-refresh"></i>
+            </button>
+          </div>
+        </div>
+        <div class="box-body">
+          <div id="rp_detail_header" class="alert alert-info" style="margin-bottom:15px; padding:10px">
+            <div class="row">
+              <div class="col-md-4">
+                <small><b>No. Rawat:</b></small><br>
+                <span id="det_norawat" class="text-bold">-</span>
+              </div>
+              <div class="col-md-4">
+                <small><b>Tanggal/Jam:</b></small><br>
+                <span id="det_tgl">-</span> <span id="det_jam">-</span>
+              </div>
+              <div class="col-md-4">
+                <small><b>Penjamin:</b></small><br>
+                <span id="det_penjamin">-</span>
+              </div>
+            </div>
+            <div class="row" style="margin-top:5px">
+              <div class="col-md-6">
+                <small><b>Poli:</b></small><br>
+                <span id="det_poli">-</span>
+              </div>
+              <div class="col-md-6">
+                <small><b>Dokter:</b></small><br>
+                <span id="det_dokter">-</span>
+              </div>
+            </div>
+          </div>
+
+          <div id="rp_detail_content">
+            <div class="text-center text-muted" style="padding:40px">
+              <i class="fa fa-arrow-left fa-2x"></i>
+              <p style="margin-top:15px">Pilih kunjungan di sebelah kiri<br>untuk melihat detail kunjungan</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mode gabungan -->
+    <div id="rp_detail_all" class="rp-mode-wrap" style="display:none">
+      <div class="box box-success box-solid rp-box">
+        <div class="box-header with-border">
+          <h3 class="box-title">
+            <i class="fa fa-list"></i> Seluruh Riwayat Pasien
+            <small id="rp_all_count">(0 kunjungan)</small>
+          </h3>
+          <div class="box-tools pull-right">
+            <button class="btn btn-box-tool" id="btn_print_all" title="Cetak Semua (PDF)">
+              <i class="fa fa-print"></i>
+            </button>
+            <button class="btn btn-box-tool" id="btn_close_all" title="Tutup Mode Gabungan">
+              <i class="fa fa-times"></i>
+            </button>
+          </div>
+        </div>
+        <div class="box-body rp-scroll-all">
+          <div id="rp_all_content">
+            <div class="text-center text-muted" style="padding:40px">
+              <i class="fa fa-spinner fa-spin fa-2x"></i>
+              <p style="margin-top:15px">Memuat seluruh riwayat...</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Assign to window object to avoid redeclaration errors in AJAX
+  window.BASE_URL = '<?= base_url() ?>';
+  // API URLs sesuai dengan controller yang baru
+  window.API_URLS = {
+    RP_LIST: '<?= site_url("admin/riwayatPasien/list") ?>',
+    RP_SUMMARY: '<?= site_url("admin/riwayatPasien/detail_summary") ?>',
+    RP_SOAP: '<?= site_url("admin/riwayatPasien/soap") ?>',
+    RP_DIAG: '<?= site_url("admin/riwayatPasien/detail_diagnosa") ?>',
+    RP_PROC: '<?= site_url("admin/riwayatPasien/detail_prosedur") ?>',
+    RP_TIND: '<?= site_url("admin/riwayatPasien/detail_tindakan") ?>',
+    RP_RESEP: '<?= site_url("admin/riwayatPasien/detail_resep") ?>',
+    RP_LAB: '<?= site_url("admin/riwayatPasien/detail_lab") ?>',
+    RP_RAD: '<?= site_url("admin/riwayatPasien/rad_list") ?>',
+    RP_RAD_DOCS: '<?= site_url("admin/riwayatPasien/rad_docs") ?>',
+    RP_BERKAS: '<?= site_url("admin/riwayatPasien/berkas_list") ?>',
+    RP_BERKAS_OPEN: '<?= site_url("admin/riwayatPasien/berkas_open") ?>',
+    RP_OPERASI: '<?= site_url("admin/riwayatPasien/operasi_list") ?>',
+    RP_PENUNJANG: '<?= site_url("admin/riwayatPasien/detail_penunjang") ?>',
+    RP_KD_IGD: '<?= site_url("admin/riwayatPasien/detail_asesmen_igd") ?>',
+    RP_ASESMEN_PD: '<?= site_url("admin/riwayatPasien/detail_asesmen_penyakit_dalam") ?>',
+    RP_ASESMEN_ORTHO: '<?= site_url("admin/riwayatPasien/detail_asesmen_orthopedi") ?>',
+    RP_FORMULIR_KFR: '<?= site_url("admin/riwayatPasien/detail_formulir_kfr") ?>',
+    RP_PROGRAM_REHAB_MEDIK: '<?= site_url("admin/riwayatPasien/detail_program_rehab_medik") ?>',
+    RP_LAPORAN_TINDAKAN: '<?= site_url("admin/riwayatPasien/detail_laporan_tindakan") ?>',
+    RP_INFO: '<?= site_url("admin/riwayatPasien/info") ?>'
+  };
+
+  // Global function untuk debug
+  function debugRiwayat() {
+    console.log('Current State:', window.riwayatState);
+    console.log('No RM:', $('#rp_no_rkm_medis').val());
+    console.log('No Rawat:', $('#rp_no_rawat').val());
+  }
+
+  // Global function untuk load full detail
+  function loadFullDetail() {
+    const noRawat = window.riwayatState?.selected_no_rawat;
+    if (noRawat) {
+      console.log('Loading full detail for:', noRawat);
+      // Implementasi load full detail bisa ditambahkan di sini
+      alert('Fitur detail lengkap akan dikembangkan untuk: ' + noRawat);
+    } else {
+      alert('Pilih kunjungan terlebih dahulu');
+    }
+  }
+</script>
+
+<script src="<?= base_url('assets/js/riwayatPasien.js') ?>?v=<?= time() ?>"></script>
+
+<!-- Debug Panel (optional) -->
+<div style="position:fixed; bottom:10px; right:10px; z-index:9999;">
+  <button class="btn btn-xs btn-warning" onclick="debugRiwayat()">
+    <i class="fa fa-bug"></i> Debug
+  </button>
+</div>

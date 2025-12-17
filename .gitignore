@@ -1,0 +1,8 @@
+application/sessions/*
+!application/sessions/index.html
+!application/sessions/.gitkeep
+application/config/development/
+application/logs/log-*.php
+node_modules/
+.DS_Store
+.DS_Store

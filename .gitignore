@@ -5,4 +5,11 @@ application/config/development/
 application/logs/log-*.php
 node_modules/
 .DS_Store
-.DS_Store
+
+# System Update - Ignore backups and history
+database/backups/*
+!database/backups/.gitkeep
+database/update_history.json
+
+# Keep migrations (important!)
+!database/migrations/*.sql

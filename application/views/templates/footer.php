@@ -53,7 +53,32 @@
         autoWidth: false
       });
     }
+
+    // Auto-check for system updates (only for admin)
+    <?php if ($this->session->userdata('role_id') == 1): ?>
+      checkSystemUpdate();
+
+      // Check every 30 minutes
+      setInterval(checkSystemUpdate, 30 * 60 * 1000);
+    <?php endif; ?>
   });
+
+  function checkSystemUpdate() {
+    $.ajax({
+      url: '<?= base_url('systemupdate/check_update'); ?>',
+      type: 'GET',
+      dataType: 'json',
+      success: function (response) {
+        if (response.status === 'success' && response.has_update) {
+          $('#update-badge').show();
+          $('#system-update-menu').addClass('bg-orange-active');
+        } else {
+          $('#update-badge').hide();
+          $('#system-update-menu').removeClass('bg-orange-active');
+        }
+      }
+    });
+  }
 </script>
 
 </body>

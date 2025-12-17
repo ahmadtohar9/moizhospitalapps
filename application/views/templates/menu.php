@@ -107,6 +107,14 @@
                 <li><a href="<?= base_url('user-manager'); ?>"><i class="fa fa-users"></i> <span>Kelola User</span></a></li>
                 <li><a href="<?= base_url('user-access'); ?>"><i class="fa fa-lock"></i> <span>Hak Akses User</span></a>
                 </li>
+                <li id="system-update-menu">
+                    <a href="<?= base_url('systemupdate'); ?>">
+                        <i class="fa fa-refresh"></i> <span>System Update</span>
+                        <span class="pull-right-container">
+                            <small class="label pull-right bg-orange" id="update-badge" style="display: none;">NEW</small>
+                        </span>
+                    </a>
+                </li>
             <?php endif; ?>
 
             <!-- Log Out Menu -->

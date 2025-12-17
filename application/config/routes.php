@@ -42,6 +42,16 @@ $route['systemupdate/run_migrations'] = 'SystemUpdate/run_migrations';
 $route['systemupdate/get_update_history'] = 'SystemUpdate/get_update_history';
 $route['systemupdate/get_system_info'] = 'SystemUpdate/get_system_info';
 
+/* ===================== PENILAIAN MEDIS MATA ===================== */
+$route['penilaian-medis-mata'] = 'PenilaianMedisMataController/index';
+$route['penilaian-medis-mata/check_existing'] = 'PenilaianMedisMataController/check_existing';
+$route['penilaian-medis-mata/save'] = 'PenilaianMedisMataController/save';
+$route['penilaian-medis-mata/update'] = 'PenilaianMedisMataController/update';
+$route['penilaian-medis-mata/delete'] = 'PenilaianMedisMataController/delete';
+$route['penilaian-medis-mata/get_data'] = 'PenilaianMedisMataController/get_data';
+$route['penilaian-medis-mata/get_riwayat'] = 'PenilaianMedisMataController/get_riwayat';
+$route['penilaian-medis-mata/copy_data'] = 'PenilaianMedisMataController/copy_data';
+
 /* ===================== ADMIN / LAPORAN DLL (AS IS) ===================== */
 $route['admin/piutangPasien'] = 'PiutangPasienController/index';
 $route['admin/piutangPasien/get_data'] = 'PiutangPasienController/get_data';

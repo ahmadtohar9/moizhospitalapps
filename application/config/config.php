@@ -372,7 +372,7 @@ $config['encryption_key'] = '162570379f3ce99c9d7ae7cdc5085dd5';
 |
 */
 $config['sess_driver'] = 'files';
-$config['sess_save_path'] = '/Applications/XAMPP/xamppfiles/htdocs/moizhospitalapps/application/sessions/';
+$config['sess_save_path'] = APPPATH . 'sessions/';
 $config['sess_cookie_name'] = 'ci_session';
 $config['sess_samesite'] = 'Lax';
 $config['sess_expiration'] = 0;

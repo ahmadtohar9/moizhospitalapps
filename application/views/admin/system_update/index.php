@@ -104,6 +104,30 @@
                     </div>
                 </div>
 
+                <!-- Developer Tools (Push to GitHub) -->
+                <!-- Hanya muncul di Localhost / IP Lokal -->
+                <?php if ($_SERVER['REMOTE_ADDR'] === '127.0.0.1' || $_SERVER['REMOTE_ADDR'] === '::1'): ?>
+                    <div class="box box-danger">
+                        <div class="box-header with-border">
+                            <h3 class="box-title"><i class="fa fa-code"></i> Developer Mode (Localhost Only)</h3>
+                        </div>
+                        <div class="box-body">
+                            <div class="form-group">
+                                <label>Commit Message</label>
+                                <input type="text" class="form-control" id="commit_message"
+                                    placeholder="Auto update from Admin Panel">
+                            </div>
+                            <button class="btn btn-danger btn-block" onclick="pushToGithub()">
+                                <i class="fa fa-github"></i> Push Local Changes to GitHub
+                            </button>
+
+                            <div id="push-output"
+                                style="margin-top:15px; background:#222; color:#0f0; padding:10px; font-family:monospace; white-space:pre-wrap; display:none; max-height:200px; overflow:auto;">
+                            </div>
+                        </div>
+                    </div>
+                <?php endif; ?>
+
                 <!-- Changelog Box -->
                 <div class="box box-info collapsed-box" id="changelog-box">
                     <div class="box-header with-border">
@@ -466,6 +490,40 @@
             "'": '&#039;'
         };
         return text.replace(/[&<>"']/g, function (m) { return map[m]; });
+    }
+
+    function pushToGithub() {
+        var msg = $('#commit_message').val();
+
+        if (!confirm('Push perubahan local ke GitHub?')) return;
+
+        var $btn = $('button[onclick="pushToGithub()"]');
+        var $out = $('#push-output');
+
+        $btn.prop('disabled', true).html('<i class="fa fa-spinner fa-spin"></i> Pushing...');
+        $out.show().text('Starting git push process...');
+
+        $.ajax({
+            url: '<?= base_url('systemupdate/git_push'); ?>',
+            type: 'POST',
+            data: { message: msg },
+            dataType: 'json',
+            success: function (res) {
+                $out.text(res.data);
+                if (res.status === 'success') {
+                    toastr.success('Berhasil push ke GitHub!');
+                } else {
+                    toastr.error('Gagal push. Cek log.');
+                }
+            },
+            error: function (xhr) {
+                $out.text('Error: ' + xhr.statusText + '\n' + xhr.responseText);
+                toastr.error('Koneksi error');
+            },
+            complete: function () {
+                $btn.prop('disabled', false).html('<i class="fa fa-github"></i> Push Local Changes to GitHub');
+            }
+        });
     }
 </script>
 

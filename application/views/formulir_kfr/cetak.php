@@ -4,9 +4,10 @@
 <head>
     <title>Cetak Formulir KFR</title>
     <style>
-        @page {
+        <style>@page {
             size: A4;
-            margin: 15mm;
+            margin: 0;
+            /* Margin 0 di page, atur di body */
         }
 
         body {
@@ -14,6 +15,16 @@
             font-size: 11pt;
             line-height: 1.4;
             color: #000;
+            margin: 0;
+            padding: 15mm 15mm 15mm 15mm;
+            /* Padding aman */
+            box-sizing: border-box;
+            /* Pastikan padding masuk width */
+        }
+
+        * {
+            box-sizing: border-box;
+            /* Global box sizing */
         }
 
         .header {
@@ -93,9 +104,11 @@
 
         .titik-titik {
             border-bottom: 1px dotted #000;
-            display: inline-block;
-            width: 98%;
-            min-height: 14px;
+            display: block;
+            /* Ganti inline-block jadi block */
+            width: 100%;
+            height: 14px;
+            margin-bottom: 5px;
         }
     </style>
 </head>

@@ -18,7 +18,7 @@ class SystemUpdate extends CI_Controller
         parent::__construct();
 
         // Cek login
-        if (!$this->session->userdata('logged_in')) {
+        if (!$this->session->userdata('user_id')) {
             redirect('auth/login');
         }
 

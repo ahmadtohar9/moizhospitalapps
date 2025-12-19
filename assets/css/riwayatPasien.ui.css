@@ -9,13 +9,13 @@
     border-radius: 12px;
     border: 1px solid #d1d5db;
     background: #fff;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     transition: all 0.3s ease;
     overflow: hidden;
 }
 
 .rp-card:hover {
-    box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
 }
 
 .rp-card .rp-card-head {
@@ -42,48 +42,57 @@
 }
 
 /* ===== HIGH CONTRAST COLOR SCHEME ===== */
-.card--soap .rp-card-head { 
+.card--soap .rp-card-head {
     background: #1e40af;
     color: white;
 }
-.card--ttv .rp-card-head { 
+
+.card--ttv .rp-card-head {
     background: #dc2626;
     color: white;
 }
-.card--diag .rp-card-head { 
+
+.card--diag .rp-card-head {
     background: #059669;
     color: white;
 }
-.card--proc .rp-card-head { 
+
+.card--proc .rp-card-head {
     background: #d97706;
     color: white;
 }
-.card--tind .rp-card-head { 
+
+.card--tind .rp-card-head {
     background: #7c3aed;
     color: white;
 }
-.card--resep .rp-card-head { 
+
+.card--resep .rp-card-head {
     background: #0891b2;
     color: white;
 }
-.card--lab .rp-card-head { 
+
+.card--lab .rp-card-head {
     background: #ea580c;
     color: white;
 }
-.card--rad .rp-card-head { 
+
+.card--rad .rp-card-head {
     background: #db2777;
     color: white;
 }
-.card--berkas .rp-card-head { 
+
+.card--berkas .rp-card-head {
     background: #475569;
     color: white;
 }
-.card--resume .rp-card-head { 
+
+.card--resume .rp-card-head {
     background: #0d9488;
     color: white;
 }
 
-.card--operasi .rp-card-head { 
+.card--operasi .rp-card-head {
     background: #7c3aed;
     color: white;
 }
@@ -114,9 +123,9 @@
     justify-content: center;
     font-weight: 800;
     font-size: 24px;
-    background: rgba(255,255,255,0.2);
+    background: rgba(255, 255, 255, 0.2);
     color: white;
-    border: 2px solid rgba(255,255,255,0.3);
+    border: 2px solid rgba(255, 255, 255, 0.3);
 }
 
 .rp-hdr-top {
@@ -138,13 +147,13 @@
 
 .rp-pj {
     margin-left: auto;
-    background: rgba(255,255,255,0.2);
+    background: rgba(255, 255, 255, 0.2);
     padding: 8px 16px;
     border-radius: 20px;
     font-size: 14px;
     font-weight: 600;
     color: white;
-    border: 1px solid rgba(255,255,255,0.3);
+    border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
 .rp-hdr-mid {
@@ -156,8 +165,8 @@
 }
 
 .rp-pill {
-    background: rgba(255,255,255,0.2);
-    border: 1px solid rgba(255,255,255,0.3);
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
     color: white;
     border-radius: 20px;
     padding: 8px 18px;
@@ -184,8 +193,8 @@
 
 .rp-norawat {
     font-family: ui-monospace, Menlo, Consolas, monospace;
-    background: rgba(255,255,255,0.2);
-    border: 1px solid rgba(255,255,255,0.3);
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
     border-radius: 8px;
     padding: 8px 14px;
     font-size: 14px;
@@ -194,8 +203,8 @@
 }
 
 .rp-diag {
-    background: rgba(255,255,255,0.2);
-    border: 1px solid rgba(255,255,255,0.3);
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
     border-radius: 8px;
     padding: 8px 14px;
     font-size: 14px;
@@ -222,8 +231,8 @@
     font-size: 13px;
     padding: 10px 18px;
     border-radius: 20px;
-    border: 1px solid rgba(255,255,255,0.4);
-    background: rgba(255,255,255,0.2);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    background: rgba(255, 255, 255, 0.2);
     color: white;
     font-weight: 700;
     transition: all 0.3s ease;
@@ -234,7 +243,7 @@
 }
 
 .rp-badge-click:hover {
-    background: rgba(255,255,255,0.3);
+    background: rgba(255, 255, 255, 0.3);
     transform: translateY(-2px);
 }
 
@@ -271,35 +280,40 @@
 }
 
 /* ===== GRID FOR RADIOLOGY & FILES ===== */
-.rp-grid, .bk-grid {
+.rp-grid,
+.bk-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     gap: 16px;
     margin-top: 16px;
 }
 
-.rp-thumb, .bk-thumb {
+.rp-thumb,
+.bk-thumb {
     border: 1px solid #e5e7eb;
     border-radius: 8px;
     overflow: hidden;
     background: #fff;
     transition: all 0.3s ease;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-.rp-thumb:hover, .bk-thumb:hover {
+.rp-thumb:hover,
+.bk-thumb:hover {
     transform: translateY(-4px);
-    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
 }
 
-.rp-thumb img, .bk-thumb img {
+.rp-thumb img,
+.bk-thumb img {
     display: block;
     width: 100%;
     height: 160px;
     object-fit: cover;
 }
 
-.rp-thumb .cap, .bk-thumb .cap {
+.rp-thumb .cap,
+.bk-thumb .cap {
     padding: 12px;
     font-size: 14px;
     color: #374151;
@@ -359,41 +373,43 @@
         text-align: center;
         gap: 16px;
     }
-    
+
     .rp-hdr-avatar {
         margin: 0 auto;
         width: 50px;
         height: 50px;
         font-size: 20px;
     }
-    
+
     .rp-hdr-top {
         justify-content: center;
         gap: 12px;
     }
-    
+
     .rp-pj {
         margin-left: 0;
         margin-top: 8px;
     }
-    
-    .rp-hdr-mid, .rp-hdr-meta {
+
+    .rp-hdr-mid,
+    .rp-hdr-meta {
         justify-content: center;
     }
-    
-    .rp-grid, .bk-grid {
+
+    .rp-grid,
+    .bk-grid {
         grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
         gap: 12px;
     }
-    
+
     .rp-kv {
         grid-template-columns: 1fr;
     }
-    
+
     .rp-card .rp-card-head {
         padding: 16px 20px;
     }
-    
+
     .rp-card .rp-card-body {
         padding: 20px;
     }
@@ -427,7 +443,8 @@
     opacity: 1;
 }
 
-.rp-time .fa, .rp-doc .fa {
+.rp-time .fa,
+.rp-doc .fa {
     opacity: 1;
 }
 
@@ -441,4 +458,129 @@
 .rp-card:target {
     border: 2px solid #1e40af;
     box-shadow: 0 0 0 4px rgba(30, 64, 175, 0.2);
+}
+
+/* ==================== PREMIUM PRINT BUTTON ==================== */
+.btn-print-bulk-premium {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    margin-right: 8px;
+}
+
+.btn-print-bulk-premium:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6);
+    background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+}
+
+.btn-print-bulk-premium:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 10px rgba(102, 126, 234, 0.4);
+}
+
+.btn-print-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 6px;
+    transition: all 0.3s ease;
+}
+
+.btn-print-bulk-premium:hover .btn-print-icon {
+    background: rgba(255, 255, 255, 0.3);
+    transform: rotate(10deg) scale(1.1);
+}
+
+.btn-print-icon .fa {
+    font-size: 14px;
+    color: white;
+}
+
+.btn-print-text {
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+/* Shine Effect */
+.btn-print-shine {
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg,
+            transparent,
+            rgba(255, 255, 255, 0.3),
+            transparent);
+    transition: left 0.5s ease;
+}
+
+.btn-print-bulk-premium:hover .btn-print-shine {
+    left: 100%;
+}
+
+/* Loading State */
+.btn-print-bulk-premium.loading {
+    pointer-events: none;
+    opacity: 0.7;
+}
+
+.btn-print-bulk-premium.loading .btn-print-icon .fa {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Ripple Effect */
+.btn-print-bulk-premium::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+}
+
+.btn-print-bulk-premium:active::before {
+    width: 300px;
+    height: 300px;
+}
+
+/* Success State (optional) */
+.btn-print-bulk-premium.success {
+    background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+    box-shadow: 0 4px 15px rgba(17, 153, 142, 0.4);
+}
+
+.btn-print-bulk-premium.success:hover {
+    background: linear-gradient(135deg, #38ef7d 0%, #11998e 100%);
 }

@@ -151,8 +151,13 @@
             <small id="rp_all_count">(0 kunjungan)</small>
           </h3>
           <div class="box-tools pull-right">
-            <button class="btn btn-box-tool" id="btn_print_all" title="Cetak Semua (PDF)">
-              <i class="fa fa-print"></i>
+            <!-- TOMBOL CETAK SUPER KEREN -->
+            <button class="btn-print-bulk-premium" id="btn_print_all" title="Cetak Semua Riwayat (Server-Side PDF)">
+              <span class="btn-print-icon">
+                <i class="fa fa-file-pdf-o"></i>
+              </span>
+              <span class="btn-print-text">Cetak PDF</span>
+              <span class="btn-print-shine"></span>
             </button>
             <button class="btn btn-box-tool" id="btn_close_all" title="Tutup Mode Gabungan">
               <i class="fa fa-times"></i>
@@ -197,6 +202,7 @@
     RP_FORMULIR_KFR: '<?= site_url("admin/riwayatPasien/detail_formulir_kfr") ?>',
     RP_PROGRAM_REHAB_MEDIK: '<?= site_url("admin/riwayatPasien/detail_program_rehab_medik") ?>',
     RP_PENILAIAN_MATA: '<?= site_url("admin/riwayatPasien/detail_penilaian_medis_mata") ?>',
+    RP_PENILAIAN_KANDUNGAN: '<?= site_url("admin/riwayatPasien/detail_penilaian_medis_kandungan") ?>',
     RP_LAPORAN_TINDAKAN: '<?= site_url("admin/riwayatPasien/detail_laporan_tindakan") ?>',
     RP_INFO: '<?= site_url("admin/riwayatPasien/info") ?>'
   };

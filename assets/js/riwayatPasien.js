@@ -561,9 +561,244 @@ $(function () {
     }
 
 
+    // ================== REFACTORED SECTIONS (MODULAR) ==================
+
+    function renderAsesmenIGD(d, helpers) {
+        const { txt, hasData, hasContent, wrapSection, renderTTV } = helpers;
+        if (hasData(d.igd)) {
+            const i = d.igd.data || d.igd;
+            if (hasContent(i, ['keluhan_utama', 'diagnosis', 'rps', 'ket_lokalis', 'tata_laksana', 'tata'])) {
+                const fisikRowIGD = (lbl, stt) => `<tr><td>${lbl}</td><td>${txt(stt)}</td></tr>`;
+                const content = `
+            <div class="mb-1"><b>A. ANAMNESIS</b></div>
+                 <table class="print-table" style="border:none">
+                     <tr><td style="border:none; width:140px; min-width:140px; white-space:nowrap"><b>Keluhan Utama</b></td><td style="border:none">: ${txt(i.keluhan_utama)}</td></tr>
+                     <tr><td style="border:none"><b>RPS</b></td><td style="border:none">: ${txt(i.rps)}</td></tr>
+                     <tr><td style="border:none"><b>RPD</b></td><td style="border:none">: ${txt(i.rpd)} (<b>RPK:</b> ${txt(i.rpk || '-')})</td></tr>
+                     <tr><td style="border:none"><b>Alergi</b></td><td style="border:none">: ${txt(i.alergi)}</td></tr>
+                 </table>
+                 <div class="mb-1 mt-2"><b>B. PEMERIKSAAN FISIK & TTV</b></div>
+                 ${renderTTV(i)}
+                 <div class="mb-1"><b>Keadaan Umum:</b> ${txt(i.keadaan)} | <b>Kesadaran:</b> ${txt(i.kesadaran)}</div>
+                 <table class="print-table" style="width:100%;table-layout:fixed;margin-bottom:10px;">
+                     <tr>
+                          <td style="width:50%;vertical-align:top;padding:0;border:none;">
+                              <table class="print-table" style="width:100%;margin:0;">
+                                  <thead><tr><th>Area</th><th>Status</th></tr></thead>
+                                  ${fisikRowIGD('Kepala', i.kepala)}
+                                  ${fisikRowIGD('Mata', i.mata)}
+                                  ${fisikRowIGD('Gigi & Mulut', i.gigi)}
+                                  ${fisikRowIGD('Leher', i.leher)}
+                                  ${fisikRowIGD('Thoraks', i.thoraks)}
+                              </table>
+                          </td>
+                          <td style="width:50%;vertical-align:top;padding:0;border:none;">
+                               <table class="print-table" style="width:100%;margin:0;">
+                                  <thead><tr><th>Area</th><th>Status</th></tr></thead>
+                                  ${fisikRowIGD('Abdomen', i.abdomen)}
+                                  ${fisikRowIGD('Genital', i.genital)}
+                                  ${fisikRowIGD('Ekstremitas', i.ekstremitas)}
+                                  <tr><td colspan="2"><b>Ket. Fisik:</b> ${txt(i.ket_fisik)}</td></tr>
+                               </table>
+                          </td>
+                     </tr>
+                 </table>
+                 ${i.lokalis_url ? `<div style="text-align:center;margin:5px 0;"><b>Status Lokalis:</b><br><img src="${i.lokalis_url}" style="max-height:150px;width:auto;border:1px solid #ccc;"><br>${txt(i.ket_lokalis)}</div>` : (!i.ket_lokalis ? '' : `<div class="mb-1"><b>Status Lokalis:</b> ${txt(i.ket_lokalis)}</div>`)}
+                 <div class="mb-1 mt-2"><b>D. DIAGNOSIS & TERAPI</b></div>
+                 <table class="print-table" style="border:none">
+                     <tr><td width="20%" style="border:none;vertical-align:top"><b>Diagnosis Kerja</b></td><td style="border:none">: ${txt(i.diagnosis)}</td></tr>
+                     <tr><td style="border:none;vertical-align:top"><b>Tatalaksana</b></td><td style="border:none">: ${txt(i.tata_laksana || i.tata)}</td></tr>
+                 </table>`;
+                return wrapSection('ASESMEN GAWAT DARURAT (IGD)', content);
+            }
+        }
+        return '';
+    }
+
+    function renderAsesmenMata(d, helpers) {
+        const { txt, hasData, wrapSection } = helpers;
+        if (hasData(d.mata)) {
+            const m = d.mata.data || d.mata || {};
+            if (m.keluhan_utama || m.diagnosis) {
+                let mataHtml = `
+                    <div style="margin-bottom:15px;">
+                        <div style="font-weight:bold; margin-bottom:10px; color:#374151; font-size:11px;">
+                            <i class="fa fa-history"></i> ANAMNESIS:
+                        </div>
+                        <table class="print-table" style="border:none; margin-bottom:10px;">
+                            <tr><td style="border:none; width:140px; min-width:140px; white-space:nowrap"><b>Keluhan Utama</b></td><td style="border:none">: ${txt(m.keluhan_utama)}</td></tr>
+                            <tr><td style="border:none"><b>RPS</b></td><td style="border:none">: ${txt(m.rps)}</td></tr>
+                            <tr><td style="border:none"><b>RPD</b></td><td style="border:none">: ${txt(m.rpd)}</td></tr>
+                            <tr><td style="border:none"><b>RPO</b></td><td style="border:none">: ${txt(m.rpo)}</td></tr>
+                            <tr><td style="border:none"><b>Alergi</b></td><td style="border:none">: ${txt(m.alergi)}</td></tr>
+                        </table>
+                    </div>
+                    
+                    <div style="margin-bottom:15px;">
+                        <div style="font-weight:bold; margin-bottom:10px; color:#374151; font-size:11px;">
+                            <i class="fa fa-heartbeat"></i> TANDA VITAL:
+                        </div>
+                        <table class="print-table" style="border:none;">
+                            <tr>
+                                <td style="border:none; padding:3px;"><b>TD:</b> ${txt(m.td)} mmHg</td>
+                                <td style="border:none; padding:3px;"><b>Nadi:</b> ${txt(m.nadi)} x/m</td>
+                                <td style="border:none; padding:3px;"><b>Suhu:</b> ${txt(m.suhu)} °C</td>
+                            </tr>
+                            <tr>
+                                <td style="border:none; padding:3px;"><b>RR:</b> ${txt(m.rr)} x/m</td>
+                                <td style="border:none; padding:3px;"><b>BB:</b> ${txt(m.bb)} Kg</td>
+                                <td style="border:none; padding:3px;"><b>Nyeri:</b> ${txt(m.nyeri)}</td>
+                            </tr>
+                        </table>
+                    </div>
+                    
+                    <div style="margin-bottom:15px;">
+                        <div style="font-weight:bold; margin-bottom:10px; color:#374151; font-size:11px;">
+                            <i class="fa fa-eye"></i> DIAGRAM MATA & STATUS OFTALMOLOGIS:
+                        </div>`;
+
+                // Gambar mata (jika ada) - TARUH DI ATAS
+                if (m.gambar_od_url || m.gambar_os_url) {
+                    mataHtml += `<div style="margin-bottom:15px; page-break-inside:avoid;">
+                        <div style="display:flex; gap:10px; justify-content:center;">`;
+
+                    if (m.gambar_od_url) {
+                        mataHtml += `<div style="text-align:center; border:2px solid #3c8dbc; padding:5px; border-radius:4px; width:25%;">
+                            <div style="font-weight:600; color:#3c8dbc; margin-bottom:5px; font-size:10px;">OD : Mata Kanan</div>
+                            <img src="${m.gambar_od_url}" style="width:100%; height:auto; border:1px solid #ccc;">
+                        </div>`;
+                    }
+
+                    if (m.gambar_os_url) {
+                        mataHtml += `<div style="text-align:center; border:2px solid #00a65a; padding:5px; border-radius:4px; width:25%;">
+                            <div style="font-weight:600; color:#00a65a; margin-bottom:5px; font-size:10px;">OS : Mata Kiri</div>
+                            <img src="${m.gambar_os_url}" style="width:100%; height:auto; border:1px solid #ccc;">
+                        </div>`;
+                    }
+
+                    mataHtml += `</div></div>`;
+                }
+
+                // Tabel Status Oftalmologis - SETELAH GAMBAR
+                mataHtml += `<table class="print-table">
+                            <thead>
+                                <tr style="background:#f8f8f8;">
+                                    <th style="padding:5px; text-align:left;">Pemeriksaan</th>
+                                    <th style="padding:5px; text-align:center; color:#3c8dbc;">OD (Kanan)</th>
+                                    <th style="padding:5px; text-align:center; color:#00a65a;">OS (Kiri)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td style="padding:3px;"><b>Visus SC</b></td><td style="padding:3px; text-align:center;">${txt(m.visuskanan)}</td><td style="padding:3px; text-align:center;">${txt(m.visuskiri)}</td></tr>
+                                <tr><td style="padding:3px;"><b>CC</b></td><td style="padding:3px; text-align:center;">${txt(m.cckanan)}</td><td style="padding:3px; text-align:center;">${txt(m.cckiri)}</td></tr>
+                                <tr><td style="padding:3px;"><b>Palpebra</b></td><td style="padding:3px; text-align:center;">${txt(m.palkanan)}</td><td style="padding:3px; text-align:center;">${txt(m.palkiri)}</td></tr>
+                                <tr><td style="padding:3px;"><b>Conjungtiva</b></td><td style="padding:3px; text-align:center;">${txt(m.conkanan)}</td><td style="padding:3px; text-align:center;">${txt(m.conkiri)}</td></tr>
+                                <tr><td style="padding:3px;"><b>Cornea</b></td><td style="padding:3px; text-align:center;">${txt(m.corneakanan)}</td><td style="padding:3px; text-align:center;">${txt(m.corneakiri)}</td></tr>
+                                <tr><td style="padding:3px;"><b>COA</b></td><td style="padding:3px; text-align:center;">${txt(m.coakanan)}</td><td style="padding:3px; text-align:center;">${txt(m.coakiri)}</td></tr>
+                                <tr><td style="padding:3px;"><b>Pupil</b></td><td style="padding:3px; text-align:center;">${txt(m.pupilkanan)}</td><td style="padding:3px; text-align:center;">${txt(m.pupilkiri)}</td></tr>
+                                <tr><td style="padding:3px;"><b>Lensa</b></td><td style="padding:3px; text-align:center;">${txt(m.lensakanan)}</td><td style="padding:3px; text-align:center;">${txt(m.lensakiri)}</td></tr>
+                                <tr><td style="padding:3px;"><b>TIO</b></td><td style="padding:3px; text-align:center;">${txt(m.tiokanan)}</td><td style="padding:3px; text-align:center;">${txt(m.tiokiri)}</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div style="margin-bottom:15px;">
+                        <div style="font-weight:bold; margin-bottom:10px; color:#374151; font-size:11px;">
+                            <i class="fa fa-stethoscope"></i> DIAGNOSIS & TATALAKSANA:
+                        </div>
+                        <table class="print-table" style="border:none;">
+                            <tr><td style="border:none; width:140px; min-width:140px; white-space:nowrap"><b>Diagnosis</b></td><td style="border:none">: ${txt(m.diagnosis)}</td></tr>
+                            ${m.diagnosisbdg ? `<tr><td style="border:none"><b>Diagnosis Banding</b></td><td style="border:none">: ${txt(m.diagnosisbdg)}</td></tr>` : ''}
+                            <tr><td style="border:none"><b>Terapi</b></td><td style="border:none">: ${txt(m.terapi)}</td></tr>
+                            <tr><td style="border:none"><b>Tindakan</b></td><td style="border:none">: ${txt(m.tindakan)}</td></tr>
+                            <tr><td style="border:none"><b>Edukasi:</b></td><td style="border:none">: ${txt(m.edukasi)}</td></tr>
+                        </table>
+                    </div>
+                `;
+
+                return wrapSection('PENILAIAN MEDIS MATA', mataHtml);
+            }
+        }
+        return '';
+    }
+
+    function renderAsesmenKandungan(d, helpers) {
+        const { txt, dateFmt, hasData, wrapSection } = helpers;
+        if (d.kandungan) {
+            const kdData = d.kandungan.data || d.kandungan || {};
+            if (kdData.keluhan_utama || kdData.diagnosis) {
+                let kdHtml = `
+                    <div style="page-break-inside:avoid; font-size:10px; line-height:1.4;">
+                        <div style="background:#fce4ec; padding:4px 6px; border-left:3px solid #e91e63; margin-bottom:6px; font-size:9px;">
+                            <strong>Tanggal:</strong> ${kdData.tanggal ? dateFmt(kdData.tanggal) : '-'} | <strong>Dokter:</strong> ${txt(kdData.nm_dokter)}
+                        </div>
+                        
+                        <div style="background:#f5f5f5; padding:3px 5px; margin-bottom:3px; font-weight:bold; font-size:9px;">ANAMNESIS</div>
+                        <div style="margin-bottom:6px; padding-left:5px;">
+                            <strong>Jenis:</strong> ${txt(kdData.anamnesis)}${kdData.hubungan ? ' (' + txt(kdData.hubungan) + ')' : ''} | 
+                            <strong>Keluhan:</strong> ${txt(kdData.keluhan_utama)}<br>
+                            <strong>RPS:</strong> ${txt(kdData.rps)}<br>
+                            <strong>RPD:</strong> ${txt(kdData.rpd)}${kdData.rpk ? ' | <strong>RPK:</strong> ' + txt(kdData.rpk) : ''}${kdData.rpo ? ' | <strong>RPO:</strong> ' + txt(kdData.rpo) : ''}<br>
+                            <strong>Alergi:</strong> ${txt(kdData.alergi)}
+                        </div>
+                        
+                        <div style="background:#f5f5f5; padding:3px 5px; margin-bottom:3px; font-weight:bold; font-size:9px;">TANDA VITAL & KESADARAN</div>
+                        <div style="margin-bottom:6px; padding-left:5px;">
+                            <strong>Keadaan:</strong> ${txt(kdData.keadaan)} | <strong>Kesadaran:</strong> ${txt(kdData.kesadaran)}${kdData.gcs ? ' (GCS: ' + txt(kdData.gcs) + ')' : ''}<br>
+                            <strong>TD:</strong> ${txt(kdData.td)} mmHg | <strong>Nadi:</strong> ${txt(kdData.nadi)} x/m | <strong>RR:</strong> ${txt(kdData.rr)} x/m | <strong>Suhu:</strong> ${txt(kdData.suhu)} °C${kdData.spo ? ' | <strong>SpO2:</strong> ' + txt(kdData.spo) + '%' : ''}<br>
+                            <strong>BB:</strong> ${txt(kdData.bb)} Kg | <strong>TB:</strong> ${txt(kdData.tb)} cm
+                        </div>
+                        
+                        ${(kdData.kepala || kdData.mata || kdData.tht || kdData.thoraks || kdData.abdomen || kdData.genital || kdData.ekstremitas) ? `
+                        <div style="background:#f5f5f5; padding:3px 5px; margin-bottom:3px; font-weight:bold; font-size:9px;">PEMERIKSAAN FISIK</div>
+                        <div style="margin-bottom:6px; padding-left:5px;">
+                            ${kdData.kepala ? '<strong>Kepala:</strong> ' + txt(kdData.kepala) + ' | ' : ''}${kdData.mata ? '<strong>Mata:</strong> ' + txt(kdData.mata) + ' | ' : ''}${kdData.tht ? '<strong>THT:</strong> ' + txt(kdData.tht) + ' | ' : ''}${kdData.gigi ? '<strong>Gigi:</strong> ' + txt(kdData.gigi) + '<br>' : ''}<br>
+                            ${kdData.thoraks ? '<strong>Thoraks:</strong> ' + txt(kdData.thoraks) + ' | ' : ''}${kdData.abdomen ? '<strong>Abdomen:</strong> ' + txt(kdData.abdomen) + ' | ' : ''}${kdData.genital ? '<strong>Genital:</strong> ' + txt(kdData.genital) + ' | ' : ''}${kdData.ekstremitas ? '<strong>Ekstremitas:</strong> ' + txt(kdData.ekstremitas) : ''}<br>
+                            ${kdData.ket_fisik ? '<strong>Keterangan:</strong> ' + txt(kdData.ket_fisik) : ''}
+                        </div>` : ''}
+                        
+                        ${kdData.tfu || kdData.djj ? `
+                        <div style="background:#f5f5f5; padding:3px 5px; margin-bottom:3px; font-weight:bold; font-size:9px;">PEMERIKSAAN OBSTETRI</div>
+                        <div style="margin-bottom:6px; padding-left:5px;">
+                            ${kdData.tfu ? '<strong>TFU:</strong> ' + txt(kdData.tfu) + ' cm | ' : ''}${kdData.tbj ? '<strong>TBJ:</strong> ' + txt(kdData.tbj) + ' gr | ' : ''}${kdData.djj ? '<strong>DJJ:</strong> ' + txt(kdData.djj) + ' x/m' : ''}${kdData.kontraksi ? ' | <strong>Kontraksi:</strong> ' + txt(kdData.kontraksi) : ''}<br>
+                            ${kdData.his ? '<strong>His:</strong> ' + txt(kdData.his) : ''}
+                        </div>` : ''}
+                        
+                        ${(kdData.inspeksi || kdData.inspekulo || kdData.vt || kdData.rt) ? `
+                        <div style="background:#f5f5f5; padding:3px 5px; margin-bottom:3px; font-weight:bold; font-size:9px;">PEMERIKSAAN GINEKOLOGI</div>
+                        <div style="margin-bottom:6px; padding-left:5px;">
+                            ${kdData.inspeksi ? '<strong>Inspeksi Vulva:</strong> ' + txt(kdData.inspeksi) + '<br>' : ''}
+                            ${kdData.inspekulo ? '<strong>Inspekulo:</strong> ' + txt(kdData.inspekulo) + '<br>' : ''}
+                            ${kdData.vt ? '<strong>VT:</strong> ' + txt(kdData.vt) + '<br>' : ''}
+                            ${kdData.rt ? '<strong>RT:</strong> ' + txt(kdData.rt) : ''}
+                        </div>` : ''}
+                        
+                        ${(kdData.ultra || kdData.kardio || kdData.lab) ? `
+                        <div style="background:#f5f5f5; padding:3px 5px; margin-bottom:3px; font-weight:bold; font-size:9px;">PEMERIKSAAN PENUNJANG</div>
+                        <div style="margin-bottom:6px; padding-left:5px;">
+                            ${kdData.ultra ? '<strong>USG:</strong> ' + txt(kdData.ultra) + '<br>' : ''}
+                            ${kdData.kardio ? '<strong>Kardiotokografi:</strong> ' + txt(kdData.kardio) + '<br>' : ''}
+                            ${kdData.lab ? '<strong>Laboratorium:</strong> ' + txt(kdData.lab) : ''}
+                        </div>` : ''}
+                        
+                        <div style="background:#f5f5f5; padding:3px 5px; margin-bottom:3px; font-weight:bold; font-size:9px;">DIAGNOSIS & TATALAKSANA</div>
+                        <div style="padding-left:5px;">
+                            <strong>Diagnosis:</strong> ${txt(kdData.diagnosis)}<br>
+                            <strong>Tatalaksana:</strong> ${txt(kdData.tata)}${kdData.konsul ? '<br><strong>Konsultasi:</strong> ' + txt(kdData.konsul) : ''}
+                        </div>
+                    </div>
+                `;
+
+                return wrapSection('PENILAIAN MEDIS KANDUNGAN', kdHtml);
+            }
+        }
+        return '';
+    }
+
     // ================== SHARED REPORT GENERATOR ==================
     // Expose generateReportHtml to window for bulk access
     window.generateReportHtml = (d) => {
+
         if (!d) return '';
         const g = window.globalInfo;
         const base = d.base || {};
@@ -620,56 +855,11 @@ $(function () {
             </div>`;
         };
 
+        const helpers = { txt, dateFmt, hasData, hasContent, wrapSection, renderTTV };
         let htmlAssess = '', htmlICD = '', htmlSoap = '', htmlTind = '', htmlResep = '', htmlLab = '', htmlRad = '', htmlBerkas = '', htmlOperasi = '', htmlResume = '', htmlLapTind = '', htmlLapPenunjang = '', htmlPenunjang = '', htmlKfr = '', htmlRehab = '';
 
         // === 1. ASESMEN ===
-        if (hasData(d.igd)) {
-            const i = d.igd.data || d.igd;
-            if (hasContent(i, ['keluhan_utama', 'diagnosis', 'rps', 'ket_lokalis', 'tata_laksana', 'tata'])) {
-                const fisikRowIGD = (lbl, stt) => `<tr><td>${lbl}</td><td>${txt(stt)}</td></tr>`;
-                const content = `
-            <div class="mb-1"><b>A. ANAMNESIS</b></div>
-                 <table class="print-table" style="border:none">
-                     <tr><td width="20%" style="border:none"><b>Keluhan Utama</b></td><td style="border:none">: ${txt(i.keluhan_utama)}</td></tr>
-                     <tr><td style="border:none"><b>RPS</b></td><td style="border:none">: ${txt(i.rps)}</td></tr>
-                     <tr><td style="border:none"><b>RPD</b></td><td style="border:none">: ${txt(i.rpd)} (<b>RPK:</b> ${txt(i.rpk || '-')})</td></tr>
-                     <tr><td style="border:none"><b>Alergi</b></td><td style="border:none">: ${txt(i.alergi)}</td></tr>
-                 </table>
-                 <div class="mb-1 mt-2"><b>B. PEMERIKSAAN FISIK & TTV</b></div>
-                 ${renderTTV(i)}
-                 <div class="mb-1"><b>Keadaan Umum:</b> ${txt(i.keadaan)} | <b>Kesadaran:</b> ${txt(i.kesadaran)}</div>
-                 <table class="print-table" style="width:100%;table-layout:fixed;margin-bottom:10px;">
-                     <tr>
-                          <td style="width:50%;vertical-align:top;padding:0;border:none;">
-                              <table class="print-table" style="width:100%;margin:0;">
-                                  <thead><tr><th>Area</th><th>Status</th></tr></thead>
-                                  ${fisikRowIGD('Kepala', i.kepala)}
-                                  ${fisikRowIGD('Mata', i.mata)}
-                                  ${fisikRowIGD('Gigi & Mulut', i.gigi)}
-                                  ${fisikRowIGD('Leher', i.leher)}
-                                  ${fisikRowIGD('Thoraks', i.thoraks)}
-                              </table>
-                          </td>
-                          <td style="width:50%;vertical-align:top;padding:0;border:none;">
-                               <table class="print-table" style="width:100%;margin:0;">
-                                  <thead><tr><th>Area</th><th>Status</th></tr></thead>
-                                  ${fisikRowIGD('Abdomen', i.abdomen)}
-                                  ${fisikRowIGD('Genital', i.genital)}
-                                  ${fisikRowIGD('Ekstremitas', i.ekstremitas)}
-                                  <tr><td colspan="2"><b>Ket. Fisik:</b> ${txt(i.ket_fisik)}</td></tr>
-                               </table>
-                          </td>
-                     </tr>
-                 </table>
-                 ${i.lokalis_url ? `<div style="text-align:center;margin:5px 0;"><b>Status Lokalis:</b><br><img src="${i.lokalis_url}" style="max-height:150px;width:auto;border:1px solid #ccc;"><br>${txt(i.ket_lokalis)}</div>` : (!i.ket_lokalis ? '' : `<div class="mb-1"><b>Status Lokalis:</b> ${txt(i.ket_lokalis)}</div>`)}
-                 <div class="mb-1 mt-2"><b>D. DIAGNOSIS & TERAPI</b></div>
-                 <table class="print-table" style="border:none">
-                     <tr><td width="20%" style="border:none;vertical-align:top"><b>Diagnosis Kerja</b></td><td style="border:none">: ${txt(i.diagnosis)}</td></tr>
-                     <tr><td style="border:none;vertical-align:top"><b>Tatalaksana</b></td><td style="border:none">: ${txt(i.tata_laksana || i.tata)}</td></tr>
-                 </table>`;
-                htmlAssess += wrapSection('ASESMEN GAWAT DARURAT (IGD)', content);
-            }
-        }
+        htmlAssess += renderAsesmenIGD(d, helpers);
 
         // === 2. DIAGNOSA & PROSEDUR ===
         // Only show if there's actual data
@@ -1180,7 +1370,7 @@ $(function () {
             if (ops.length > 0) {
                 const opHtml = ops.map(o => `
             <table class="print-table" style="border:none; margin-bottom:10px;">
-                     <tr><td width="20%" style="border:none"><b>Tanggal</b></td><td style="border:none">: ${dateFmt(o.tgl_operasi)}</td></tr>
+                     <tr><td style="border:none; width:140px; min-width:140px; white-space:nowrap"><b>Tanggal</b></td><td style="border:none">: ${dateFmt(o.tgl_operasi)}</td></tr>
                      <tr><td style="border:none"><b>Jenis Operasi</b></td><td style="border:none">: ${txt(o.nm_paket_operasi)}</td></tr>
                      <tr><td style="border:none"><b>Operator</b></td><td style="border:none">: ${txt(o.nm_operator1)}</td></tr>
                      <tr><td style="border:none"><b>Diagnosa Pre-Op</b></td><td style="border:none">: ${txt(o.diagnosa_preop)}</td></tr>
@@ -1199,7 +1389,7 @@ $(function () {
             if (lt && (lt.laporan_tindakan || lt.laporan)) {
                 const htmlLT = `
             <table class="print-table" style="border:none;">
-                     <tr><td width="20%" style="border:none"><b>Tanggal</b></td><td style="border:none">: ${dateFmt(lt.tanggal)}</td></tr>
+                     <tr><td style="border:none; width:140px; min-width:140px; white-space:nowrap"><b>Tanggal</b></td><td style="border:none">: ${dateFmt(lt.tanggal)}</td></tr>
                      <tr><td style="border:none"><b>Tindakan</b></td><td style="border:none">: ${txt(lt.nama_tindakan || lt.nm_tindakan || 'Laporan Tindakan')}</td></tr>
                      <tr><td style="border:none"><b>Operator</b></td><td style="border:none">: ${txt(lt.operator || lt.nm_dokter)}</td></tr>
                      <tr><td colspan="2" style="border:none; padding-top:5px;"><b>Isi Laporan:</b><br><div style="border:1px solid #ccc; padding:3px; white-space:pre-wrap;">${txt(lt.laporan_tindakan || lt.laporan)}</div></td></tr>
@@ -1234,7 +1424,7 @@ $(function () {
             const anamnesis = `
             <div class="mb-1"><b>A. ANAMNESIS</b></div>
                 <table class="print-table" style="border:none; margin-bottom:10px;">
-                    <tr><td width="20%" style="border:none"><b>Keluhan Utama</b></td><td style="border:none">: ${txt(i.keluhan_utama)}</td></tr>
+                    <tr><td style="border:none; width:140px; min-width:140px; white-space:nowrap"><b>Keluhan Utama</b></td><td style="border:none">: ${txt(i.keluhan_utama)}</td></tr>
                     <tr><td style="border:none"><b>RPS</b></td><td style="border:none">: ${txt(i.rps)}</td></tr>
                     <tr><td style="border:none"><b>RPD</b></td><td style="border:none">: ${txt(i.rpd)}</td></tr>
                     <tr><td style="border:none"><b>RPO</b></td><td style="border:none">: ${txt(i.rpo)}</td></tr>
@@ -1303,108 +1493,12 @@ $(function () {
         }
 
         // Render Penilaian Medis Mata
-        if (hasData(d.mata)) {
-            const m = d.mata.data || d.mata || {};
-            if (m.keluhan_utama || m.diagnosis) {
-                let mataHtml = `
-                    <div style="margin-bottom:15px;">
-                        <div style="font-weight:bold; margin-bottom:10px; color:#374151; font-size:11px;">
-                            <i class="fa fa-history"></i> ANAMNESIS:
-                        </div>
-                        <table class="print-table" style="border:none; margin-bottom:10px;">
-                            <tr><td width="20%" style="border:none"><b>Keluhan Utama</b></td><td style="border:none">: ${txt(m.keluhan_utama)}</td></tr>
-                            <tr><td style="border:none"><b>RPS</b></td><td style="border:none">: ${txt(m.rps)}</td></tr>
-                            <tr><td style="border:none"><b>RPD</b></td><td style="border:none">: ${txt(m.rpd)}</td></tr>
-                            <tr><td style="border:none"><b>RPO</b></td><td style="border:none">: ${txt(m.rpo)}</td></tr>
-                            <tr><td style="border:none"><b>Alergi</b></td><td style="border:none">: ${txt(m.alergi)}</td></tr>
-                        </table>
-                    </div>
-                    
-                    <div style="margin-bottom:15px;">
-                        <div style="font-weight:bold; margin-bottom:10px; color:#374151; font-size:11px;">
-                            <i class="fa fa-heartbeat"></i> TANDA VITAL:
-                        </div>
-                        <table class="print-table" style="border:none;">
-                            <tr>
-                                <td style="border:none; padding:3px;"><b>TD:</b> ${txt(m.td)} mmHg</td>
-                                <td style="border:none; padding:3px;"><b>Nadi:</b> ${txt(m.nadi)} x/m</td>
-                                <td style="border:none; padding:3px;"><b>Suhu:</b> ${txt(m.suhu)} °C</td>
-                            </tr>
-                            <tr>
-                                <td style="border:none; padding:3px;"><b>RR:</b> ${txt(m.rr)} x/m</td>
-                                <td style="border:none; padding:3px;"><b>BB:</b> ${txt(m.bb)} Kg</td>
-                                <td style="border:none; padding:3px;"><b>Nyeri:</b> ${txt(m.nyeri)}</td>
-                            </tr>
-                        </table>
-                    </div>
-                    
-                    <div style="margin-bottom:15px;">
-                        <div style="font-weight:bold; margin-bottom:10px; color:#374151; font-size:11px;">
-                            <i class="fa fa-eye"></i> DIAGRAM MATA & STATUS OFTALMOLOGIS:
-                        </div>`;
+        htmlAssess += renderAsesmenMata(d, helpers);
 
-                // Gambar mata (jika ada) - TARUH DI ATAS
-                if (m.gambar_od_url || m.gambar_os_url) {
-                    mataHtml += `<div style="margin-bottom:15px; page-break-inside:avoid;">
-                        <div style="display:flex; gap:10px; justify-content:center;">`;
 
-                    if (m.gambar_od_url) {
-                        mataHtml += `<div style="text-align:center; border:2px solid #3c8dbc; padding:5px; border-radius:4px; width:25%;">
-                            <div style="font-weight:600; color:#3c8dbc; margin-bottom:5px; font-size:10px;">OD : Mata Kanan</div>
-                            <img src="${m.gambar_od_url}" style="width:100%; height:auto; border:1px solid #ccc;">
-                        </div>`;
-                    }
 
-                    if (m.gambar_os_url) {
-                        mataHtml += `<div style="text-align:center; border:2px solid #00a65a; padding:5px; border-radius:4px; width:25%;">
-                            <div style="font-weight:600; color:#00a65a; margin-bottom:5px; font-size:10px;">OS : Mata Kiri</div>
-                            <img src="${m.gambar_os_url}" style="width:100%; height:auto; border:1px solid #ccc;">
-                        </div>`;
-                    }
-
-                    mataHtml += `</div></div>`;
-                }
-
-                // Tabel Status Oftalmologis - SETELAH GAMBAR
-                mataHtml += `<table class="print-table">
-                            <thead>
-                                <tr style="background:#f8f8f8;">
-                                    <th style="padding:5px; text-align:left;">Pemeriksaan</th>
-                                    <th style="padding:5px; text-align:center; color:#3c8dbc;">OD (Kanan)</th>
-                                    <th style="padding:5px; text-align:center; color:#00a65a;">OS (Kiri)</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr><td style="padding:3px;"><b>Visus SC</b></td><td style="padding:3px; text-align:center;">${txt(m.visuskanan)}</td><td style="padding:3px; text-align:center;">${txt(m.visuskiri)}</td></tr>
-                                <tr><td style="padding:3px;"><b>CC</b></td><td style="padding:3px; text-align:center;">${txt(m.cckanan)}</td><td style="padding:3px; text-align:center;">${txt(m.cckiri)}</td></tr>
-                                <tr><td style="padding:3px;"><b>Palpebra</b></td><td style="padding:3px; text-align:center;">${txt(m.palkanan)}</td><td style="padding:3px; text-align:center;">${txt(m.palkiri)}</td></tr>
-                                <tr><td style="padding:3px;"><b>Conjungtiva</b></td><td style="padding:3px; text-align:center;">${txt(m.conkanan)}</td><td style="padding:3px; text-align:center;">${txt(m.conkiri)}</td></tr>
-                                <tr><td style="padding:3px;"><b>Cornea</b></td><td style="padding:3px; text-align:center;">${txt(m.corneakanan)}</td><td style="padding:3px; text-align:center;">${txt(m.corneakiri)}</td></tr>
-                                <tr><td style="padding:3px;"><b>COA</b></td><td style="padding:3px; text-align:center;">${txt(m.coakanan)}</td><td style="padding:3px; text-align:center;">${txt(m.coakiri)}</td></tr>
-                                <tr><td style="padding:3px;"><b>Pupil</b></td><td style="padding:3px; text-align:center;">${txt(m.pupilkanan)}</td><td style="padding:3px; text-align:center;">${txt(m.pupilkiri)}</td></tr>
-                                <tr><td style="padding:3px;"><b>Lensa</b></td><td style="padding:3px; text-align:center;">${txt(m.lensakanan)}</td><td style="padding:3px; text-align:center;">${txt(m.lensakiri)}</td></tr>
-                                <tr><td style="padding:3px;"><b>TIO</b></td><td style="padding:3px; text-align:center;">${txt(m.tiokanan)}</td><td style="padding:3px; text-align:center;">${txt(m.tiokiri)}</td></tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    
-                    <div style="margin-bottom:15px;">
-                        <div style="font-weight:bold; margin-bottom:10px; color:#374151; font-size:11px;">
-                            <i class="fa fa-stethoscope"></i> DIAGNOSIS & TATALAKSANA:
-                        </div>
-                        <table class="print-table" style="border:none;">
-                            <tr><td width="20%" style="border:none"><b>Diagnosis</b></td><td style="border:none">: ${txt(m.diagnosis)}</td></tr>
-                            ${m.diagnosisbdg ? `<tr><td style="border:none"><b>Diagnosis Banding</b></td><td style="border:none">: ${txt(m.diagnosisbdg)}</td></tr>` : ''}
-                            <tr><td style="border:none"><b>Terapi</b></td><td style="border:none">: ${txt(m.terapi)}</td></tr>
-                     <tr><td style="border:none"><b>Tindakan</b></td><td style="border:none">: ${txt(m.tindakan)}</td></tr>
-                            <tr><td style="border:none"><b>Edukasi:</b></td><td style="border:none">: ${txt(m.edukasi)}</td></tr>
-                        </table>
-                    </div>
-                `;
-
-                htmlAssess += wrapSection('PENILAIAN MEDIS MATA', mataHtml);
-            }
-        }
+        // === PENILAIAN MEDIS KANDUNGAN ===
+        htmlAssess += renderAsesmenKandungan(d, helpers);
 
         // Combine all sections (Ordered: Asesmen, ICD/Diagnosa, Prosedur, SOAP, Tindakan, Resep, Lab, Rad, Berkas, dll, KFR, Rehab, Resume di akhir)
         const sectionsHtml = htmlAssess + htmlICD + htmlSoap + htmlTind + htmlLapTind + htmlResep + htmlLab + htmlRad + htmlBerkas + htmlPenunjang + htmlOperasi + htmlKfr + htmlRehab + htmlResume;
@@ -1450,8 +1544,8 @@ $(function () {
         `;
     };
 
-    // ================== UNIFIED PRINT FUNCTION (Refactored) ==================
-    // ================== UNIFIED PRINT FUNCTION (Refactored) ==================
+    // ================== PRINT FUNCTION - MENGGUNAKAN ENDPOINT BARU ==================
+    // Menggunakan PrintController endpoint untuk hasil print yang konsisten
     window.printRiwayat = function (dataOverride) {
         console.log('printRiwayat called with data:', dataOverride);
 
@@ -1467,53 +1561,39 @@ $(function () {
             return alert('Data belum siap. Silakan buka detail kunjungan terlebih dahulu.');
         }
 
+        // Ambil no_rawat dari data
+        const noRawat = d.base.no_rawat || d.base.norawat;
+        if (!noRawat) {
+            console.error('printRiwayat: No rawat not found', d);
+            return alert('No. Rawat tidak ditemukan.');
+        }
+
         // Set flag to prevent double printing
         window.printInProgress = true;
 
-        const content = generateReportHtml(d);
+        // Encode no_rawat untuk URL - ganti slash dengan dash
+        // Contoh: 2025/12/18/000001 -> 2025-12-18-000001
+        const noRawatSafe = String(noRawat).replace(/\//g, '-');
+        const encodedNoRawat = encodeURIComponent(noRawatSafe);
 
-        const printWindow = window.open('', '_blank');
+        // URL endpoint print baru (SERVER-SIDE)
+        const printUrl = (typeof baseUrl !== 'undefined' ? baseUrl : '/moizhospitalapps/') + 'print/riwayat_pasien/' + encodedNoRawat;
+
+        console.log('Opening print URL:', printUrl);
+
+        // Buka window baru ke endpoint print
+        const printWindow = window.open(printUrl, '_blank');
 
         // Reset flag after window opens
         setTimeout(() => {
             window.printInProgress = false;
         }, 1000);
-        printWindow.document.write(`
-            <!DOCTYPE html>
-            <html>
-                <head><title>Cetak Riwayat PDF</title>
-                    <style>
-                        @page { size: A4; margin: 10mm 15mm; }
-                        body { font-family: "Times New Roman", Times, serif; font-size: 11px; margin: 0; padding: 10px; }
-                        .text-center { text-align: center; } .text-right { text-align: right; } .text-bold { font-weight: bold; }
-                        .print-header { display: flex; align-items: center; border-bottom: 3px double #000; padding-bottom: 5px; margin-bottom: 10px; }
-                        .print-logo { width: 60px; height: 60px; object-fit: contain; margin-right: 15px; }
-                        .print-instansi { flex: 1; text-align: center; }
-                        .print-instansi h2 { font-size: 16px; margin: 0; font-weight: bold; }
-                        .print-instansi p { margin: 1px 0; font-size: 10px; }
-                        .print-subhead { text-align: center; font-size: 13px; font-weight: bold; margin-bottom: 10px; text-decoration: underline; text-transform: uppercase; }
-                        .patient-info-table { width: 100%; margin-bottom: 15px; border-collapse: collapse; font-size: 11px; }
-                        .patient-info-table td { padding: 2px; vertical-align: top; }
-                        .label-cell { font-weight: bold; width: 15%; white-space: nowrap; }
-                        .print-section { margin-bottom: 15px; break-inside: avoid; }
-                        .section-title { font-size: 11px; font-weight: bold; background: #eee; border: 1px solid #000; padding: 3px 5px; margin-bottom: 0; text-transform: uppercase; }
-                        .section-body { border: 1px solid #000; padding: 5px; }
-                        .print-table { width: 100%; border-collapse: collapse; font-size: 10px; }
-                        .print-table th, .print-table td { border: 1px solid #ccc; padding: 3px; }
-                        .print-table th { background: #f8f8f8; text-align: left; }
-                        .ttv-grid { display: grid; grid-template-columns: repeat(8, 1fr); gap: 2px; margin-bottom: 5px; }
-                        .ttv-item { border: 1px solid #ccc; padding: 2px; text-align: center; font-size: 10px; }
-                        .ttv-label { font-weight: bold; font-size: 9px; color: #555; }
-                        .footer-sig { margin-top: 20px; display: flex; justify-content: flex-end; break-inside: avoid; }
-                        .sig-box { text-align: center; width: 200px; font-size: 11px; }
-                        .print-wrapper { page-break-after: always; display: block; }
-                        .print-wrapper:last-child { page-break-after: auto; }
-                    </style>
-                </head>
-                <body onload="window.print()">${content}</body>
-            </html>
-        `);
-        printWindow.document.close();
+
+        // Cek apakah window berhasil dibuka
+        if (!printWindow) {
+            alert('Pop-up diblokir! Mohon izinkan pop-up untuk mencetak dokumen.');
+            window.printInProgress = false;
+        }
     };
 
     // ================== BULK PRINT FUNCTION ==================
@@ -1558,19 +1638,19 @@ $(function () {
             $.get(API_URLS.RP_ASESMEN_ORTHO, { no_rawat: norawat }),
             $.get(API_URLS.RP_FORMULIR_KFR, { no_rawat: norawat }),
             $.get(API_URLS.RP_PROGRAM_REHAB_MEDIK, { no_rawat: norawat }),
-            $.get(API_URLS.RP_PENILAIAN_MATA, { no_rawat: norawat })
+            $.get(API_URLS.RP_PENILAIAN_MATA, { no_rawat: norawat }),
+            $.get(API_URLS.RP_PENILAIAN_KANDUNGAN, { no_rawat: norawat })
         ).done(function (
             summaryRes, soapRes, diagRes, procRes, tindRes, resepRes,
-            labRes, radRes, rdocsRes, berkasRes, operasiRes, penunjangRes, laptindRes, igdRes, pdRes, orthoRes, kfrRes, rehabRes, mataRes
+            labRes, radRes, rdocsRes, berkasRes, operasiRes, penunjangRes, laptindRes, igdRes, pdRes, orthoRes, kfrRes, rehabRes, mataRes, kandunganRes
         ) {
-            // ================== PARSE JSON RESPONSE ==================
             const J = x => { try { return (typeof x[0] === 'string') ? JSON.parse(x[0]) : x[0]; } catch (_) { return {}; } };
 
             const summary = J(summaryRes), soapRaw = J(soapRes);
             const diag = J(diagRes), proc = J(procRes), tind = J(tindRes), resep = J(resepRes);
             const lab = J(labRes), rad = J(radRes), rdocs = J(rdocsRes), berkas = J(berkasRes);
             const operasi = J(operasiRes), penunjang = J(penunjangRes), laptind = J(laptindRes);
-            const igd = J(igdRes), pd = J(pdRes), ortho = J(orthoRes), kfr = J(kfrRes), rehab = J(rehabRes), mata = J(mataRes);
+            const igd = J(igdRes), pd = J(pdRes), ortho = J(orthoRes), kfr = J(kfrRes), rehab = J(rehabRes), mata = J(mataRes), detail_penilaian_medis_kandungan = J(kandunganRes);
 
             // Debug: Check if KFR and Rehab data exist
             console.log('KFR Data:', kfr);
@@ -1635,12 +1715,11 @@ $(function () {
                         <td style="padding:5px 0 5px 15px; vertical-align:top; color:#32325d; font-weight:500; border-bottom:1px solid #f6f9fc; line-height:1.5;">${escHtml(val || '-')}</td>
                     </tr > `;
 
-            // ================== RENDER ASESMEN SPESIALIS (Common Logic) ==================
+            // ================== RENDER ASESMEN SPESIALIS LENGKAP (PD & Ortho) ==================
             function renderSpesialis(dataObj, title, icon, colorTheme, isOrtho = false) {
                 const d = dataObj.data || dataObj || {};
-                // Cek data valid (harus ada tanggal/keluhan/diagnosa)
-                // Strict check: Must have at least one meaningful field
-                if (!hasKeys(d, ['keluhan_utama', 'rps', 'rpd', 'diagnosa', 'terapi'])) return;
+                // Cek data valid
+                if (!hasKeys(d, ['keluhan_utama', 'rps', 'rpd', 'diagnosa', 'diagnosis', 'terapi'])) return;
 
                 let html = `<div style="display:flex; flex-wrap:wrap; gap:24px;" > `;
 
@@ -1653,6 +1732,8 @@ $(function () {
                                 <i class="fa fa-history"></i> Anamnesis
                             </h5>
                             <table style="width:100%; font-size:13px; border-collapse:collapse;">
+                                ${d.anamnesis ? row('Jenis Anamnesis', d.anamnesis) : ''}
+                                ${d.hubungan ? row('Hubungan', d.hubungan) : ''}
                                 ${row('Keluhan Utama', d.keluhan_utama)}
                                 ${row('RPS', d.rps)}
                                 ${row('RPD', d.rpd)}
@@ -1664,7 +1745,7 @@ $(function () {
                 // 2. FISIK & VITAL
                 html += `<div style="margin-bottom:20px;" >
                              <h5 style="font-size:12px; font-weight:700; color:#2dce89; text-transform:uppercase; letter-spacing:1px; margin-bottom:12px; border-bottom:2px solid #2dce89; display:inline-block; padding-bottom:4px;">
-                                <i class="fa fa-heartbeat"></i> Status Fisik
+                                <i class="fa fa-heartbeat"></i> Status Fisik & Tanda Vital
                             </h5>
                             <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(80px, 1fr)); gap:10px; margin-bottom:12px;">
                                 ${ttvBox('TD', d.td, 'mmHg')}
@@ -1673,30 +1754,103 @@ $(function () {
                                 ${ttvBox('RR', d.rr, 'x/m')}
                                 ${ttvBox('GCS', d.gcs)}
                                 ${ttvBox('Kesadaran', d.kesadaran)}
+                                ${d.bb ? ttvBox('BB', d.bb, 'Kg') : ''}
+                                ${d.nyeri ? ttvBox('Nyeri', d.nyeri) : ''}
                             </div>
-                            <!--Fisik Organ Simple-- >
-                <div style="background:#f9fafb; padding:10px; border-radius:6px; font-size:13px; border:1px solid #eee;">
-                    <strong>Kepala:</strong> ${escHtml(d.kepala || '-')} &bull;
-                    <strong>Thoraks:</strong> ${escHtml(d.thoraks || '-')} &bull;
-                    <strong>Abdomen:</strong> ${escHtml(d.abdomen || '-')} &bull;
-                    <strong>Ekstremitas:</strong> ${escHtml(d.ekstremitas || '-')}
-                </div>
                         </div > `;
 
-                // 3. DIAGNOSA & PLAN
+                // 3. PEMERIKSAAN ORGAN DETAIL
+                const hasOrganDetail = d.keterangan_kepala || d.keterangan_thorak || d.keterangan_abdomen || d.keterangan_ekstremitas || d.lainnya;
+
+                html += `<div style="margin-bottom:20px;">
+                    <h5 style="font-size:12px; font-weight:700; color:#fb6340; text-transform:uppercase; letter-spacing:1px; margin-bottom:12px; border-bottom:2px solid #fb6340; display:inline-block; padding-bottom:4px;">
+                        <i class="fa fa-user-md"></i> Pemeriksaan Organ
+                    </h5>`;
+
+                if (hasOrganDetail) {
+                    // Detail version dengan keterangan
+                    html += `<div style="background:#fff; border:1px solid #e9ecef; border-radius:8px; padding:12px;">`;
+
+                    if (d.kepala || d.keterangan_kepala) {
+                        html += `<div style="margin-bottom:10px; padding-bottom:10px; border-bottom:1px dashed #e9ecef;">
+                            <div style="font-weight:600; color:#525f7f; margin-bottom:4px;">• Kepala: <span style="font-weight:400;">${escHtml(d.kepala || '-')}</span></div>
+                            ${d.keterangan_kepala ? `<div style="font-size:12px; color:#8898aa; margin-left:12px; font-style:italic;">${escHtml(d.keterangan_kepala)}</div>` : ''}
+                        </div>`;
+                    }
+
+                    if (d.thoraks || d.keterangan_thorak) {
+                        html += `<div style="margin-bottom:10px; padding-bottom:10px; border-bottom:1px dashed #e9ecef;">
+                            <div style="font-weight:600; color:#525f7f; margin-bottom:4px;">• Thoraks: <span style="font-weight:400;">${escHtml(d.thoraks || '-')}</span></div>
+                            ${d.keterangan_thorak ? `<div style="font-size:12px; color:#8898aa; margin-left:12px; font-style:italic;">${escHtml(d.keterangan_thorak)}</div>` : ''}
+                        </div>`;
+                    }
+
+                    if (d.abdomen || d.keterangan_abdomen) {
+                        html += `<div style="margin-bottom:10px; padding-bottom:10px; border-bottom:1px dashed #e9ecef;">
+                            <div style="font-weight:600; color:#525f7f; margin-bottom:4px;">• Abdomen: <span style="font-weight:400;">${escHtml(d.abdomen || '-')}</span></div>
+                            ${d.keterangan_abdomen ? `<div style="font-size:12px; color:#8898aa; margin-left:12px; font-style:italic;">${escHtml(d.keterangan_abdomen)}</div>` : ''}
+                        </div>`;
+                    }
+
+                    if (d.ekstremitas || d.keterangan_ekstremitas) {
+                        html += `<div style="margin-bottom:10px; padding-bottom:10px; border-bottom:1px dashed #e9ecef;">
+                            <div style="font-weight:600; color:#525f7f; margin-bottom:4px;">• Ekstremitas: <span style="font-weight:400;">${escHtml(d.ekstremitas || '-')}</span></div>
+                            ${d.keterangan_ekstremitas ? `<div style="font-size:12px; color:#8898aa; margin-left:12px; font-style:italic;">${escHtml(d.keterangan_ekstremitas)}</div>` : ''}
+                        </div>`;
+                    }
+
+                    if (d.lainnya) {
+                        html += `<div style="margin-bottom:10px;">
+                            <div style="font-weight:600; color:#525f7f; margin-bottom:4px;">• Lainnya: <span style="font-weight:400;">${escHtml(d.lainnya)}</span></div>
+                        </div>`;
+                    }
+
+                    html += `</div>`;
+                } else {
+                    // Simple version
+                    html += `<div style="background:#f9fafb; padding:10px; border-radius:6px; font-size:13px; border:1px solid #eee;">
+                        <strong>Kepala:</strong> ${escHtml(d.kepala || '-')} &bull;
+                        <strong>Thoraks:</strong> ${escHtml(d.thoraks || '-')} &bull;
+                        <strong>Abdomen:</strong> ${escHtml(d.abdomen || '-')} &bull;
+                        <strong>Ekstremitas:</strong> ${escHtml(d.ekstremitas || '-')}
+                    </div>`;
+                }
+
+                html += `</div>`;
+
+                // 4. PEMERIKSAAN PENUNJANG (Khusus Penyakit Dalam)
+                if (!isOrtho && (d.lab || d.rad || d.penunjanglain)) {
+                    html += `<div style="margin-bottom:20px;">
+                        <h5 style="font-size:12px; font-weight:700; color:#8b5cf6; text-transform:uppercase; letter-spacing:1px; margin-bottom:12px; border-bottom:2px solid #8b5cf6; display:inline-block; padding-bottom:4px;">
+                            <i class="fa fa-flask"></i> Pemeriksaan Penunjang
+                        </h5>
+                        <table style="width:100%; font-size:13px; border-collapse:collapse;">
+                            ${d.lab ? row('Laboratorium', d.lab) : ''}
+                            ${d.rad ? row('Radiologi', d.rad) : ''}
+                            ${d.penunjanglain ? row('Penunjang Lain', d.penunjanglain) : ''}
+                        </table>
+                    </div>`;
+                }
+
+                // 5. DIAGNOSA & PLAN
                 html += `<div >
                             <h5 style="font-size:12px; font-weight:700; color:#f5365c; text-transform:uppercase; letter-spacing:1px; margin-bottom:12px; border-bottom:2px solid #f5365c; display:inline-block; padding-bottom:4px;">
-                                <i class="fa fa-stethoscope"></i> Diagnosis & Plan
+                                <i class="fa fa-stethoscope"></i> Diagnosis & Perencanaan
                             </h5>
                             
                             <div style="background:#fff5f5; border-left:4px solid #f5365c; padding:12px; border-radius:4px; margin-bottom:12px;">
-                                <div style="font-size:11px; color:#f5365c; font-weight:700; text-transform:uppercase; margin-bottom:4px;">Diagnosis Utama</div>
-                                <div style="font-size:14px; font-weight:600; color:#32325d;">${escHtml(d.diagnosis || '-')}</div>
+                                <div style="font-size:11px; color:#f5365c; font-weight:700; text-transform:uppercase; margin-bottom:4px;">Diagnosis Kerja</div>
+                                <div style="font-size:14px; font-weight:600; color:#32325d;">${escHtml(d.diagnosis || d.diagnosa || '-')}</div>
                                 ${d.diagnosis2 ? `<hr style="border-top:1px dashed #fcd34d; margin:8px 0;"><div style="font-size:11px; color:#888;"><b>Banding/Sekunder:</b> ${escHtml(d.diagnosis2)}</div>` : ''}
                             </div>
 
+                            ${d.permasalahan ? `<div style="background:#fef3c7; border-left:4px solid #f59e0b; padding:12px; border-radius:4px; margin-bottom:12px;">
+                                <div style="font-size:11px; color:#f59e0b; font-weight:700; text-transform:uppercase; margin-bottom:4px;">Permasalahan</div>
+                                <div style="font-size:13px; color:#525f7f;">${escHtml(d.permasalahan)}</div>
+                            </div>` : ''}
+
                             <div style="background:#f6f9fc; border-left:4px solid ${colorTheme}; padding:12px; border-radius:4px;">
-                                <div style="font-size:11px; color:${colorTheme}; font-weight:700; text-transform:uppercase; margin-bottom:4px;">Tatalaksana / Tindakan</div>
+                                <div style="font-size:11px; color:${colorTheme}; font-weight:700; text-transform:uppercase; margin-bottom:4px;">Tatalaksana</div>
                                 <ul style="margin:0; padding-left:16px; font-size:13px; color:#525f7f; line-height:1.6;">
                                     ${d.terapi ? `<li><b>Terapi:</b> ${escHtml(d.terapi)}</li>` : ''}
                                     ${d.tindakan ? `<li><b>Tindakan:</b> ${escHtml(d.tindakan)}</li>` : ''}
@@ -1706,8 +1860,8 @@ $(function () {
                         </div > `;
                 html += `</div > `; // End Left Col
 
-                // --- KOLOM KANAN: LOKALIS (Only if Ortho or specific data exists) ---
-                if (isOrtho && d.lokalis_url) {
+                // --- KOLOM KANAN: LOKALIS (Ortho OR PD dengan lokalis) ---
+                if (d.lokalis_url) {
                     html += `<div style="width:300px; flex-shrink:0;" >
                             <h5 style="font-size:12px; font-weight:700; color:#11cdef; text-transform:uppercase; letter-spacing:1px; margin-bottom:12px; border-bottom:2px solid #11cdef; display:inline-block; padding-bottom:4px;">
                                 <i class="fa fa-universal-access"></i> Status Lokalis
@@ -1874,7 +2028,122 @@ $(function () {
             }
 
 
-            // === 0. RENDER ASESMEN IGD PEMERIKSAAN MEDIS (CLEAN LAYOUT) ===
+
+            // === PENILAIAN MEDIS KANDUNGAN ===
+            if (typeof detail_penilaian_medis_kandungan !== 'undefined' && detail_penilaian_medis_kandungan && detail_penilaian_medis_kandungan.data) {
+                const kd = detail_penilaian_medis_kandungan.data;
+                if (kd.keluhan_utama || kd.diagnosis || kd.td) {
+                    let html = `
+                        <div style="margin-bottom:15px;">
+                            <h5 style="font-size:12px; font-weight:700; color:#e91e63; text-transform:uppercase; margin-bottom:10px; border-bottom:2px solid #e91e63; display:inline-block; padding-bottom:4px;">
+                                <i class="fa fa-stethoscope"></i> Anamnesis
+                            </h5>
+                            <table style="width:100%; font-size:13px;">
+                                ${row('Jenis Anamnesis', kd.anamnesis + (kd.hubungan ? ' (' + kd.hubungan + ')' : ''))}
+                                ${row('Keluhan Utama', kd.keluhan_utama)}
+                                ${row('RPS', kd.rps)}
+                                ${row('RPD', kd.rpd)}
+                                ${kd.rpk ? row('RPK', kd.rpk) : ''}
+                                ${kd.rpo ? row('RPO', kd.rpo) : ''}
+                                ${row('Alergi', kd.alergi)}
+                            </table>
+                        </div>
+                        <div style="margin-bottom:15px;">
+                            <h5 style="font-size:12px; font-weight:700; color:#00bcd4; text-transform:uppercase; margin-bottom:10px; border-bottom:2px solid #00bcd4; display:inline-block; padding-bottom:4px;">
+                                <i class="fa fa-heartbeat"></i> Tanda Vital & Kesadaran
+                            </h5>
+                            <table style="width:100%; font-size:13px; margin-bottom:8px;">
+                                ${row('Keadaan Umum', kd.keadaan)}
+                                ${row('Kesadaran', kd.kesadaran + (kd.gcs ? ' (GCS: ' + kd.gcs + ')' : ''))}
+                            </table>
+                            <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(80px, 1fr)); gap:10px;">
+                                ${ttvBox('TD', kd.td, 'mmHg')}
+                                ${ttvBox('Nadi', kd.nadi, 'x/m')}
+                                ${ttvBox('RR', kd.rr, 'x/m')}
+                                ${ttvBox('Suhu', kd.suhu, '°C')}
+                                ${kd.spo ? ttvBox('SpO2', kd.spo, '%') : ''}
+                                ${ttvBox('BB', kd.bb, 'Kg')}
+                                ${ttvBox('TB', kd.tb, 'cm')}
+                            </div>
+                        </div>
+                        ${(kd.kepala || kd.mata || kd.tht || kd.thoraks || kd.abdomen || kd.genital || kd.ekstremitas) ? `
+                        <div style="margin-bottom:15px;">
+                            <h5 style="font-size:12px; font-weight:700; color:#ff9800; text-transform:uppercase; margin-bottom:10px; border-bottom:2px solid #ff9800; display:inline-block; padding-bottom:4px;">
+                                <i class="fa fa-user-md"></i> Pemeriksaan Fisik
+                            </h5>
+                            <table style="width:100%; font-size:13px;">
+                                ${kd.kepala ? row('Kepala', kd.kepala) : ''}
+                                ${kd.mata ? row('Mata', kd.mata) : ''}
+                                ${kd.tht ? row('THT', kd.tht) : ''}
+                                ${kd.gigi ? row('Gigi', kd.gigi) : ''}
+                                ${kd.thoraks ? row('Thoraks', kd.thoraks) : ''}
+                                ${kd.abdomen ? row('Abdomen', kd.abdomen) : ''}
+                                ${kd.genital ? row('Genital', kd.genital) : ''}
+                                ${kd.ekstremitas ? row('Ekstremitas', kd.ekstremitas) : ''}
+                                ${kd.ket_fisik ? row('Keterangan', kd.ket_fisik) : ''}
+                            </table>
+                        </div>` : ''}
+                        ${kd.tfu || kd.djj ? `
+                        <div style="margin-bottom:15px;">
+                            <h5 style="font-size:12px; font-weight:700; color:#4caf50; text-transform:uppercase; margin-bottom:10px; border-bottom:2px solid #4caf50; display:inline-block; padding-bottom:4px;">
+                                <i class="fa fa-female"></i> Pemeriksaan Obstetri
+                            </h5>
+                            <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap:10px; margin-bottom:8px;">
+                                ${ttvBox('TFU', kd.tfu, 'cm')}
+                                ${kd.tbj ? ttvBox('TBJ', kd.tbj, 'gr') : ''}
+                                ${ttvBox('DJJ', kd.djj, 'x/m')}
+                                ${kd.kontraksi ? ttvBox('Kontraksi', kd.kontraksi) : ''}
+                            </div>
+                            ${kd.his ? `<div style="padding:8px; background:#e8f5e9; border-left:3px solid #4caf50; font-size:12px;"><b>His:</b> ${escHtml(kd.his)}</div>` : ''}
+                        </div>` : ''}
+                        ${(kd.inspeksi || kd.inspekulo || kd.vt || kd.rt) ? `
+                        <div style="margin-bottom:15px;">
+                            <h5 style="font-size:12px; font-weight:700; color:#9c27b0; text-transform:uppercase; margin-bottom:10px; border-bottom:2px solid #9c27b0; display:inline-block; padding-bottom:4px;">
+                                <i class="fa fa-venus"></i> Pemeriksaan Ginekologi
+                            </h5>
+                            <table style="width:100%; font-size:13px;">
+                                ${kd.inspeksi ? row('Inspeksi Vulva', kd.inspeksi) : ''}
+                                ${kd.inspekulo ? row('Inspekulo', kd.inspekulo) : ''}
+                                ${kd.vt ? row('VT', kd.vt) : ''}
+                                ${kd.rt ? row('RT', kd.rt) : ''}
+                            </table>
+                        </div>` : ''}
+                        ${(kd.ultra || kd.kardio || kd.lab) ? `
+                        <div style="margin-bottom:15px;">
+                            <h5 style="font-size:12px; font-weight:700; color:#3f51b5; text-transform:uppercase; margin-bottom:10px; border-bottom:2px solid #3f51b5; display:inline-block; padding-bottom:4px;">
+                                <i class="fa fa-flask"></i> Pemeriksaan Penunjang
+                            </h5>
+                            <table style="width:100%; font-size:13px;">
+                                ${kd.ultra ? row('USG', kd.ultra) : ''}
+                                ${kd.kardio ? row('Kardiotokografi', kd.kardio) : ''}
+                                ${kd.lab ? row('Laboratorium', kd.lab) : ''}
+                            </table>
+                        </div>` : ''}
+                        <div>
+                            <h5 style="font-size:12px; font-weight:700; color:#f44336; text-transform:uppercase; margin-bottom:10px; border-bottom:2px solid #f44336; display:inline-block; padding-bottom:4px;">
+                                <i class="fa fa-medkit"></i> Diagnosis & Tatalaksana
+                            </h5>
+                            <div style="background:#ffebee; border-left:4px solid #f44336; padding:12px; border-radius:4px; margin-bottom:10px;">
+                                <div style="font-size:11px; color:#f44336; font-weight:700; text-transform:uppercase; margin-bottom:4px;">Diagnosis</div>
+                                <div style="font-size:14px; font-weight:600; color:#32325d;">${escHtml(kd.diagnosis || '-')}</div>
+                            </div>
+                            <div style="background:#f6f9fc; border-left:4px solid #ff9800; padding:12px; border-radius:4px;">
+                                <div style="font-size:11px; color:#ff9800; font-weight:700; text-transform:uppercase; margin-bottom:4px;">Tatalaksana</div>
+                                <div style="font-size:13px; color:#525f7f;">${escHtml(kd.tata || '-')}</div>
+                                ${kd.konsul ? `<hr style="border-top:1px dashed #e9ecef; margin:8px 0;"><div style="font-size:12px; color:#888;"><b>Konsultasi:</b> ${escHtml(kd.konsul)}</div>` : ''}
+                            </div>
+                        </div>
+                        <div style="margin-top:15px; padding-top:10px; border-top:1px dashed #e9ecef; font-size:12px; color:#525f7f;">
+                            <i class="fa fa-user-md"></i> <b>${escHtml(kd.nm_dokter || '-')}</b>
+                            <span style="color:#8898aa; margin:0 5px;">&bull;</span>
+                            <i class="fa fa-clock-o"></i> ${escHtml(kd.tanggal || '-')}
+                        </div>
+                    `;
+                    cardsToShow.push(cardWrap('kandungan', 'Penilaian Medis Kandungan', html));
+                }
+            }
+
+
             function renderIGD() {
                 const data = igd.data || igd || {};
 
@@ -3260,9 +3529,9 @@ $(function () {
             renderPenilaianMata();
             renderIGD();
             renderTandaVital();
+            renderSOAP();
             renderDiagnosa();
             renderProsedur();
-            renderSOAP();
             renderTindakan();
             renderResep();
             renderLaboratorium();
@@ -3537,17 +3806,109 @@ $(function () {
         }
     };
 
+    // ==================== BULK PRINT (PHP SERVER-SIDE) ====================
     // Bind the bulk print button
-    // Bind the bulk print button (Delegated)
     $(document).on('click', '#btn_print_all', function (e) {
         e.preventDefault();
-        console.log('Button Cetak Semua clicked');
-        if (typeof window.printBulkRiwayat === 'function') {
-            window.printBulkRiwayat();
-        } else {
-            console.error('window.printBulkRiwayat is not defined');
-            alert('Fungsi cetak belum siap. Silakan refresh halaman.');
+        console.log('🖨️ Cetak Bulk - PHP Server-Side');
+
+        const $btn = $(this);
+        const no_rkm_medis = $('#rp_no_rkm_medis').val();
+
+        if (!no_rkm_medis) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'No. Rekam Medis tidak ditemukan!'
+            });
+            return;
         }
+
+        // Show loading state
+        $btn.addClass('loading');
+        $btn.find('.btn-print-text').text('Memproses...');
+        $btn.find('.fa').removeClass('fa-file-pdf-o').addClass('fa-spinner fa-spin');
+
+        // Show loading modal
+        Swal.fire({
+            title: '🖨️ Menyiapkan Dokumen PDF',
+            html: `
+                <div style="text-align:center;">
+                    <div class="spinner-border text-primary" role="status" style="width:3rem; height:3rem;">
+                        <span class="sr-only">Loading...</span>
+                    </div>
+                    <p style="margin-top:20px; color:#666;">
+                        Sedang mengumpulkan semua riwayat medis...<br>
+                        <small>Proses ini mungkin memakan waktu beberapa detik</small>
+                    </p>
+                </div>
+            `,
+            showConfirmButton: false,
+            allowOutsideClick: false
+        });
+
+        // Get current filters from UI
+        const dateFrom = $('#rp_date_from').val();
+        const dateTo = $('#rp_date_to').val();
+
+        // Build URL with filters - USE PDF ENDPOINT for perfect scaling
+        let printUrl = `${window.BASE_URL}print/riwayat_bulk_pdf/${no_rkm_medis}`;
+        const params = [];
+
+        if (dateFrom) params.push(`date_from=${dateFrom}`);
+        if (dateTo) params.push(`date_to=${dateTo}`);
+
+        if (params.length > 0) {
+            printUrl += '?' + params.join('&');
+        }
+
+        console.log('📄 Opening PDF URL:', printUrl);
+
+        // Delay sedikit untuk animasi
+        setTimeout(() => {
+            const printWindow = window.open(printUrl, '_blank');
+
+            if (printWindow) {
+                // Reset button after window opens
+                setTimeout(() => {
+                    $btn.removeClass('loading');
+                    $btn.find('.btn-print-text').text('Cetak PDF');
+                    $btn.find('.fa').removeClass('fa-spinner fa-spin').addClass('fa-file-pdf-o');
+
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Berhasil!',
+                        html: `
+                            <p>Dokumen PDF telah dibuka di tab baru.</p>
+                            <p style="color:#666; font-size:14px;">
+                                Jika tidak muncul, pastikan popup tidak diblokir oleh browser.
+                            </p>
+                        `,
+                        timer: 3000,
+                        showConfirmButton: false
+                    });
+                }, 1000);
+            } else {
+                // Popup blocked
+                $btn.removeClass('loading');
+                $btn.find('.btn-print-text').text('Cetak PDF');
+                $btn.find('.fa').removeClass('fa-spinner fa-spin').addClass('fa-file-pdf-o');
+
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Popup Diblokir',
+                    html: `
+                        <p>Browser memblokir popup.</p>
+                        <p>Silakan klik tombol di bawah untuk membuka dokumen:</p>
+                        <a href="${printUrl}" target="_blank" class="btn btn-primary" style="margin-top:10px;">
+                            <i class="fa fa-external-link"></i> Buka Dokumen PDF
+                        </a>
+                    `,
+                    showConfirmButton: true,
+                    confirmButtonText: 'OK'
+                });
+            }
+        }, 500);
     });
 
 

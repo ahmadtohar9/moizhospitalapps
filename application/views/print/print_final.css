@@ -1,0 +1,644 @@
+/**
+ * CSS PRINT FINAL - SIMRS MOIZ ANDINI
+ * 
+ * ATURAN PENTING:
+ * 1. Tidak menggunakan transform: scale atau zoom
+ * 2. Menggunakan @page untuk ukuran A4 fisik
+ * 3. Semua section menggunakan page-break-inside: avoid
+ * 4. Font medis standar (Times New Roman)
+ * 5. Konsisten untuk semua modul
+ * 
+ * Dibuat: 2025-12-18
+ * Untuk: Produksi SIMRS (Audit & Akreditasi)
+ */
+
+/* ============================================
+   RESET & BASE STYLES
+   ============================================ */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html,
+body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Times New Roman', Times, serif;
+    font-size: 11pt;
+    line-height: 1.4;
+    color: #000;
+    background: #fff;
+}
+
+/* ============================================
+   PAGE SETUP - A4 FISIK
+   ============================================ */
+@page {
+    size: A4 portrait;
+    margin: 10mm 15mm 10mm 15mm;
+}
+
+@media print {
+
+    /* FORCE 100% SCALING - PREVENT BROWSER AUTO-ADJUST */
+    @page {
+        size: A4 portrait;
+        margin: 10mm 15mm;
+    }
+
+    /* Reset untuk print */
+    html {
+        width: 210mm;
+        height: 297mm;
+        font-size: 12pt !important;
+        /* Force font size */
+    }
+
+    body {
+        width: 210mm;
+        height: auto;
+        margin: 0 !important;
+        padding: 0 !important;
+        font-size: 11pt !important;
+        transform: none !important;
+        zoom: 1 !important;
+        -webkit-transform: none !important;
+    }
+
+    /* Sembunyikan elemen yang tidak perlu */
+    .no-print,
+    button,
+    .btn,
+    nav,
+    .navbar,
+    .sidebar,
+    .modal,
+    .tooltip,
+    .alert,
+    input[type="button"],
+    input[type="submit"] {
+        display: none !important;
+    }
+
+    /* Paksa background untuk print */
+    * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+        color-adjust: exact !important;
+    }
+
+    /* Hindari page break di tengah elemen */
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        page-break-after: avoid;
+        page-break-inside: avoid;
+    }
+
+    table,
+    figure,
+    img {
+        page-break-inside: avoid;
+    }
+
+    /* Orphans & Widows */
+    p {
+        orphans: 3;
+        widows: 3;
+    }
+}
+
+/* ============================================
+   CONTAINER UTAMA
+   ============================================ */
+.print-container {
+    width: 100%;
+    max-width: 210mm;
+    min-height: 297mm;
+    margin: 0 auto;
+    padding: 0;
+    background: #fff;
+    position: relative;
+}
+
+/* ============================================
+   HEADER RUMAH SAKIT (KOP SURAT)
+   ============================================ */
+.print-header {
+    width: 100%;
+    padding: 3mm 0;
+    border-bottom: 2px solid #000;
+    margin-bottom: 3mm;
+    page-break-inside: avoid;
+    page-break-after: avoid;
+}
+
+.print-header-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4mm;
+}
+
+.print-header-logo {
+    flex-shrink: 0;
+}
+
+.print-header-logo img {
+    width: 45px;
+    height: auto;
+    display: block;
+}
+
+.print-header-info {
+    flex: 1;
+    text-align: center;
+}
+
+.print-header-info h1 {
+    font-size: 13pt;
+    font-weight: bold;
+    margin-bottom: 1mm;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    line-height: 1.2;
+}
+
+.print-header-info .alamat {
+    font-size: 9pt;
+    margin-bottom: 1mm;
+    line-height: 1.2;
+}
+
+.print-header-info .kontak {
+    font-size: 9pt;
+    color: #333;
+}
+
+.print-header-info .akreditasi {
+    font-size: 8pt;
+    margin-top: 1mm;
+    font-style: italic;
+    color: #666;
+}
+
+/* ============================================
+   IDENTITAS PASIEN
+   ============================================ */
+.print-patient-identity {
+    width: 100%;
+    margin-bottom: 5mm;
+    page-break-inside: avoid;
+    page-break-after: avoid;
+}
+
+.print-patient-identity h2 {
+    font-size: 12pt;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 2mm;
+    text-transform: uppercase;
+    border-bottom: 1px solid #333;
+    padding-bottom: 1mm;
+    line-height: 1.2;
+}
+
+.patient-info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1mm 5mm;
+    font-size: 10pt;
+}
+
+.patient-info-item {
+    display: flex;
+}
+
+.patient-info-label {
+    font-weight: bold;
+    min-width: 35mm;
+    flex-shrink: 0;
+}
+
+.patient-info-value {
+    flex: 1;
+}
+
+.patient-info-separator {
+    margin: 0 2mm;
+}
+
+/* ============================================
+   SECTION KONTEN
+   ============================================ */
+.print-section {
+    width: 100%;
+    margin-bottom: 5mm;
+    page-break-inside: avoid;
+}
+
+.print-section-title {
+    font-size: 12pt;
+    font-weight: bold;
+    margin-bottom: 3mm;
+    padding: 2mm 3mm;
+    background: #f0f0f0;
+    border-left: 4px solid #333;
+}
+
+.print-section-content {
+    padding: 0 3mm;
+    font-size: 10pt;
+}
+
+/* ============================================
+   TABEL DATA
+   ============================================ */
+.print-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 3mm 0;
+    font-size: 10pt;
+    page-break-inside: avoid;
+}
+
+.print-table th {
+    background: #e0e0e0;
+    font-weight: bold;
+    text-align: left;
+    padding: 2mm 3mm;
+    border: 1px solid #999;
+}
+
+.print-table td {
+    padding: 2mm 3mm;
+    border: 1px solid #ccc;
+    vertical-align: top;
+}
+
+.print-table tr:nth-child(even) {
+    background: #f9f9f9;
+}
+
+/* Tabel tanpa border (untuk layout) */
+.print-table-noborder {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 2mm 0;
+    font-size: 10pt;
+}
+
+.print-table-noborder td {
+    padding: 1mm 2mm;
+    vertical-align: top;
+    border: none;
+}
+
+.print-table-noborder td.label {
+    font-weight: bold;
+    width: 35%;
+}
+
+.print-table-noborder td.separator {
+    width: 5%;
+    text-align: center;
+}
+
+.print-table-noborder td.value {
+    width: 60%;
+}
+
+/* ============================================
+   SOAP SECTION
+   ============================================ */
+.soap-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 3mm;
+}
+
+.soap-item {
+    border: 1px solid #ccc;
+    padding: 3mm;
+    border-radius: 2mm;
+}
+
+.soap-item-title {
+    font-weight: bold;
+    font-size: 11pt;
+    margin-bottom: 2mm;
+    color: #333;
+}
+
+.soap-item-content {
+    font-size: 10pt;
+    line-height: 1.5;
+    white-space: pre-wrap;
+}
+
+/* ============================================
+   DIAGNOSA & PROSEDUR
+   ============================================ */
+.diagnosa-list,
+.prosedur-list {
+    list-style: none;
+    padding: 0;
+    margin: 2mm 0;
+}
+
+.diagnosa-item,
+.prosedur-item {
+    padding: 2mm 3mm;
+    margin-bottom: 2mm;
+    border-left: 3px solid #666;
+    background: #f9f9f9;
+}
+
+.diagnosa-item-code,
+.prosedur-item-code {
+    font-weight: bold;
+    color: #333;
+}
+
+.diagnosa-item-name,
+.prosedur-item-name {
+    margin-left: 2mm;
+}
+
+.diagnosa-item-status {
+    font-size: 9pt;
+    color: #666;
+    font-style: italic;
+    margin-left: 2mm;
+}
+
+/* ============================================
+   TINDAKAN
+   ============================================ */
+.tindakan-list {
+    margin: 2mm 0;
+}
+
+.tindakan-item {
+    padding: 2mm 3mm;
+    margin-bottom: 1mm;
+    border-bottom: 1px solid #ddd;
+}
+
+.tindakan-item:last-child {
+    border-bottom: none;
+}
+
+.tindakan-nama {
+    font-weight: bold;
+}
+
+.tindakan-detail {
+    font-size: 9pt;
+    color: #666;
+    margin-top: 1mm;
+}
+
+/* ============================================
+   HASIL LAB & RADIOLOGI
+   ============================================ */
+.lab-result-table,
+.rad-result-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 3mm 0;
+    font-size: 9pt;
+}
+
+.lab-result-table th,
+.rad-result-table th {
+    background: #e0e0e0;
+    padding: 2mm;
+    border: 1px solid #999;
+    font-weight: bold;
+    text-align: left;
+}
+
+.lab-result-table td,
+.rad-result-table td {
+    padding: 2mm;
+    border: 1px solid #ccc;
+}
+
+.lab-result-abnormal {
+    background: #fff3cd !important;
+    font-weight: bold;
+}
+
+.lab-result-critical {
+    background: #f8d7da !important;
+    font-weight: bold;
+    color: #721c24;
+}
+
+/* ============================================
+   GAMBAR RADIOLOGI & DIGITAL FILES
+   ============================================ */
+.print-image-container {
+    text-align: center;
+    margin: 3mm 0;
+    page-break-inside: avoid;
+}
+
+.print-image {
+    max-width: 100%;
+    max-height: 150mm;
+    height: auto;
+    border: 1px solid #ccc;
+    padding: 2mm;
+}
+
+.print-image-caption {
+    font-size: 9pt;
+    font-style: italic;
+    margin-top: 2mm;
+    color: #666;
+}
+
+/* ============================================
+   FOOTER PRINT
+   ============================================ */
+.print-footer {
+    width: 100%;
+    margin-top: 10mm;
+    padding-top: 3mm;
+    border-top: 1px solid #ccc;
+    font-size: 8pt;
+    color: #666;
+    page-break-inside: avoid;
+}
+
+.print-footer-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.print-footer-left {
+    text-align: left;
+}
+
+.print-footer-right {
+    text-align: right;
+}
+
+/* ============================================
+   TANDA TANGAN
+   ============================================ */
+.signature-section {
+    margin-top: 10mm;
+    page-break-inside: avoid;
+}
+
+.signature-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10mm;
+}
+
+.signature-box {
+    text-align: center;
+}
+
+.signature-title {
+    font-size: 10pt;
+    margin-bottom: 15mm;
+}
+
+.signature-name {
+    font-weight: bold;
+    margin-top: 2mm;
+}
+
+.signature-nip {
+    font-size: 9pt;
+    color: #666;
+}
+
+/* ============================================
+   UTILITY CLASSES
+   ============================================ */
+.text-center {
+    text-align: center;
+}
+
+.text-right {
+    text-align: right;
+}
+
+.text-bold {
+    font-weight: bold;
+}
+
+.text-italic {
+    font-style: italic;
+}
+
+.text-uppercase {
+    text-transform: uppercase;
+}
+
+.mb-2 {
+    margin-bottom: 2mm;
+}
+
+.mb-3 {
+    margin-bottom: 3mm;
+}
+
+.mb-5 {
+    margin-bottom: 5mm;
+}
+
+.mt-2 {
+    margin-top: 2mm;
+}
+
+.mt-3 {
+    margin-top: 3mm;
+}
+
+.mt-5 {
+    margin-top: 5mm;
+}
+
+.page-break {
+    page-break-after: always;
+}
+
+.no-page-break {
+    page-break-inside: avoid;
+}
+
+/* ============================================
+   WATERMARK (OPSIONAL)
+   ============================================ */
+.print-watermark {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(-45deg);
+    font-size: 72pt;
+    color: rgba(0, 0, 0, 0.05);
+    font-weight: bold;
+    z-index: -1;
+    pointer-events: none;
+}
+
+/* ============================================
+   RESPONSIVE UNTUK PREVIEW
+   ============================================ */
+@media screen {
+    body {
+        background: #e0e0e0;
+        padding: 10mm;
+    }
+
+    .print-container {
+        box-shadow: 0 0 10mm rgba(0, 0, 0, 0.3);
+        padding: 10mm 15mm;
+    }
+}
+
+/* ============================================
+   PRINT MEDIA QUERY
+   ============================================ */
+@media print {
+    body {
+        background: #fff;
+        padding: 0;
+    }
+
+    .print-container {
+        box-shadow: none;
+        padding: 0;
+        margin: 0;
+        max-width: 100%;
+    }
+
+    /* Hindari halaman kosong */
+    .print-section:last-child {
+        margin-bottom: 0;
+    }
+
+    /* Pastikan footer selalu di bawah */
+    .print-footer {
+        position: relative;
+        bottom: 0;
+    }
+}

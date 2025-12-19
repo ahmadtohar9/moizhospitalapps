@@ -151,6 +151,7 @@ class RekamMedisRalanController extends CI_Controller
 
             'AwalMedisDokterMataRalanController/index' => ['model' => 'awalMedisDokterMataRalanModel', 'view' => 'rekammedis/dokter/awalMedisDokterMata_view'],
             'PenilaianMedisMataController/index' => ['model' => 'PenilaianMedisMataModel', 'view' => 'penilaian_medis_mata/form'],
+            'PenilaianMedisKandunganController/index' => ['model' => 'PenilaianMedisKandunganModel', 'view' => 'penilaian_medis_kandungan/form'],
             'SoapRalanController/index' => ['model' => 'SoapRalanModel', 'view' => 'rekammedis/soap_ralan'],
             'TindakanRalanDokterController/index' => ['model' => 'TindakanRalanDokterModel', 'view' => 'rekammedis/dokter/tindakanRalan'],
             'PermintaanResepRalan/index' => ['model' => 'PermintaanResepRalan_model', 'view' => 'rekammedis/dokter/permintaanResepRalan'],
@@ -246,6 +247,15 @@ class RekamMedisRalanController extends CI_Controller
             if ($decodedUrl === 'PenilaianMedisMataController/index') {
                 $this->load->model('PenilaianMedisMataModel');
                 date_default_timezone_set('Asia/Jakarta');
+                $data['tgl_sekarang'] = date('Y-m-d');
+                $data['jam_sekarang'] = date('H:i:s');
+            }
+
+            // [PATCH] Inject data Penilaian Medis Kandungan
+            if ($decodedUrl === 'PenilaianMedisKandunganController/index') {
+                $this->load->model('PenilaianMedisKandunganModel');
+                date_default_timezone_set('Asia/Jakarta');
+                $data['pasien'] = $this->PenilaianMedisKandunganModel->get_pasien_info($no_rawat);
                 $data['tgl_sekarang'] = date('Y-m-d');
                 $data['jam_sekarang'] = date('H:i:s');
             }

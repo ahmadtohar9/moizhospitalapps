@@ -13,3 +13,4 @@ database/update_history.json
 
 # Keep migrations (important!)
 !database/migrations/*.sql
+moizhospitalapps.zip

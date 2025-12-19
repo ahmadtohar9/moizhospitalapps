@@ -113,7 +113,7 @@
     </style>
 </head>
 
-<body onload="window.print(); window.close();">
+<body>
 
     <div class="header">
         <table width="100%" style="border: none; margin-bottom: 0;">
@@ -228,6 +228,31 @@
             </tr>
         </table>
     </div>
+
+    <!-- PRINT BUTTON -->
+    <div style="position: fixed; bottom: 20px; right: 20px; z-index: 9999;" class="no-print">
+        <button onclick="window.print()" style="
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        ">
+            🖨️ Cetak Dokumen
+        </button>
+    </div>
+
+    <style>
+        @media print {
+            .no-print {
+                display: none !important;
+            }
+        }
+    </style>
 
 </body>
 

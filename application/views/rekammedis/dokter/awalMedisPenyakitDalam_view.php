@@ -513,9 +513,9 @@
     // Hubungan bebas diisi kapan saja.
 
     // 2. Logic Jam Realtime (Hanya jika data belum ada alias form baru)
-    const isEditMode = "<?= isset($asesment['tanggal']) ? 'true' : 'false' ?>";
+    const isEditModePD = "<?= isset($asesment['tanggal']) ? 'true' : 'false' ?>";
 
-    if (isEditMode === 'false') {
+    if (isEditModePD === 'false') {
         let clockInterval = setInterval(() => {
             const now = new Date();
             const hours = String(now.getHours()).padStart(2, '0');

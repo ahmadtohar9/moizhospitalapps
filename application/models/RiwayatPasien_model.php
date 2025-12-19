@@ -105,7 +105,6 @@ class RiwayatPasien_model extends CI_Model
         }
     }
 
-    /* ================== DETAIL METHODS ================== */
     /**
      * Get basic visit info (for print header)
      */
@@ -121,6 +120,33 @@ class RiwayatPasien_model extends CI_Model
             ->join('dokter d', 'd.kd_dokter = rp.kd_dokter', 'left')
             ->where('rp.no_rawat', $no_rawat)
             ->get()->row_array() ?: [];
+    }
+
+    /**
+     * Get visit by no_rawat (for PrintController)
+     * Mengambil data kunjungan lengkap untuk print
+     */
+    public function get_visit_by_norawat($no_rawat)
+    {
+        return $this->db->select('
+            rp.no_rawat,
+            rp.no_rkm_medis,
+            rp.tgl_registrasi,
+            rp.jam_reg,
+            rp.status_lanjut,
+            rp.kd_poli,
+            rp.kd_dokter,
+            rp.kd_pj,
+            p.nm_poli,
+            d.nm_dokter,
+            pj.png_jawab
+        ')
+            ->from('reg_periksa rp')
+            ->join('poliklinik p', 'rp.kd_poli = p.kd_poli', 'left')
+            ->join('dokter d', 'rp.kd_dokter = d.kd_dokter', 'left')
+            ->join('penjab pj', 'rp.kd_pj = pj.kd_pj', 'left')
+            ->where('rp.no_rawat', $no_rawat)
+            ->get()->row_array();
     }
 
     public function get_summary_by_norawat($no_rawat)
@@ -497,7 +523,7 @@ class RiwayatPasien_model extends CI_Model
 
     public function get_awal_medis_penyakit_dalam_by_norawat($no_rawat)
     {
-        return $this->db->select("
+        $row = $this->db->select("
             pd.*,
             d.nm_dokter
         ")
@@ -505,6 +531,19 @@ class RiwayatPasien_model extends CI_Model
             ->join('dokter d', 'd.kd_dokter = pd.kd_dokter', 'left')
             ->where('pd.no_rawat', $no_rawat)
             ->get()->row_array();
+
+        if ($row) {
+            // Add lokalis image if exists
+            $clean_no_rawat = str_replace('/', '', $no_rawat);
+            $path = 'assets/images/lokalis_pd/lokalis_' . $clean_no_rawat . '.png';
+            if (file_exists(FCPATH . $path)) {
+                $row['lokalis_url'] = base_url($path);
+            } else {
+                $row['lokalis_url'] = null;
+            }
+        }
+
+        return $row;
     }
 
     public function get_awal_medis_orthopedi_by_norawat($no_rawat)
@@ -582,6 +621,14 @@ class RiwayatPasien_model extends CI_Model
         return $this->db->get()->row_array();
     }
 
+    /**
+     * Alias untuk get_patient_detail (untuk PrintController)
+     */
+    public function get_by_no_rkm_medis($no_rkm_medis)
+    {
+        return $this->get_patient_detail($no_rkm_medis);
+    }
+
     public function get_formulir_kfr_by_norawat($no_rawat)
     {
         $this->db->select('k.*, d.nm_dokter');
@@ -638,5 +685,70 @@ class RiwayatPasien_model extends CI_Model
         }
 
         return $row;
+    }
+
+    /**
+     * Get Penilaian Medis Kandungan by no_rawat
+     */
+    public function get_penilaian_medis_kandungan_by_norawat($no_rawat)
+    {
+        $row = $this->db->select("
+            pk.*,
+            d.nm_dokter
+        ")
+            ->from('penilaian_medis_ralan_kandungan pk')
+            ->join('dokter d', 'd.kd_dokter = pk.kd_dokter', 'left')
+            ->where('pk.no_rawat', $no_rawat)
+            ->get()->row_array();
+
+        return $row;
+    }
+
+    /**
+     * Ambil SEMUA data riwayat untuk keperluan cetak
+     * Membungkus semua query individual menjadi satu paket data
+     */
+    public function get_complete_history_data($no_rawat)
+    {
+        $data = array();
+
+        // 1. SOAP
+        $soap_data = $this->get_soap_by_norawat($no_rawat);
+        $data['soap'] = (!empty($soap_data) && !empty($soap_data['soap'])) ? $soap_data['soap'] : null;
+
+        // 2. Diagnosa
+        $data['diagnosa'] = $this->get_diagnosa_by_norawat($no_rawat);
+
+        // 3. Prosedur
+        $data['prosedur'] = $this->get_prosedur_by_norawat($no_rawat);
+
+        // 4. Tindakan
+        $data['tindakan'] = $this->get_tindakan_by_norawat($no_rawat);
+
+        // 5. Lab
+        $data['lab'] = $this->get_lab_by_norawat($no_rawat);
+
+        // 6. Radiologi
+        $data['radiologi'] = $this->get_radiologi_by_norawat($no_rawat);
+
+        // 7. Resep
+        $data['resep'] = $this->get_resep_by_norawat($no_rawat);
+
+        // 8. Operasi
+        $data['operasi'] = $this->get_operasi_by_no_rawat($no_rawat);
+
+        // 9. Asesmen IGD
+        $data['asesmen_igd'] = $this->get_asesmen_igd_by_norawat($no_rawat);
+
+        // 10. Asesmen Kandungan
+        $data['asesmen_kandungan'] = $this->get_penilaian_medis_kandungan_by_norawat($no_rawat);
+
+        // 11. Asesmen Mata
+        $data['asesmen_mata'] = $this->get_penilaian_medis_mata_by_norawat($no_rawat);
+
+        // 12. Resume Medis
+        $data['resume'] = $this->get_summary_by_norawat($no_rawat);
+
+        return $data;
     }
 }

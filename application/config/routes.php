@@ -6,6 +6,18 @@ $route['auth/logout'] = 'auth/logout';
 $route['admin/dashboard'] = 'AdminController/index';
 $route['user/dashboard'] = 'UserController/index';
 
+/* ===================== PRINT CONTROLLER ===================== */
+// $route['print/riwayat_pasien/(:any)'] = 'PrintController/riwayat_pasien/$1';
+// $route['print/resume_medis/(:any)'] = 'PrintController/resume_medis/$1';
+// $route['print/asesmen_igd/(:any)'] = 'PrintController/asesmen_igd/$1';
+// ================= PRINT =================
+$route['print/riwayat_bulk/(:any)'] = 'PrintController/riwayat_bulk/$1';
+$route['print/riwayat_bulk_pdf/(:any)'] = 'PrintController/riwayat_bulk_pdf/$1';
+// BULK: Semua kunjungan
+$route['print/riwayat_pasien/(:any)'] = 'PrintController/riwayat_pasien/$1'; // Single visit
+$route['print/resume_medis/(:any)'] = 'PrintController/resume_medis/$1';
+$route['print/asesmen_igd/(:any)'] = 'PrintController/asesmen_igd/$1';
+
 $route['default_controller'] = 'auth/login';
 $route['404_override'] = '';
 $route['translate_uri_dashes'] = FALSE;
@@ -52,6 +64,17 @@ $route['penilaian-medis-mata/get_data'] = 'PenilaianMedisMataController/get_data
 $route['penilaian-medis-mata/get_riwayat'] = 'PenilaianMedisMataController/get_riwayat';
 $route['penilaian-medis-mata/copy_data'] = 'PenilaianMedisMataController/copy_data';
 $route['penilaian-medis-mata/cetak-pdf'] = 'PenilaianMedisMataController/cetak_pdf';
+
+/* ===================== PENILAIAN MEDIS KANDUNGAN ===================== */
+$route["penilaian-medis-kandungan"] = "PenilaianMedisKandunganController/index";
+$route["penilaian-medis-kandungan/save"] = "PenilaianMedisKandunganController/save";
+$route["penilaian-medis-kandungan/update"] = "PenilaianMedisKandunganController/update";
+$route["penilaian-medis-kandungan/delete"] = "PenilaianMedisKandunganController/delete";
+$route["penilaian-medis-kandungan/get-hasil"] = "PenilaianMedisKandunganController/get_hasil";
+$route["penilaian-medis-kandungan/get-detail"] = "PenilaianMedisKandunganController/get_detail";
+$route["penilaian-medis-kandungan/get-riwayat-norm"] = "PenilaianMedisKandunganController/get_riwayat_norm";
+$route["penilaian-medis-kandungan/get-last"] = "PenilaianMedisKandunganController/get_last";
+$route["penilaian-medis-kandungan/cetak"] = "PenilaianMedisKandunganController/cetak";
 
 
 
@@ -269,6 +292,7 @@ $route['admin/riwayatPasien/detail_asesmen_orthopedi'] = 'RiwayatPasienControlle
 $route['admin/riwayatPasien/detail_formulir_kfr'] = 'RiwayatPasienController/detail_formulir_kfr';
 $route['admin/riwayatPasien/detail_program_rehab_medik'] = 'RiwayatPasienController/detail_program_rehab_medik';
 $route['admin/riwayatPasien/detail_penilaian_medis_mata'] = 'RiwayatPasienController/detail_penilaian_medis_mata';
+$route['admin/riwayatPasien/detail_penilaian_medis_kandungan'] = 'RiwayatPasienController/detail_penilaian_medis_kandungan';
 $route['admin/riwayatPasien/info'] = 'RiwayatPasienController/info';
 $route['RiwayatPasien/get_detail'] = 'RiwayatPasienController/get_detail';
 

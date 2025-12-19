@@ -181,6 +181,11 @@ class RiwayatPasienController extends CI_Controller
         $this->_get_detail('get_penilaian_medis_mata_by_norawat');
     }
 
+    public function detail_penilaian_medis_kandungan()
+    {
+        $this->_get_detail("get_penilaian_medis_kandungan_by_norawat");
+    }
+
 
     public function rad_list()
     {
@@ -415,6 +420,7 @@ class RiwayatPasienController extends CI_Controller
                 'kfr' => $this->RiwayatPasien_model->get_formulir_kfr_by_norawat($no_rawat),
                 'rehab' => $this->RiwayatPasien_model->get_program_rehab_medik_by_norawat($no_rawat),
                 'mata' => $this->RiwayatPasien_model->get_penilaian_medis_mata_by_norawat($no_rawat),
+                'kandungan' => $this->RiwayatPasien_model->get_penilaian_medis_kandungan_by_norawat($no_rawat),
             ];
 
             echo json_encode(['success' => true, 'data' => $data]);

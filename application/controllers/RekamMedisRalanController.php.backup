@@ -152,22 +152,6 @@ class RekamMedisRalanController extends CI_Controller
             'AwalMedisDokterMataRalanController/index' => ['model' => 'awalMedisDokterMataRalanModel', 'view' => 'rekammedis/dokter/awalMedisDokterMata_view'],
             'PenilaianMedisMataController/index' => ['model' => 'PenilaianMedisMataModel', 'view' => 'penilaian_medis_mata/form'],
             'PenilaianMedisKandunganController/index' => ['model' => 'PenilaianMedisKandunganModel', 'view' => 'penilaian_medis_kandungan/form'],
-
-            // ==================== AUTO-GENERATED MEDICAL ASSESSMENTS ====================
-            'AwalMedisAnakController/index' => ['model' => 'AwalMedisAnakModel', 'view' => 'rekammedis/dokter/awalMedisAnak_view'],
-            'AwalMedisBedahController/index' => ['model' => 'AwalMedisBedahModel', 'view' => 'rekammedis/dokter/awalMedisBedah_view'],
-            'AwalMedisBedahMulutController/index' => ['model' => 'AwalMedisBedahMulutModel', 'view' => 'rekammedis/dokter/awalMedisBedahMulut_view'],
-            'AwalMedisGawatDaruratPsikiatriController/index' => ['model' => 'AwalMedisGawatDaruratPsikiatriModel', 'view' => 'rekammedis/dokter/awalMedisGawatDaruratPsikiatri_view'],
-            'AwalMedisGeriatriController/index' => ['model' => 'AwalMedisGeriatriModel', 'view' => 'rekammedis/dokter/awalMedisGeriatri_view'],
-            'AwalMedisJantungController/index' => ['model' => 'AwalMedisJantungModel', 'view' => 'rekammedis/dokter/awalMedisJantung_view'],
-            'AwalMedisKulitDanKelaminController/index' => ['model' => 'AwalMedisKulitKelaminModel', 'view' => 'rekammedis/dokter/awalMedisKulitKelamin_view'],
-            'AwalMedisNeurologiController/index' => ['model' => 'AwalMedisNeurologiModel', 'view' => 'rekammedis/dokter/awalMedisNeurologi_view'],
-            'AwalMedisParuController/index' => ['model' => 'AwalMedisParuModel', 'view' => 'rekammedis/dokter/awalMedisParu_view'],
-            'AwalMedisPsikiatrikController/index' => ['model' => 'AwalMedisPsikiatrikModel', 'view' => 'rekammedis/dokter/awalMedisPsikiatrik_view'],
-            'AwalMedisRehabMedikController/index' => ['model' => 'AwalMedisRehabMedikModel', 'view' => 'rekammedis/dokter/awalMedisRehabMedik_view'],
-            'AwalMedisTHTController/index' => ['model' => 'AwalMedisTHTModel', 'view' => 'rekammedis/dokter/awalMedisTHT_view'],
-            'AwalMedisUrologiController/index' => ['model' => 'AwalMedisUrologiModel', 'view' => 'rekammedis/dokter/awalMedisUrologi_view'],
-            // ==================== END AUTO-GENERATED ====================
             'SoapRalanController/index' => ['model' => 'SoapRalanModel', 'view' => 'rekammedis/soap_ralan'],
             'TindakanRalanDokterController/index' => ['model' => 'TindakanRalanDokterModel', 'view' => 'rekammedis/dokter/tindakanRalan'],
             'PermintaanResepRalan/index' => ['model' => 'PermintaanResepRalan_model', 'view' => 'rekammedis/dokter/permintaanResepRalan'],
@@ -275,32 +259,6 @@ class RekamMedisRalanController extends CI_Controller
                 $data['tgl_sekarang'] = date('Y-m-d');
                 $data['jam_sekarang'] = date('H:i:s');
             }
-
-            // ==================== AUTO-GENERATED DATA INJECTION ====================
-            $new_modules = [
-                'AwalMedisAnakController/index' => 'AwalMedisAnakModel',
-                'AwalMedisBedahController/index' => 'AwalMedisBedahModel',
-                'AwalMedisBedahMulutController/index' => 'AwalMedisBedahMulutModel',
-                'AwalMedisGawatDaruratPsikiatriController/index' => 'AwalMedisGawatDaruratPsikiatriModel',
-                'AwalMedisGeriatriController/index' => 'AwalMedisGeriatriModel',
-                'AwalMedisJantungController/index' => 'AwalMedisJantungModel',
-                'AwalMedisKulitDanKelaminController/index' => 'AwalMedisKulitKelaminModel',
-                'AwalMedisNeurologiController/index' => 'AwalMedisNeurologiModel',
-                'AwalMedisParuController/index' => 'AwalMedisParuModel',
-                'AwalMedisPsikiatrikController/index' => 'AwalMedisPsikiatrikModel',
-                'AwalMedisRehabMedikController/index' => 'AwalMedisRehabMedikModel',
-                'AwalMedisTHTController/index' => 'AwalMedisTHTModel',
-                'AwalMedisUrologiController/index' => 'AwalMedisUrologiModel'
-            ];
-
-            if (isset($new_modules[$decodedUrl])) {
-                $model_name = $new_modules[$decodedUrl];
-                $this->load->model($model_name);
-                $data['asesment'] = $this->{$model_name}->get_by_no_rawat($no_rawat);
-                $data['tgl_sekarang'] = date('Y-m-d');
-                $data['jam_sekarang'] = date('H:i:s');
-            }
-            // ==================== END AUTO-GENERATED ====================
 
             $this->load->view($entry['view'], $data);
             return;

@@ -4053,48 +4053,190 @@ $(function () {
                 }
             }
 
-            // === 7b. RENDER PSIKIATRIK ===
+            // === 7b. RENDER PSIKIATRIK (COMPLETE & PREMIUM) ===
             function renderPsikiatrik() {
                 const d = psikiatrik.data || psikiatrik || {};
-                // Simple check for data existence
-                if (d.keluhan_utama || d.diagnosis || d.anamnesis) {
 
-                    const row = (lbl, val) => `<div style="margin-bottom:4px;"><span style="color:#666; width:120px; display:inline-block;">${lbl}</span> <span style="font-weight:600; color:#333;">${escHtml(val || '-')}</span></div>`;
+                // Cek data valid
+                if (!hasKeys(d, ['keluhan_utama', 'anamnesis', 'diagnosis', 'penampilan'])) return;
 
-                    const html = `
-                        <div style="font-family:sans-serif;">
-                            <div style="margin-bottom:12px; border-bottom:1px dashed #ec4899; padding-bottom:8px;">
-                                <div style="font-weight:700; color:#db2777; margin-bottom:4px; text-transform:uppercase; font-size:12px;">Anamnesis & Keluhan</div>
-                                ${d.anamnesis ? row('Jenis Anamnesis', d.anamnesis) : ''}
-                                ${d.hubungan ? row('Hubungan', d.hubungan) : ''}
-                                <div style="margin-top:4px;"><b>Keluhan Utama:</b><br>${escHtml(d.keluhan_utama)}</div>
-                                <div style="margin-top:4px;"><b>RPS:</b><br>${escHtml(d.rps)}</div>
+                // Theme color: Magenta/Pink for Psikiatrik
+                const themeColor = '#db2777';
+                const bgColor = '#fff1f2';
+                const borderColor = '#fbcfe8';
+
+                // Helpers
+                const row = (lbl, val) => `
+                    <div style="margin-bottom:6px; border-bottom:1px dashed #eee; padding-bottom:4px;">
+                        <span style="color:#64748b; font-size:11px; text-transform:uppercase; letter-spacing:0.5px; display:block; margin-bottom:2px;">${lbl}</span>
+                        <span style="color:#334155; font-weight:600; font-size:13px; line-height:1.4;">${escHtml(val || '-')}</span>
+                    </div>`;
+
+                const gridItem = (lbl, val) => `
+                    <div style="background:#fff; border:1px solid #e2e8f0; border-radius:6px; padding:8px;">
+                        <div style="font-size:10px; color:#94a3b8; font-weight:700; text-transform:uppercase; margin-bottom:4px;">${lbl}</div>
+                        <div style="font-size:13px; color:#334155; font-weight:500;">${escHtml(val || '-')}</div>
+                    </div>`;
+
+                const ttvItem = (lbl, val, unit) => `
+                    <div style="text-align:center; padding:8px; border-radius:8px; background:#fff; border:1px solid #e2e8f0;">
+                         <div style="font-size:10px; color:#64748b; margin-bottom:2px;">${lbl}</div>
+                         <div style="font-weight:700; color:#db2777; font-size:14px;">${escHtml(val || '-')} <small style="color:#94a3b8; font-weight:400; font-size:10px;">${unit}</small></div>
+                    </div>`;
+
+                let html = `<div style="font-family:'Inter', sans-serif;">`;
+
+                // 1. ANAMNESIS SECTION
+                html += `
+                <div style="margin-bottom:24px;">
+                     <h5 style="font-size:12px; font-weight:700; color:${themeColor}; text-transform:uppercase; letter-spacing:1px; margin-bottom:12px; border-bottom:2px solid ${themeColor}; display:inline-block; padding-bottom:4px;">
+                        <i class="fa fa-history"></i> Anamnesis & Keluhan
+                    </h5>
+                    <div style="display:flex; flex-wrap:wrap; gap:20px;">
+                        <!-- Kiri: Info Dasar & Keluhan -->
+                        <div style="flex:1; min-width:300px;">
+                            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px; margin-bottom:12px;">
+                                ${row('Jenis Anamnesis', d.anamnesis)}
+                                ${row('Hubungan', d.hubungan)}
                             </div>
-
-                            <div style="margin-bottom:12px; border-bottom:1px dashed #ec4899; padding-bottom:8px;">
-                                <div style="font-weight:700; color:#db2777; margin-bottom:8px; text-transform:uppercase; font-size:12px;">Status Psikiatrik</div>
-                                <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; font-size:13px; background:#fdf2f8; padding:8px; border-radius:6px;">
-                                    ${d.penampilan ? `<div><span>Penampilan:</span> <b>${escHtml(d.penampilan)}</b></div>` : ''}
-                                    ${d.pembicaraan ? `<div><span>Pembicaraan:</span> <b>${escHtml(d.pembicaraan)}</b></div>` : ''}
-                                    ${d.psikomotor ? `<div><span>Psikomotor:</span> <b>${escHtml(d.psikomotor)}</b></div>` : ''}
-                                    ${d.mood ? `<div><span>Mood:</span> <b>${escHtml(d.mood)}</b></div>` : ''}
-                                    ${d.sikap ? `<div><span>Sikap:</span> <b>${escHtml(d.sikap)}</b></div>` : ''}
-                                    ${d.fungsi_kognitif ? `<div><span>Fungsi Kognitif:</span> <b>${escHtml(d.fungsi_kognitif)}</b></div>` : ''}
-                                </div>
+                            <div style="background:${bgColor}; border-left:4px solid ${themeColor}; padding:12px; border-radius:4px; margin-bottom:12px;">
+                                <div style="font-size:11px; font-weight:700; color:${themeColor}; text-transform:uppercase; margin-bottom:4px;">Keluhan Utama</div>
+                                <div style="font-size:14px; font-weight:600; color:#1e293b; line-height:1.5;">${escHtml(d.keluhan_utama)}</div>
                             </div>
-
-                            <div style="margin-bottom:12px;">
-                                <div style="font-weight:700; color:#db2777; margin-bottom:4px; text-transform:uppercase; font-size:12px;">Diagnosis & Terapi</div>
-                                <div style="background:#fff1f2; padding:8px; border-radius:6px; border:1px solid #fda4af;">
-                                    <div style="margin-bottom:6px;"><b>Diagnosis:</b> ${escHtml(d.diagnosis)}</div>
-                                    <div style="margin-bottom:6px;"><b>Tatalaksana:</b> ${escHtml(d.tata)}</div>
-                                    ${d.konsulrujuk ? `<div><b>Konsul/Rujuk:</b> ${escHtml(d.konsulrujuk)}</div>` : ''}
-                                </div>
+                             <div style="background:#f8fafc; border:1px solid #e2e8f0; padding:12px; border-radius:4px;">
+                                <div style="font-size:11px; font-weight:700; color:#475569; text-transform:uppercase; margin-bottom:4px;">Riwayat Penyakit Sekarang (RPS)</div>
+                                <div style="font-size:13px; color:#334155; line-height:1.6;">${escHtml(d.rps || '-')}</div>
                             </div>
                         </div>
-                    `;
-                    cardsToShow.push(cardWrap('psikiatrik', 'ASESMEN PSIKIATRIK', html));
-                }
+                        
+                        <!-- Kanan: Riwayat Lain -->
+                        <div style="flex:1; min-width:280px; background:#fff; border:1px solid #e2e8f0; border-radius:8px; padding:16px;">
+                            ${row('RPD (Dahulu)', d.rpd)}
+                            ${row('RPK (Keluarga)', d.rpk)}
+                            ${row('RPO (Pengobatan)', d.rpo)}
+                            <div style="margin-top:8px;">
+                                <span style="color:#ef4444; font-weight:700; font-size:11px; text-transform:uppercase;">Alergi</span>
+                                <div style="font-weight:600; color:#1e293b; font-size:13px;">${escHtml(d.alergi || 'Tidak ada')}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>`;
+
+                // 2. STATUS PSIKIATRIK SECTION (Grid Layout)
+                html += `
+                <div style="margin-bottom:24px;">
+                    <h5 style="font-size:12px; font-weight:700; color:${themeColor}; text-transform:uppercase; letter-spacing:1px; margin-bottom:12px; border-bottom:2px solid ${themeColor}; display:inline-block; padding-bottom:4px;">
+                        <i class="fa fa-brain"></i> Status Psikiatrik
+                    </h5>
+                    
+                    <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap:12px; background:#fdf2f8; padding:16px; border-radius:12px; border:1px solid ${borderColor};">
+                        ${gridItem('Penampilan', d.penampilan)}
+                        ${gridItem('Pembicaraan', d.pembicaraan)}
+                        ${gridItem('Psikomotor', d.psikomotor)}
+                        ${gridItem('Sikap', d.sikap)}
+                        ${gridItem('Mood / Afek', d.mood)}
+                        ${gridItem('Fungsi Kognitif', d.fungsi_kognitif)}
+                        ${gridItem('Gangguan Persepsi', d.gangguan_persepsi)}
+                        ${gridItem('Proses Pikir', d.proses_pikir)}
+                        ${gridItem('Pengendalian Impuls', d.pengendalian_impuls)}
+                        ${gridItem('Tilikan', d.tilikan)}
+                        ${gridItem('Daya Nilai RTA', d.rta)}
+                    </div>
+                </div>`;
+
+                // 3. PEMERIKSAAN FISIK & SISTEMIK
+                html += `
+                <div style="margin-bottom:24px;">
+                    <h5 style="font-size:12px; font-weight:700; color:#059669; text-transform:uppercase; letter-spacing:1px; margin-bottom:12px; border-bottom:2px solid #059669; display:inline-block; padding-bottom:4px;">
+                        <i class="fa fa-stethoscope"></i> Status Fisik & Sistemik
+                    </h5>
+                    
+                    <!-- TTV & Keadaan Umum -->
+                     <div style="display:flex; flex-wrap:wrap; gap:16px; margin-bottom:16px;">
+                        <div style="flex:2; display:grid; grid-template-columns: repeat(auto-fit, minmax(80px, 1fr)); gap:8px;">
+                            ${ttvItem('TD', d.td, 'mmHg')}
+                            ${ttvItem('Nadi', d.nadi, 'x/m')}
+                            ${ttvItem('RR', d.rr, 'x/m')}
+                            ${ttvItem('Suhu', d.suhu, '°C')}
+                            ${ttvItem('SpO2', d.spo, '%')}
+                            ${ttvItem('BB', d.bb, 'kg')}
+                            ${ttvItem('TB', d.tb, 'cm')}
+                        </div>
+                         <div style="flex:1; min-width:200px; background:#f0fdf4; border:1px solid #bbf7d0; padding:12px; border-radius:8px;">
+                            ${row('Keadaan Umum', d.keadaan)}
+                            <div style="margin-bottom:0;">
+                                <span style="font-size:11px; color:#166534; font-weight:700;">KESADARAN / GCS</span>
+                                <div style="font-size:13px; font-weight:600; color:#14532d;">${escHtml(d.kesadaran || '-')} (GCS: ${escHtml(d.gcs || '-')})</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Pemeriksaan Organ (Simple Table) -->
+                    <div style="background:#fff; border:1px solid #e2e8f0; border-radius:8px; overflow:hidden; margin-bottom:12px;">
+                        <table class="table table-sm table-bordered mb-0" style="font-size:12px;">
+                            <thead style="background:#f1f5f9;">
+                                <tr>
+                                    <th width="12%">Kepala</th>
+                                    <th width="12%">Mata/THT</th>
+                                    <th width="12%">Thoraks</th>
+                                    <th width="12%">Abdomen</th>
+                                    <th width="12%">Genital</th>
+                                    <th width="12%">Ekstremitas</th>
+                                    <th width="12%">Kulit</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="${d.kepala === 'Abnormal' ? 'text-danger fw-bold' : ''}">${escHtml(d.kepala)}</td>
+                                    <td class="${d.tht === 'Abnormal' ? 'text-danger fw-bold' : ''}">${escHtml(d.tht)}</td>
+                                    <td class="${d.thoraks === 'Abnormal' ? 'text-danger fw-bold' : ''}">${escHtml(d.thoraks)}</td>
+                                    <td class="${d.abdomen === 'Abnormal' ? 'text-danger fw-bold' : ''}">${escHtml(d.abdomen)}</td>
+                                    <td class="${d.genital === 'Abnormal' ? 'text-danger fw-bold' : ''}">${escHtml(d.genital)}</td>
+                                    <td class="${d.ekstremitas === 'Abnormal' ? 'text-danger fw-bold' : ''}">${escHtml(d.ekstremitas)}</td>
+                                    <td class="${d.kulit === 'Abnormal' ? 'text-danger fw-bold' : ''}">${escHtml(d.kulit)}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        ${d.ket_fisik ? `<div style="padding:10px; border-top:1px solid #eee; background:#f8fafc; font-style:italic; font-size:12px; color:#64748b;"><b>Catatan Fisik:</b> ${escHtml(d.ket_fisik)}</div>` : ''}
+                    </div>
+
+                     ${d.penunjang ? `
+                        <div style="background:#fff7ed; border:1px solid #ffedd5; padding:12px; border-radius:8px; margin-bottom:12px;">
+                            <div style="font-size:11px; font-weight:700; color:#ea580c; text-transform:uppercase; margin-bottom:4px;"><i class="fa fa-flask"></i> Pemeriksaan Penunjang</div>
+                            <div style="font-size:13px; color:#334155;">${escHtml(d.penunjang)}</div>
+                        </div>` : ''}
+                </div>`;
+
+                // 4. DIAGNOSIS & TERAPI
+                html += `
+                <div>
+                     <h5 style="font-size:12px; font-weight:700; color:#7c3aed; text-transform:uppercase; letter-spacing:1px; margin-bottom:12px; border-bottom:2px solid #7c3aed; display:inline-block; padding-bottom:4px;">
+                        <i class="fa fa-clipboard-list"></i> Diagnosis & Tatalaksana
+                    </h5>
+
+                    <div style="background:#f5f3ff; border-left:4px solid #7c3aed; padding:16px; border-radius:4px; margin-bottom:12px;">
+                        <div style="margin-bottom:12px;">
+                             <div style="font-size:11px; font-weight:700; color:#7c3aed; text-transform:uppercase; margin-bottom:4px;">Diagnosis Psikiatri</div>
+                             <div style="font-size:15px; font-weight:700; color:#1e293b; line-height:1.4;">${escHtml(d.diagnosis || '-')}</div>
+                        </div>
+
+                        <div style="display:flex; flex-wrap:wrap; gap:20px; border-top:1px dashed #ddd6fe; pt-3; mt-3;">
+                             <div style="flex:2;">
+                                <div style="font-size:11px; font-weight:700; color:#4b5563; text-transform:uppercase; margin-bottom:4px;">Tatalaksana / Terapi</div>
+                                <div style="font-size:13px; color:#334155; line-height:1.6; white-space:pre-wrap;">${escHtml(d.tata || '-')}</div>
+                             </div>
+                             ${d.konsulrujuk ? `
+                             <div style="flex:1; min-width:200px; background:#fff; padding:10px; border-radius:6px; border:1px solid #e5e7eb;">
+                                <div style="font-size:11px; font-weight:700; color:#dc2626; text-transform:uppercase; margin-bottom:4px;">Konsul / Rujuk</div>
+                                <div style="font-size:13px; color:#ef4444; font-weight:600;">${escHtml(d.konsulrujuk)}</div>
+                             </div>` : ''}
+                        </div>
+                    </div>
+                </div>`;
+
+                html += `</div>`; // End wrapper
+
+                cardsToShow.push(cardWrap('psikiatrik', 'ASESMEN AWAL MEDIS PSIKIATRIK', html));
             }
             renderPsikiatrik();
 

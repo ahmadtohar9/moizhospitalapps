@@ -382,6 +382,7 @@ $route['admin/riwayatPasien/detail_penilaian_medis_jantung'] = 'RiwayatPasienCon
 $route['admin/riwayatPasien/detail_penilaian_medis_kulitdankelamin'] = 'RiwayatPasienController/detail_penilaian_medis_kulitdankelamin';
 $route['admin/riwayatPasien/detail_penilaian_medis_neurologi'] = 'RiwayatPasienController/detail_penilaian_medis_neurologi';
 $route['admin/riwayatPasien/detail_penilaian_medis_paru'] = 'RiwayatPasienController/detail_penilaian_medis_paru';
+$route['admin/riwayatPasien/detail_penilaian_medis_psikiatrik'] = 'RiwayatPasienController/detail_penilaian_medis_psikiatrik';
 $route['admin/riwayatPasien/info'] = 'RiwayatPasienController/info';
 $route['RiwayatPasien/get_detail'] = 'RiwayatPasienController/get_detail';
 

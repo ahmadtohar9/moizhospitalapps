@@ -210,6 +210,7 @@
     RP_PENILAIAN_KULITDANKELAMIN: '<?= site_url("admin/riwayatPasien/detail_penilaian_medis_kulitdankelamin") ?>',
     RP_PENILAIAN_NEUROLOGI: '<?= site_url("admin/riwayatPasien/detail_penilaian_medis_neurologi") ?>',
     RP_PENILAIAN_PARU: '<?= site_url("admin/riwayatPasien/detail_penilaian_medis_paru") ?>',
+    RP_PENILAIAN_PSIKIATRIK: '<?= site_url("admin/riwayatPasien/detail_penilaian_medis_psikiatrik") ?>',
     RP_LAPORAN_TINDAKAN: '<?= site_url("admin/riwayatPasien/detail_laporan_tindakan") ?>',
     RP_INFO: '<?= site_url("admin/riwayatPasien/info") ?>'
   };

@@ -813,6 +813,24 @@ class RiwayatPasien_model extends CI_Model
     }
 
     /**
+     * Get Penilaian Medis Psikiatrik by no_rawat
+     */
+    public function get_penilaian_medis_psikiatrik_by_norawat($no_rawat)
+    {
+        $row = $this->db->select("
+            pp.*,
+            d.nm_dokter
+        ")
+            ->from('penilaian_medis_ralan_psikiatrik pp')
+            ->join('dokter d', 'd.kd_dokter = pp.kd_dokter', 'left')
+            ->where('pp.no_rawat', $no_rawat)
+            ->get()->row_array();
+
+        return $row;
+    }
+
+
+    /**
      * Get Penilaian Medis Jantung (Kardiologi) by no_rawat
      */
     public function get_penilaian_medis_jantung_by_norawat($no_rawat)

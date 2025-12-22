@@ -1927,10 +1927,11 @@ $(function () {
             $.get(API_URLS.RP_PENILAIAN_JANTUNG, { no_rawat: norawat }),
             $.get(API_URLS.RP_PENILAIAN_KULITDANKELAMIN, { no_rawat: norawat }),
             $.get(API_URLS.RP_PENILAIAN_NEUROLOGI, { no_rawat: norawat }),
-            $.get(API_URLS.RP_PENILAIAN_PARU, { no_rawat: norawat })
+            $.get(API_URLS.RP_PENILAIAN_PARU, { no_rawat: norawat }),
+            $.get(API_URLS.RP_PENILAIAN_PSIKIATRIK, { no_rawat: norawat })
         ).done(function (
             summaryRes, soapRes, diagRes, procRes, tindRes, resepRes,
-            labRes, radRes, rdocsRes, berkasRes, operasiRes, penunjangRes, laptindRes, igdRes, pdRes, orthoRes, kfrRes, rehabRes, mataRes, kandunganRes, anakRes, bedahRes, thtRes, jantungRes, kulitdankelaminRes, neurologiRes, paruRes
+            labRes, radRes, rdocsRes, berkasRes, operasiRes, penunjangRes, laptindRes, igdRes, pdRes, orthoRes, kfrRes, rehabRes, mataRes, kandunganRes, anakRes, bedahRes, thtRes, jantungRes, kulitdankelaminRes, neurologiRes, paruRes, psikiatrikRes
         ) {
             const J = x => { try { return (typeof x[0] === 'string') ? JSON.parse(x[0]) : x[0]; } catch (_) { return {}; } };
 
@@ -1938,7 +1939,7 @@ $(function () {
             const diag = J(diagRes), proc = J(procRes), tind = J(tindRes), resep = J(resepRes);
             const lab = J(labRes), rad = J(radRes), rdocs = J(rdocsRes), berkas = J(berkasRes);
             const operasi = J(operasiRes), penunjang = J(penunjangRes), laptind = J(laptindRes);
-            const igd = J(igdRes), pd = J(pdRes), ortho = J(orthoRes), kfr = J(kfrRes), rehab = J(rehabRes), mata = J(mataRes), detail_penilaian_medis_kandungan = J(kandunganRes), anak = J(anakRes), bedah = J(bedahRes), tht = J(thtRes), jantung = J(jantungRes), kulitdankelamin = J(kulitdankelaminRes), neurologi = J(neurologiRes), paru = J(paruRes);
+            const igd = J(igdRes), pd = J(pdRes), ortho = J(orthoRes), kfr = J(kfrRes), rehab = J(rehabRes), mata = J(mataRes), detail_penilaian_medis_kandungan = J(kandunganRes), anak = J(anakRes), bedah = J(bedahRes), tht = J(thtRes), jantung = J(jantungRes), kulitdankelamin = J(kulitdankelaminRes), neurologi = J(neurologiRes), paru = J(paruRes), psikiatrik = J(psikiatrikRes);
 
             // Debug: Check if KFR and Rehab data exist
             console.log('KFR Data:', kfr);
@@ -1948,6 +1949,7 @@ $(function () {
             const printPayload = {
                 summary, soapRaw, diag, proc, tind, resep, lab, rad,
                 rdocs, berkas, operasi, penunjang, laptind, igd, pd, ortho, kfr, rehab, mata,
+                psikiatrik,
                 base: base
             };
             window.currentPrintData = printPayload;
@@ -4051,6 +4053,51 @@ $(function () {
                 }
             }
 
+            // === 7b. RENDER PSIKIATRIK ===
+            function renderPsikiatrik() {
+                const d = psikiatrik.data || psikiatrik || {};
+                // Simple check for data existence
+                if (d.keluhan_utama || d.diagnosis || d.anamnesis) {
+
+                    const row = (lbl, val) => `<div style="margin-bottom:4px;"><span style="color:#666; width:120px; display:inline-block;">${lbl}</span> <span style="font-weight:600; color:#333;">${escHtml(val || '-')}</span></div>`;
+
+                    const html = `
+                        <div style="font-family:sans-serif;">
+                            <div style="margin-bottom:12px; border-bottom:1px dashed #ec4899; padding-bottom:8px;">
+                                <div style="font-weight:700; color:#db2777; margin-bottom:4px; text-transform:uppercase; font-size:12px;">Anamnesis & Keluhan</div>
+                                ${d.anamnesis ? row('Jenis Anamnesis', d.anamnesis) : ''}
+                                ${d.hubungan ? row('Hubungan', d.hubungan) : ''}
+                                <div style="margin-top:4px;"><b>Keluhan Utama:</b><br>${escHtml(d.keluhan_utama)}</div>
+                                <div style="margin-top:4px;"><b>RPS:</b><br>${escHtml(d.rps)}</div>
+                            </div>
+
+                            <div style="margin-bottom:12px; border-bottom:1px dashed #ec4899; padding-bottom:8px;">
+                                <div style="font-weight:700; color:#db2777; margin-bottom:8px; text-transform:uppercase; font-size:12px;">Status Psikiatrik</div>
+                                <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; font-size:13px; background:#fdf2f8; padding:8px; border-radius:6px;">
+                                    ${d.penampilan ? `<div><span>Penampilan:</span> <b>${escHtml(d.penampilan)}</b></div>` : ''}
+                                    ${d.pembicaraan ? `<div><span>Pembicaraan:</span> <b>${escHtml(d.pembicaraan)}</b></div>` : ''}
+                                    ${d.psikomotor ? `<div><span>Psikomotor:</span> <b>${escHtml(d.psikomotor)}</b></div>` : ''}
+                                    ${d.mood ? `<div><span>Mood:</span> <b>${escHtml(d.mood)}</b></div>` : ''}
+                                    ${d.sikap ? `<div><span>Sikap:</span> <b>${escHtml(d.sikap)}</b></div>` : ''}
+                                    ${d.fungsi_kognitif ? `<div><span>Fungsi Kognitif:</span> <b>${escHtml(d.fungsi_kognitif)}</b></div>` : ''}
+                                </div>
+                            </div>
+
+                            <div style="margin-bottom:12px;">
+                                <div style="font-weight:700; color:#db2777; margin-bottom:4px; text-transform:uppercase; font-size:12px;">Diagnosis & Terapi</div>
+                                <div style="background:#fff1f2; padding:8px; border-radius:6px; border:1px solid #fda4af;">
+                                    <div style="margin-bottom:6px;"><b>Diagnosis:</b> ${escHtml(d.diagnosis)}</div>
+                                    <div style="margin-bottom:6px;"><b>Tatalaksana:</b> ${escHtml(d.tata)}</div>
+                                    ${d.konsulrujuk ? `<div><b>Konsul/Rujuk:</b> ${escHtml(d.konsulrujuk)}</div>` : ''}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    cardsToShow.push(cardWrap('psikiatrik', 'ASESMEN PSIKIATRIK', html));
+                }
+            }
+            renderPsikiatrik();
+
             // === 8. RENDER RADIOLOGI ===
             function renderRadiologi() {
                 const radRows = (rad.data?.rows || rad.data || rad || []);
@@ -4661,7 +4708,7 @@ $(function () {
             renderPenilaianJantung();
             renderPenilaianKulitDanKelamin(); renderIGD();
             renderPenilaianNeurologi(); renderTandaVital();
-            renderPenilaianParu();            renderSOAP();
+            renderPenilaianParu(); renderSOAP();
             renderDiagnosa();
             renderProsedur();
             renderTindakan();

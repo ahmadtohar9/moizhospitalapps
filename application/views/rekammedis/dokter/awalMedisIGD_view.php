@@ -1,1070 +1,778 @@
+<!-- ASESMEN AWAL MEDIS IGD - COMPLETE CLEAN VERSION -->
 <style>
-    .form-header {
-        background: #f4f4f4;
-        padding: 10px;
-        border-bottom: 1px solid #ddd;
+    .section-header {
+        background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        color: white;
+        padding: 10px 15px;
+        border-radius: 5px;
+        margin: 15px 0 10px 0;
         font-weight: bold;
+    }
+
+    .form-group {
         margin-bottom: 15px;
     }
 
     .form-group label {
         font-weight: 600;
-        font-size: 0.9em;
-    }
-
-    .input-sm {
-        padding: 5px 10px;
-        height: 30px;
-        font-size: 13px;
-    }
-
-    .canvas-container {
-        position: relative;
-        border: 1px solid #ccc;
-        background: #f9f9f9;
-        margin: 0 auto;
+        margin-bottom: 5px;
         display: block;
     }
 
-    canvas {
-        cursor: crosshair;
-    }
-
-    .canvas-tools {
-        margin-bottom: 5px;
+    .canvas-wrapper {
+        border: 2px dashed #ddd;
+        padding: 10px;
+        background: #f9f9f9;
         text-align: center;
     }
 
-    .canvas-tools button {
-        margin: 0 2px;
+    canvas {
+        border: 1px solid #ccc;
+        cursor: crosshair;
+        max-width: 100%;
     }
 </style>
 
+<div class="container-fluid">
+    <form id="formIGDAssessment" autocomplete="off">
+        <input type="hidden" name="no_rawat" value="<?= $no_rawat ?>">
+        <input type="hidden" name="kd_dokter" value="<?= $kd_dokter ?>">
 
-<div class="box-header with-border">
-    <h3 class="box-title"><b><i class="fa fa-user-md"></i> Asesmen Awal Medis Gawat Darurat</b></h3>
-    <div class="box-tools pull-right">
-        <button type="button" class="btn btn-box-tool" onclick="location.reload()" title="Refresh"><i
-                class="fa fa-refresh"></i></button>
-    </div>
-</div>
-<div class="box-body">
-    <style>
-        .section-header {
-            font-size: 16px;
-            font-weight: 600;
-            color: #3c8dbc;
-            border-bottom: 2px solid #3c8dbc;
-            padding-bottom: 5px;
-            margin-top: 20px;
-            margin-bottom: 15px;
-        }
-
-        .section-header i {
-            margin-right: 8px;
-        }
-
-        .form-horizontal .control-label {
-            text-align: left;
-        }
-    </style>
-
-    <form id="form-awal-igd">
-        <input type="hidden" name="no_rawat" id="igd_no_rawat" value="<?= $no_rawat; ?>">
-        <input type="hidden" name="kd_dokter" id="igd_kd_dokter" value="<?= $kd_dokter; ?>">
-        <input type="hidden" name="lokalis_image" id="lokalis_image">
-
-
-
-            <!-- Baris Atas: Tanggal, Jam, Anamnesis, Hubungan -->
-            <div class="row" style="margin-bottom: 10px;">
-                <div class="col-md-2">
-                    <div class="form-group">
-                        <label>Tanggal</label>
-                        <div class="input-group">
-                            <div class="input-group-addon"><i class="fa fa-calendar"></i></div>
-                            <input type="text" class="form-control datepicker" name="tanggal"
-                                value="<?= isset($asesment['tanggal']) ? explode(' ', $asesment['tanggal'])[0] : $tgl_sekarang; ?>">
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-2">
-                    <div class="form-group">
-                        <label>Jam</label>
-                        <div class="input-group">
-                            <div class="input-group-addon"><i class="fa fa-clock-o"></i></div>
-                            <input type="text" class="form-control" name="jam" id="jam_input"
-                                value="<?= isset($asesment['tanggal']) ? explode(' ', $asesment['tanggal'])[1] : $jam_sekarang; ?>">
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="form-group">
-                        <label>Anamnesis</label>
-                        <select class="form-control" name="anamnesis">
-                            <option value="Autoanamnesis" <?= (isset($asesment['anamnesis']) && $asesment['anamnesis'] == 'Autoanamnesis') ? 'selected' : ''; ?>>Autoanamnesis</option>
-                            <option value="Alloanamnesis" <?= (isset($asesment['anamnesis']) && $asesment['anamnesis'] == 'Alloanamnesis') ? 'selected' : ''; ?>>Alloanamnesis</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="col-md-5">
-                    <div class="form-group">
-                        <label>Hubungan (jika Alloanamnesis)</label>
-                        <input type="text" class="form-control" name="hubungan"
-                            value="<?= $asesment['hubungan'] ?? ''; ?>"
-                            placeholder="Sebutkan hubungan dengan pasien...">
-                    </div>
+        <!-- TANGGAL & JAM ASESMEN -->
+        <div class="row" style="margin-bottom: 20px;">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label><i class="fa fa-calendar"></i> Tanggal Asesmen <span class="text-danger">*</span></label>
+                    <input type="date" class="form-control" name="tanggal" value="<?= $tgl_sekarang ?>" required>
                 </div>
             </div>
-
-            <!-- I. RIWAYAT KESEHATAN -->
-            <div class="section-header"><i class="fa fa-history"></i> I. RIWAYAT KESEHATAN</div>
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label>Keluhan Utama</label>
-                        <textarea class="form-control" name="keluhan_utama"
-                            rows="3"><?= $asesment['keluhan_utama'] ?? ''; ?></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label>Riwayat Penyakit Sekarang</label>
-                        <textarea class="form-control" name="rps" rows="3"><?= $asesment['rps'] ?? ''; ?></textarea>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label>Riw. Penyakit Dahulu</label>
-                                <textarea class="form-control" name="rpd"
-                                    rows="3"><?= $asesment['rpd'] ?? ''; ?></textarea>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label>Riw. Penyakit Keluarga</label>
-                                <textarea class="form-control" name="rpk"
-                                    rows="3"><?= $asesment['rpk'] ?? ''; ?></textarea>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label>Riw. Penggunaan Obat</label>
-                                <textarea class="form-control" name="rpo"
-                                    rows="3"><?= $asesment['rpo'] ?? ''; ?></textarea>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label>Riwayat Alergi</label>
-                                <input type="text" class="form-control" name="alergi"
-                                    value="<?= $asesment['alergi'] ?? ''; ?>" placeholder="Tidak ada">
-                            </div>
-                        </div>
-                    </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label><i class="fa fa-clock"></i> Jam Asesmen <span class="text-danger">*</span></label>
+                    <input type="time" class="form-control" name="jam" value="<?= $jam_sekarang ?>" step="1" required>
                 </div>
             </div>
-
-
-            <!-- II. PEMERIKSAAN FISIK -->
-            <div class="section-header"><i class="fa fa-stethoscope"></i> II. PEMERIKSAAN FISIK</div>
-
-            <div class="well" style="background: #fdfdfd; padding: 15px;">
-                <div class="row">
-                    <div class="col-md-2">
-                        <label>Keadaan Umum</label>
-                        <select class="form-control input-sm" name="keadaan">
-                            <option value="">-- Pilih --</option>
-                            <option value="Sehat" <?= ($asesment['keadaan'] ?? '') == 'Sehat' ? 'selected' : ''; ?>>Sehat
-                            </option>
-                            <option value="Sakit Ringan" <?= ($asesment['keadaan'] ?? '') == 'Sakit Ringan' ? 'selected' : ''; ?>>
-                                Sakit Ringan</option>
-                            <option value="Sakit Sedang" <?= ($asesment['keadaan'] ?? '') == 'Sakit Sedang' ? 'selected' : ''; ?>>
-                                Sakit Sedang</option>
-                            <option value="Sakit Berat" <?= ($asesment['keadaan'] ?? '') == 'Sakit Berat' ? 'selected' : ''; ?>>Sakit
-                                Berat</option>
-                        </select>
-                    </div>
-                    <div class="col-md-2">
-                        <label>Kesadaran</label>
-                        <select class="form-control input-sm" name="kesadaran">
-                            <option value="">-- Pilih --</option>
-                            <option value="Compos Mentis" <?= ($asesment['kesadaran'] ?? '') == 'Compos Mentis' ? 'selected' : ''; ?>>Compos Mentis</option>
-                            <option value="Apatis" <?= ($asesment['kesadaran'] ?? '') == 'Apatis' ? 'selected' : ''; ?>>
-                                Apatis
-                            </option>
-                            <option value="Somnolen" <?= ($asesment['kesadaran'] ?? '') == 'Somnolen' ? 'selected' : ''; ?>>Somnolen
-                            </option>
-                            <option value="Sopor" <?= ($asesment['kesadaran'] ?? '') == 'Sopor' ? 'selected' : ''; ?>>Sopor
-                            </option>
-                            <option value="Koma" <?= ($asesment['kesadaran'] ?? '') == 'Koma' ? 'selected' : ''; ?>>Koma
-                            </option>
-                        </select>
-                    </div>
-                    <div class="col-md-1">
-                        <label>GCS</label>
-                        <input type="text" class="form-control input-sm" name="gcs"
-                            value="<?= $asesment['gcs'] ?? ''; ?>">
-                    </div>
-                    <div class="col-md-1">
-                        <label>TB (cm)</label>
-                        <input type="text" class="form-control input-sm" name="tb"
-                            value="<?= $asesment['tb'] ?? ''; ?>">
-                    </div>
-                    <div class="col-md-1">
-                        <label>BB (Kg)</label>
-                        <input type="text" class="form-control input-sm" name="bb"
-                            value="<?= $asesment['bb'] ?? ''; ?>">
-                    </div>
-                    <div class="col-md-1">
-                        <label>TD</label>
-                        <input type="text" class="form-control input-sm" name="td" value="<?= $asesment['td'] ?? ''; ?>"
-                            placeholder="mmHg">
-                    </div>
-                    <div class="col-md-1">
-                        <label>Nadi</label>
-                        <input type="text" class="form-control input-sm" name="nadi"
-                            value="<?= $asesment['nadi'] ?? ''; ?>" placeholder="x/m">
-                    </div>
-                    <div class="col-md-1">
-                        <label>RR</label>
-                        <input type="text" class="form-control input-sm" name="rr" value="<?= $asesment['rr'] ?? ''; ?>"
-                            placeholder="x/m">
-                    </div>
-                    <div class="col-md-1">
-                        <label>Suhu</label>
-                        <input type="text" class="form-control input-sm" name="suhu"
-                            value="<?= $asesment['suhu'] ?? ''; ?>" placeholder="C">
-                    </div>
-                    <div class="col-md-1">
-                        <label>SpO2</label>
-                        <input type="text" class="form-control input-sm" name="spo2"
-                            value="<?= $asesment['spo'] ?? ($asesment['spo2'] ?? ''); ?>" placeholder="%">
-                    </div>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col-md-6">
-                    <table class="table table-borderless table-condensed">
-                        <tr>
-                            <td width="30%"><label>Kepala</label></td>
-                            <td>
-                                <select class="form-control input-sm" name="kepala">
-                                    <option value="Normal" <?= ($asesment['kepala'] ?? '') == 'Normal' ? 'selected' : ''; ?>>Normal
-                                    </option>
-                                    <option value="Abnormal" <?= ($asesment['kepala'] ?? '') == 'Abnormal' ? 'selected' : ''; ?>>
-                                        Abnormal</option>
-                                    <option value="Tidak Diperiksa" <?= ($asesment['kepala'] ?? '') == 'Tidak Diperiksa' ? 'selected' : ''; ?>>Tidak Diperiksa</option>
-                                </select>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><label>Mata</label></td>
-                            <td>
-                                <select class="form-control input-sm" name="mata">
-                                    <option value="Normal" <?= ($asesment['mata'] ?? '') == 'Normal' ? 'selected' : ''; ?>>
-                                        Normal
-                                    </option>
-                                    <option value="Abnormal" <?= ($asesment['mata'] ?? '') == 'Abnormal' ? 'selected' : ''; ?>>
-                                        Abnormal</option>
-                                    <option value="Tidak Diperiksa" <?= ($asesment['mata'] ?? '') == 'Tidak Diperiksa' ? 'selected' : ''; ?>>Tidak Diperiksa</option>
-                                </select>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><label>Gigi & Mulut</label></td>
-                            <td>
-                                <select class="form-control input-sm" name="gigi">
-                                    <option value="Normal" <?= ($asesment['gigi'] ?? '') == 'Normal' ? 'selected' : ''; ?>>
-                                        Normal
-                                    </option>
-                                    <option value="Abnormal" <?= ($asesment['gigi'] ?? '') == 'Abnormal' ? 'selected' : ''; ?>>
-                                        Abnormal</option>
-                                    <option value="Tidak Diperiksa" <?= ($asesment['gigi'] ?? '') == 'Tidak Diperiksa' ? 'selected' : ''; ?>>Tidak Diperiksa</option>
-                                </select>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><label>Leher</label></td>
-                            <td>
-                                <select class="form-control input-sm" name="leher">
-                                    <option value="Normal" <?= ($asesment['leher'] ?? '') == 'Normal' ? 'selected' : ''; ?>>Normal
-                                    </option>
-                                    <option value="Abnormal" <?= ($asesment['leher'] ?? '') == 'Abnormal' ? 'selected' : ''; ?>>
-                                        Abnormal</option>
-                                    <option value="Tidak Diperiksa" <?= ($asesment['leher'] ?? '') == 'Tidak Diperiksa' ? 'selected' : ''; ?>>Tidak Diperiksa</option>
-                                </select>
-                            </td>
-                        </tr>
-                    </table>
-                </div>
-                <div class="col-md-6">
-                    <table class="table table-borderless table-condensed">
-                        <tr>
-                            <td width="30%"><label>Thoraks</label></td>
-                            <td>
-                                <select class="form-control input-sm" name="thoraks">
-                                    <option value="Normal" <?= ($asesment['thoraks'] ?? '') == 'Normal' ? 'selected' : ''; ?>>Normal
-                                    </option>
-                                    <option value="Abnormal" <?= ($asesment['thoraks'] ?? '') == 'Abnormal' ? 'selected' : ''; ?>>
-                                        Abnormal</option>
-                                    <option value="Tidak Diperiksa" <?= ($asesment['thoraks'] ?? '') == 'Tidak Diperiksa' ? 'selected' : ''; ?>>Tidak Diperiksa</option>
-                                </select>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><label>Abdomen</label></td>
-                            <td>
-                                <select class="form-control input-sm" name="abdomen">
-                                    <option value="Normal" <?= ($asesment['abdomen'] ?? '') == 'Normal' ? 'selected' : ''; ?>>Normal
-                                    </option>
-                                    <option value="Abnormal" <?= ($asesment['abdomen'] ?? '') == 'Abnormal' ? 'selected' : ''; ?>>
-                                        Abnormal</option>
-                                    <option value="Tidak Diperiksa" <?= ($asesment['abdomen'] ?? '') == 'Tidak Diperiksa' ? 'selected' : ''; ?>>Tidak Diperiksa</option>
-                                </select>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><label>Genital</label></td>
-                            <td>
-                                <select class="form-control input-sm" name="genital">
-                                    <option value="Normal" <?= ($asesment['genital'] ?? '') == 'Normal' ? 'selected' : ''; ?>>Normal
-                                    </option>
-                                    <option value="Abnormal" <?= ($asesment['genital'] ?? '') == 'Abnormal' ? 'selected' : ''; ?>>
-                                        Abnormal</option>
-                                    <option value="Tidak Diperiksa" <?= ($asesment['genital'] ?? '') == 'Tidak Diperiksa' ? 'selected' : ''; ?>>Tidak Diperiksa</option>
-                                </select>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><label>Ekstremitas</label></td>
-                            <td>
-                                <select class="form-control input-sm" name="ekstremitas">
-                                    <option value="Normal" <?= ($asesment['ekstremitas'] ?? '') == 'Normal' ? 'selected' : ''; ?>>
-                                        Normal</option>
-                                    <option value="Abnormal" <?= ($asesment['ekstremitas'] ?? '') == 'Abnormal' ? 'selected' : ''; ?>>Abnormal</option>
-                                    <option value="Tidak Diperiksa" <?= ($asesment['ekstremitas'] ?? '') == 'Tidak Diperiksa' ? 'selected' : ''; ?>>Tidak Diperiksa</option>
-                                </select>
-                            </td>
-                        </tr>
-                    </table>
-                </div>
-            </div>
-            <div class="form-group">
-                <label>Keterangan Fisik Lainnya</label>
-                <textarea class="form-control" name="ket_fisik" rows="2"><?= $asesment['ket_fisik'] ?? ''; ?></textarea>
-            </div>
-
-            <!-- III. STATUS LOKALIS -->
-            <div class="section-header"><i class="fa fa-male"></i> III. STATUS LOKALIS 3D</div>
-            <div class="text-center">
-                <div class="canvas-tools">
-                    <button type="button" class="btn btn-default btn-sm" onclick="setBrushColor('#000000')"><i
-                            class="fa fa-circle" style="color:black"></i></button>
-                    <button type="button" class="btn btn-default btn-sm" onclick="setBrushColor('#ff0000')"><i
-                            class="fa fa-circle" style="color:red"></i> Biasa</button>
-                    <button type="button" class="btn btn-default btn-sm" onclick="setBrushColor('#0000ff')"><i
-                            class="fa fa-circle" style="color:blue"></i> Luka</button>
-                    <button type="button" class="btn btn-default btn-sm" onclick="setBrushColor('#00ff00')"><i
-                            class="fa fa-circle" style="color:green"></i> Nyeri</button>
-                    <button type="button" class="btn btn-default btn-sm" onclick="clearCanvas()"><i
-                            class="fa fa-eraser"></i> Reset</button>
-                </div>
-                <div class="canvas-wrapper"
-                    style="overflow:auto; margin-top:5px; border:1px solid #ddd; background:#fff;">
-                    <canvas id="lokalisCanvas" width="800" height="400"></canvas>
-                </div>
-                <div class="form-group mt-2 text-left">
-                    <label>Keterangan Lokalis</label>
-                    <textarea class="form-control" name="ket_lokalis"
-                        rows="2"><?= $asesment['ket_lokalis'] ?? ''; ?></textarea>
-                </div>
-            </div>
-
-            <!-- IV. PEMERIKSAAN PENUNJANG -->
-            <div class="section-header"><i class="fa fa-flask"></i> IV. PEMERIKSAAN PENUNJANG</div>
-            <div class="row">
-                <div class="col-md-4">
-                    <div class="form-group">
-                        <label>EKG</label>
-                        <textarea class="form-control" name="ekg" rows="3"><?= $asesment['ekg'] ?? ''; ?></textarea>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="form-group">
-                        <label>Radiologi</label>
-                        <textarea class="form-control" name="rad" rows="3"><?= $asesment['rad'] ?? ''; ?></textarea>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="form-group">
-                        <label>Laboratorium</label>
-                        <textarea class="form-control" name="lab" rows="3"><?= $asesment['lab'] ?? ''; ?></textarea>
-                    </div>
-                </div>
-            </div>
-
-            <!-- V_VI. DIAGNOSIS & TATALAKSANA -->
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="section-header"><i class="fa fa-medkit"></i> V. DIAGNOSIS / ASESMEN</div>
-                    <div class="form-group">
-                        <textarea class="form-control" name="diagnosis"
-                            rows="5"><?= $asesment['diagnosis'] ?? ''; ?></textarea>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="section-header"><i class="fa fa-user-md"></i> VI. TATALAKSANA</div>
-                    <div class="form-group">
-                        <textarea class="form-control" name="tata_laksana"
-                            rows="5"><?= $asesment['tata'] ?? ($asesment['tata_laksana'] ?? ''); ?></textarea>
-                    </div>
-                </div>
-            </div>
-
-            <div class="box-footer text-center" style="border-top: 1px solid #f4f4f4; padding-top: 20px;">
-                <button type="button" class="btn btn-success btn-lg btn-flat" id="btn-save-igd"
-                    style="min-width:120px; margin-right: 5px;"><i class="fa fa-save"></i> Simpan</button>
-                <button type="button" class="btn btn-warning btn-lg btn-flat" id="btn-print-igd"
-                    style="min-width:120px; margin-right: 5px;"><i class="fa fa-print"></i> Cetak</button>
-                <button type="button" class="btn btn-danger btn-lg btn-flat" id="btn-delete-igd"
-                    style="min-width:120px;"><i class="fa fa-trash"></i> Hapus</button>
-            </div>
-        </form>
-
-        <div id="history-container" style="<?= !empty($asesment['no_rawat']) ? '' : 'display:none;'; ?>">
-            <div class="row" style="margin-top: 40px; margin-bottom: 20px;">
-                <div class="col-md-12">
-                    <div class="box box-success box-solid">
-                        <div class="box-header with-border">
-                            <h3 class="box-title"><i class="fa fa-check-square-o"></i> Riwayat Asesmen Aktif</h3>
-                        </div>
-                        <div class="box-body no-padding">
-                            <table class="table table-striped">
-                                <thead>
-                                    <tr>
-                                        <th>Tanggal</th>
-                                        <th>Dokter</th>
-                                        <th>Anamnesis</th>
-                                        <th>Diagnosis Utama</th>
-                                        <th style="width: 150px">Aksi</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td style="vertical-align:middle;" data-bind="tanggal">
-                                            <?= isset($asesment['tanggal']) ? date('d-m-Y H:i', strtotime($asesment['tanggal'])) : '-'; ?>
-                                        </td>
-                                        <td style="vertical-align:middle;"><?= $detail_pasien['nm_dokter']; ?></td>
-                                        <td style="vertical-align:middle;" data-bind="anamnesis">
-                                            <?= $asesment['anamnesis'] ?? ''; ?>
-                                        </td>
-                                        <td style="vertical-align:middle;"><span class="label label-danger"
-                                                style="font-size:12px;"
-                                                data-bind="diagnosis_short"><?= isset($asesment['diagnosis']) ? substr($asesment['diagnosis'], 0, 50) . '...' : ''; ?></span>
-                                        </td>
-                                        <td style="vertical-align:middle;">
-                                            <button type="button" class="btn btn-info btn-sm btn-flat"
-                                                data-toggle="modal" data-target="#modal-detail-igd"
-                                                title="Lihat Detail"><i class="fa fa-eye"></i></button>
-                                            <button type="button" class="btn btn-warning btn-sm btn-flat"
-                                                id="btn-print-table" title="Cetak"><i class="fa fa-print"></i></button>
-                                            <button type="button" class="btn btn-danger btn-sm btn-flat"
-                                                id="btn-delete-table" title="Hapus"><i class="fa fa-trash"></i></button>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Modal Detail -->
-            <div class="modal fade" id="modal-detail-igd">
-                <div class="modal-dialog modal-lg" style="width: 90%;">
-                    <div class="modal-content" style="border-radius: 5px;">
-                        <div class="modal-header bg-blue"
-                            style="border-top-left-radius: 5px; border-top-right-radius: 5px;">
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"
-                                style="color:white; opacity:1;">
-                                <span aria-hidden="true">&times;</span></button>
-                            <h4 class="modal-title"><i class="fa fa-file-medical-alt"></i> Detail Asesmen IGD Pasien
-                            </h4>
-                        </div>
-                        <div class="modal-body" style="background: #ecf0f5;">
-
-                            <div class="row">
-                                <!-- Kolom Kiri: Vital & Riwayat -->
-                                <div class="col-md-5">
-                                    <!-- Tanda Vital -->
-                                    <div class="box box-widget widget-user-2">
-                                        <div class="widget-user-header bg-aqua-active">
-                                            <div class="widget-user-image">
-                                                <img class="img-circle"
-                                                    src="<?= base_url('assets/dist/img/avatar5.png'); ?>"
-                                                    alt="User Avatar" style="background:#fff;">
-                                            </div>
-                                            <h3 class="widget-user-username" style="font-size: 18px;">
-                                                <?= $detail_pasien['nm_pasien']; ?>
-                                            </h3>
-                                            <h5 class="widget-user-desc">No. RM: <?= $detail_pasien['no_rkm_medis']; ?>
-                                            </h5>
-                                        </div>
-                                        <div class="box-footer no-padding">
-                                            <ul class="nav nav-stacked">
-                                                <li><a href="#">Keadaan Umum <span class="pull-right badge bg-blue"
-                                                            data-bind="keadaan"><?= $asesment['keadaan'] ?? ''; ?></span></a>
-                                                </li>
-                                                <li><a href="#">Kesadaran <span class="pull-right badge bg-blue"><span
-                                                                data-bind="kesadaran"><?= $asesment['kesadaran'] ?? ''; ?></span>
-                                                            (GCS: <span
-                                                                data-bind="gcs"><?= $asesment['gcs'] ?? ''; ?></span>)</span></a>
-                                                </li>
-                                                <li><a href="#">Tekanan Darah <span
-                                                            class="pull-right badge bg-aqua"><span
-                                                                data-bind="td"><?= $asesment['td'] ?? ''; ?></span>
-                                                            mmHg</span></a></li>
-                                                <li><a href="#">Nadi <span class="pull-right badge bg-aqua"><span
-                                                                data-bind="nadi"><?= $asesment['nadi'] ?? ''; ?></span>
-                                                            x/m</span></a></li>
-                                                <li><a href="#">RR (Napas) <span class="pull-right badge bg-aqua"><span
-                                                                data-bind="rr"><?= $asesment['rr'] ?? ''; ?></span>
-                                                            x/m</span></a></li>
-                                                <li><a href="#">Suhu <span class="pull-right badge bg-red"><span
-                                                                data-bind="suhu"><?= $asesment['suhu'] ?? ''; ?></span>
-                                                            °C</span></a></li>
-                                                <li><a href="#">SpO2 <span class="pull-right badge bg-green"><span
-                                                                data-bind="spo2"><?= $asesment['spo'] ?? ($asesment['spo2'] ?? '-'); ?></span>
-                                                            %</span></a></li>
-                                            </ul>
-                                        </div>
-                                    </div>
-
-                                    <div class="box box-solid">
-                                        <div class="box-header with-border">
-                                            <h3 class="box-title"><i class="fa fa-history"></i> Riwayat Kesehatan</h3>
-                                        </div>
-                                        <div class="box-body">
-                                            <strong><i class="fa fa-commenting-o margin-r-5"></i> Keluhan Utama</strong>
-                                            <p class="text-muted" data-bind="keluhan_utama">
-                                                <?= $asesment['keluhan_utama'] ?? ''; ?>
-                                            </p>
-                                            <hr style="margin: 10px 0;">
-                                            <strong><i class="fa fa-file-text-o margin-r-5"></i> Riwayat Penyakit
-                                                Sekarang</strong>
-                                            <p class="text-muted" data-bind="rps"><?= $asesment['rps'] ?? ''; ?></p>
-                                            <hr style="margin: 10px 0;">
-                                            <strong><i class="fa fa-history margin-r-5"></i> Riwayat Penyakit
-                                                Dahulu</strong>
-                                            <p class="text-muted" data-bind="rpd"><?= $asesment['rpd'] ?? ''; ?></p>
-                                            <hr style="margin: 10px 0;">
-                                            <strong><i class="fa fa-warning margin-r-5"></i> Alergi</strong>
-                                            <p class="text-danger" data-bind="alergi"><?= $asesment['alergi'] ?? ''; ?>
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Kolom Kanan: Diagnosis & Lokalis -->
-                                <div class="col-md-7">
-                                    <!-- Callout Diagnosis -->
-                                    <div class="callout callout-danger" style="border-left-width: 5px;">
-                                        <h4 style="margin-bottom: 5px;"><i class="fa fa-stethoscope"></i> Diagnosis
-                                            Kerja
-                                        </h4>
-                                        <p style="font-size: 16px;" data-bind="diagnosis">
-                                            <?= $asesment['diagnosis'] ?? ''; ?>
-                                        </p>
-                                    </div>
-
-                                    <!-- Status Lokalis & Penunjang -->
-                                    <div class="nav-tabs-custom">
-                                        <ul class="nav nav-tabs">
-                                            <li class="active"><a href="#tab_lokalis" data-toggle="tab">Status
-                                                    Lokalis</a>
-                                            </li>
-                                            <li><a href="#tab_penunjang" data-toggle="tab">Pemeriksaan Penunjang</a>
-                                            </li>
-                                            <li><a href="#tab_tatalaksana" data-toggle="tab">Tatalaksana</a></li>
-                                        </ul>
-                                        <div class="tab-content">
-                                            <div class="tab-pane active" id="tab_lokalis">
-                                                <p class="lead" style="font-size:14px; margin-bottom:10px;"
-                                                    data-bind="ket_lokalis"><?= $asesment['ket_lokalis'] ?? ''; ?></p>
-                                                <div class="text-center"
-                                                    style="background: #fff; border: 1px solid #f4f4f4; padding: 10px;">
-                                                    <img id="img_lokalis_view"
-                                                        src="<?= isset($asesment['no_rawat']) && file_exists(FCPATH . 'assets/images/lokalis_igd/lokalis_' . str_replace('/', '', $asesment['no_rawat']) . '.png') ? base_url('assets/images/lokalis_igd/lokalis_' . str_replace('/', '', $asesment['no_rawat']) . '.png') : ''; ?>"
-                                                        class="img-responsive"
-                                                        style="max-height:300px; margin: 0 auto; display: <?= isset($asesment['no_rawat']) ? 'block' : 'none'; ?>">
-                                                    <div id="no_img_lokalis" class="alert alert-warning"
-                                                        style="display: <?= isset($asesment['no_rawat']) ? 'none' : 'block'; ?>">
-                                                        Tidak ada gambar status lokalis.</div>
-                                                </div>
-                                            </div>
-                                            <div class="tab-pane" id="tab_penunjang">
-                                                <ul class="products-list product-list-in-box">
-                                                    <li class="item">
-                                                        <div class="product-img"><i
-                                                                class="fa fa-heartbeat fa-2x text-red"></i></div>
-                                                        <div class="product-info"><a href="javascript:void(0)"
-                                                                class="product-title">EKG</a>
-                                                            <span class="product-description"
-                                                                data-bind="ekg"><?= $asesment['ekg'] ?? '-'; ?></span>
-                                                        </div>
-                                                    </li>
-                                                    <li class="item">
-                                                        <div class="product-img"><i
-                                                                class="fa fa-film fa-2x text-black"></i>
-                                                        </div>
-                                                        <div class="product-info"><a href="javascript:void(0)"
-                                                                class="product-title">Radiologi</a>
-                                                            <span class="product-description"
-                                                                data-bind="rad"><?= $asesment['rad'] ?? '-'; ?></span>
-                                                        </div>
-                                                    </li>
-                                                    <li class="item">
-                                                        <div class="product-img"><i
-                                                                class="fa fa-flask fa-2x text-yellow"></i></div>
-                                                        <div class="product-info"><a href="javascript:void(0)"
-                                                                class="product-title">Laboratorium</a>
-                                                            <span class="product-description"
-                                                                data-bind="lab"><?= $asesment['lab'] ?? '-'; ?></span>
-                                                        </div>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                            <div class="tab-pane" id="tab_tatalaksana">
-                                                <div class="well well-sm">
-                                                    <h4 class="text-green">Rencana Tatalaksana / Terapi:</h4>
-                                                    <p data-bind="tata_laksana">
-                                                        <?= nl2br($asesment['tata'] ?? ($asesment['tata_laksana'] ?? '-')); ?>
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                </div>
-                            </div>
-
-                        </div>
-                        <div class="modal-footer" style="background: #f4f4f4;">
-                            <button type="button" class="btn btn-default btn-flat pull-left"
-                                data-dismiss="modal">Tutup</button>
-                            <a href="javascript:void(0)" onclick="$('#btn-print-igd').click()"
-                                class="btn btn-primary btn-flat"><i class="fa fa-print"></i> Cetak Dokumen PDF</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <script>
-                // Bind buttons in table to main actions
-                $('#btn-print-table').click(function () {
-                    var nr = $('#igd_no_rawat').val();
-                    var t = new Date().getTime();
-                    window.open("<?= base_url('AwalMedisIGDController/print_pdf?no_rawat='); ?>" + nr + "&t=" + t, '_blank');
-                });
-                $('#btn-delete-table').click(function () { $('#btn-delete-igd').click(); });
-            </script>
         </div>
 
-        <script>
-            $(document).ready(function () {
-                initCanvas();
+        <!-- I. ANAMNESIS -->
+        <div class="section-header"><i class="fa fa-clipboard"></i> I. ANAMNESIS</div>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label>Jenis Anamnesis <span class="text-danger">*</span></label>
+                    <select class="form-control" name="anamnesis" required onchange="toggleHubungan(this.value)">
+                        <option value="">-- Pilih --</option>
+                        <option value="Autoanamnesis">Autoanamnesis</option>
+                        <option value="Alloanamnesis">Alloanamnesis</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-6" id="hubunganContainer" style="display:none;">
+                <div class="form-group">
+                    <label>Hubungan dengan Pasien</label>
+                    <input type="text" class="form-control" name="hubungan" value=""
+                        placeholder="Contoh: Ibu kandung, Ayah">
+                </div>
+            </div>
+        </div>
 
-                $('#btn-save-igd').click(function () {
-                    // Save logic with Canvas
-                    saveCanvas();
+        <div class="form-group">
+            <label>Keluhan Utama <span class="text-danger">*</span></label>
+            <textarea class="form-control" name="keluhan_utama" rows="2" required></textarea>
+        </div>
 
-                    const data = $('#form-awal-igd').serialize();
-                    const btn = $(this);
-                    btn.prop('disabled', true).html('<i class="fa fa-spin fa-spinner"></i> Menyimpan...');
+        <div class="form-group">
+            <label>Riwayat Penyakit Sekarang (RPS) <span class="text-danger">*</span></label>
+            <textarea class="form-control" name="rps" rows="3" required></textarea>
+        </div>
 
-                    $.post('<?= base_url("AwalMedisIGDController/save") ?>', data, function (res) {
-                        btn.prop('disabled', false).html('<i class="fa fa-save"></i> Simpan');
+        <div class="row">
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label>Riwayat Penyakit Dahulu (RPD)</label>
+                    <textarea class="form-control" name="rpd" rows="2"></textarea>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label>Riwayat Penyakit Keluarga (RPK)</label>
+                    <textarea class="form-control" name="rpk" rows="2"></textarea>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label>Riwayat Penggunaan Obat (RPO)</label>
+                    <textarea class="form-control" name="rpo" rows="2"></textarea>
+                </div>
+            </div>
+        </div>
 
-                        if (res.status === 'success') {
-                            Swal.fire({
-                                title: 'Berhasil',
-                                text: res.message,
-                                icon: 'success',
-                                timer: 1000,
-                                showConfirmButton: false
-                            });
+        <div class="form-group">
+            <label>Riwayat Alergi</label>
+            <input type="text" class="form-control" name="alergi" value="">
+        </div>
 
-                            // SMOOTH UPDATE UI WITHOUT REFRESH
-                            $('#history-container').fadeIn();
+        <!-- II. PEMERIKSAAN FISIK -->
+        <div class="section-header"><i class="fa fa-heartbeat"></i> II. PEMERIKSAAN FISIK</div>
 
-                            // Update Data bindings
-                            $('[data-bind]').each(function () {
-                                var field = $(this).data('bind');
-                                var val = $('[name="' + field + '"]').val();
+        <div class="row">
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label>Keadaan Umum <span class="text-danger">*</span></label>
+                    <select class="form-control" name="keadaan" required>
+                        <option value="">-- Pilih --</option>
+                        <option value="Sehat">Sehat</option>
+                        <option value="Sakit Ringan">Sakit Ringan</option>
+                        <option value="Sakit Sedang">Sakit Sedang</option>
+                        <option value="Sakit Berat">Sakit Berat</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label>Kesadaran <span class="text-danger">*</span></label>
+                    <select class="form-control" name="kesadaran" required>
+                        <option value="">-- Pilih --</option>
+                        <option value="Compos Mentis">Compos Mentis</option>
+                        <option value="Apatis">Apatis</option>
+                        <option value="Somnolen">Somnolen</option>
+                        <option value="Sopor">Sopor</option>
+                        <option value="Koma">Koma</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label>GCS <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" name="gcs" value="" required placeholder="E4V5M6">
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label>SpO₂ (%)</label>
+                    <input type="text" class="form-control" name="spo" value="" placeholder="98">
+                </div>
+            </div>
+        </div>
 
-                                // Special case for diagnosis_short
-                                if (field === 'diagnosis_short') {
-                                    var diag = $('[name="diagnosis"]').val();
-                                    $(this).text(diag.length > 50 ? diag.substring(0, 50) + '...' : diag);
-                                }
-                                else {
-                                    $(this).text(val ? val : '-');
-                                }
-                            });
+        <div class="row">
+            <div class="col-md-2">
+                <div class="form-group">
+                    <label>TD (mmHg)</label>
+                    <input type="text" class="form-control" name="td" value="" placeholder="120/80">
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="form-group">
+                    <label>Nadi (x/mnt)</label>
+                    <input type="text" class="form-control" name="nadi" value="" placeholder="80">
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="form-group">
+                    <label>RR (x/mnt)</label>
+                    <input type="text" class="form-control" name="rr" value="" placeholder="20">
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="form-group">
+                    <label>Suhu (°C)</label>
+                    <input type="text" class="form-control" name="suhu" value="" placeholder="36.5">
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="form-group">
+                    <label>BB (kg) <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" name="bb" value="" required>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="form-group">
+                    <label>TB (cm) <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" name="tb" value="" required>
+                </div>
+            </div>
+        </div>
 
-                            // Update Image Lokalis
-                            var canvasData = document.getElementById('lokalisCanvas').toDataURL();
-                            $('#img_lokalis_view').attr('src', canvasData).show();
-                            $('#no_img_lokalis').hide();
+        <!-- III. PEMERIKSAAN SISTEMIK -->
+        <div class="section-header"><i class="fa fa-user-md"></i> III. PEMERIKSAAN SISTEMIK</div>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label>Kepala</label>
+                    <select class="form-control" name="kepala">
+                        <option value="">-- Pilih --</option>
+                        <option value="Normal">
+                            Normal</option>
+                        <option value="Abnormal">
+                            Abnormal</option>
+                        <option value="Tidak Diperiksa">Tidak Diperiksa</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label>Mata</label>
+                    <select class="form-control" name="mata">
+                        <option value="">-- Pilih --</option>
+                        <option value="Normal">Normal
+                        </option>
+                        <option value="Abnormal">Abnormal
+                        </option>
+                        <option value="Tidak Diperiksa">Tidak Diperiksa</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label>Gigi & Mulut</label>
+                    <select class="form-control" name="gigi">
+                        <option value="">-- Pilih --</option>
+                        <option value="Normal">Normal
+                        </option>
+                        <option value="Abnormal">Abnormal
+                        </option>
+                        <option value="Tidak Diperiksa">Tidak Diperiksa</option>
+                    </select>
+                </div>
+            </div>
+        </div>
 
-                            // Scroll to bottom
-                            $('html, body').animate({
-                                scrollTop: $("#history-container").offset().top
-                            }, 1000);
+        <div class="row">
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label>Leher</label>
+                    <select class="form-control" name="leher">
+                        <option value="">-- Pilih --</option>
+                        <option value="Normal">Normal
+                        </option>
+                        <option value="Abnormal">Abnormal
+                        </option>
+                        <option value="Tidak Diperiksa">Tidak Diperiksa</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label>Thoraks</label>
+                    <select class="form-control" name="thoraks">
+                        <option value="">-- Pilih --</option>
+                        <option value="Normal">
+                            Normal</option>
+                        <option value="Abnormal">
+                            Abnormal</option>
+                        <option value="Tidak Diperiksa">Tidak Diperiksa</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label>Abdomen</label>
+                    <select class="form-control" name="abdomen">
+                        <option value="">-- Pilih --</option>
+                        <option value="Normal">
+                            Normal</option>
+                        <option value="Abnormal">
+                            Abnormal</option>
+                        <option value="Tidak Diperiksa">Tidak Diperiksa</option>
+                    </select>
+                </div>
+            </div>
+        </div>
 
-                        } else {
-                            Swal.fire('Gagal', res.message, 'error');
-                        }
-                    }, 'json').fail(function (xhr) {
-                        btn.prop('disabled', false).html('<i class="fa fa-save"></i> Simpan');
-                        Swal.fire('Error', 'Terjadi kesalahan sistem: ' + xhr.responseText, 'error');
-                    });
-                });
+        <div class="row">
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label>Genital</label>
+                    <select class="form-control" name="genital">
+                        <option value="">-- Pilih --</option>
+                        <option value="Normal">
+                            Normal</option>
+                        <option value="Abnormal">
+                            Abnormal</option>
+                        <option value="Tidak Diperiksa">Tidak Diperiksa</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label>Ekstremitas</label>
+                    <select class="form-control" name="ekstremitas">
+                        <option value="">-- Pilih --</option>
+                        <option value="Normal">
+                            Normal</option>
+                        <option value="Abnormal">
+                            Abnormal</option>
+                        <option value="Tidak Diperiksa">Tidak Diperiksa</option>
+                    </select>
+                </div>
+            </div>
+        </div>
 
-                $('#btn-print-igd').click(function () {
-                    var no_rawat = $('#igd_no_rawat').val();
-                    window.open('<?= base_url("AwalMedisIGDController/print_pdf?no_rawat=") ?>' + no_rawat, '_blank');
-                });
+        <div class="form-group">
+            <label>Keterangan Pemeriksaan Fisik</label>
+            <textarea class="form-control" name="ket_fisik" rows="2" <></textarea>
+        </div>
 
-                $('#btn-delete-igd').click(function () {
-                    Swal.fire({
-                        title: 'Hapus Asesmen?',
-                        text: "Data akan dihapus permanen",
-                        icon: 'warning',
-                        showCancelButton: true,
-                        confirmButtonColor: '#d33'
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            $.post('<?= base_url("AwalMedisIGDController/delete") ?>', { no_rawat: $('#igd_no_rawat').val() }, function (res) {
-                                if (res.status === 'success') {
-                                    Swal.fire('Terhapus', 'Data berhasil dihapus', 'success').then(() => location.reload()); // Delete still needs reload to clear inputs effectively or reset form
-                                } else {
-                                    Swal.fire('Gagal', res.message, 'error');
-                                }
-                            }, 'json');
-                        }
-                    });
-                });
-            });
-        </script>
+        <!-- IV. STATUS LOKALIS -->
+        <div class="section-header"><i class="fa fa-image"></i> IV. STATUS LOKALIS</div>
 
+        <div class="row">
+            <!-- Kolom Gambar Lokalis -->
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label>Gambar Lokalis</label>
+                    <div class="canvas-wrapper" style="height:450px;">
+                        <div style="margin-bottom:10px;">
+                            <button type="button" class="btn btn-sm btn-danger" onclick="setDrawColor('red')"><i
+                                    class="fa fa-circle" style="color:red"></i> Merah</button>
+                            <button type="button" class="btn btn-sm btn-primary" onclick="setDrawColor('blue')"><i
+                                    class="fa fa-circle" style="color:blue"></i> Biru</button>
+                            <button type="button" class="btn btn-sm btn-dark" onclick="setDrawColor('black')"><i
+                                    class="fa fa-circle"></i> Hitam</button>
+                            <button type="button" class="btn btn-sm btn-success" onclick="setDrawColor('green')"><i
+                                    class="fa fa-circle" style="color:green"></i> Hijau</button>
+                            <button type="button" class="btn btn-sm btn-warning" onclick="clearCanvas()"><i
+                                    class="fa fa-eraser"></i> Hapus</button>
+                        </div>
+                        <canvas id="igdCanvas" width="600" height="350"></canvas>
+                        <input type="hidden" name="lokalis_image" id="lokalisImage">
+                    </div>
+                </div>
+            </div>
 
+            <!-- Kolom Keterangan Lokalis -->
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label>Keterangan Lokalis</label>
+                    <textarea class="form-control" name="ket_lokalis" rows="18"
+                        placeholder="Keterangan detail lokasi yang diperiksa..."></textarea>
+                </div>
+            </div>
+        </div>
+
+        <!-- V. PEMERIKSAAN PENUNJANG -->
+        <div class="section-header"><i class="fa fa-flask"></i> V. PEMERIKSAAN PENUNJANG</div>
+
+        <div class="form-group">
+            <label>EKG</label>
+            <textarea class="form-control" name="ekg" rows="2" placeholder="Hasil pemeriksaan EKG..."></textarea>
+        </div>
+
+        <div class="form-group">
+            <label>Radiologi</label>
+            <textarea class="form-control" name="rad" rows="2" placeholder="Hasil pemeriksaan radiologi..."></textarea>
+        </div>
+
+        <div class="form-group">
+            <label>Laboratorium</label>
+            <textarea class="form-control" name="lab" rows="2"
+                placeholder="Hasil pemeriksaan laboratorium..."></textarea>
+        </div>
+
+        <!-- VI. DIAGNOSIS & TATALAKSANA -->
+        <div class="section-header"><i class="fa fa-notes-medical"></i> VI. DIAGNOSIS & TATALAKSANA</div>
+        <div class="form-group">
+            <label>Diagnosis <span class="text-danger">*</span></label>
+            <textarea class="form-control" name="diagnosis" rows="2" required<></textarea>
+        </div>
+
+        <div class="form-group">
+            <label>Tatalaksana <span class="text-danger">*</span></label>
+            <textarea class="form-control" name="tata" rows="3" required></textarea>
+        </div>
+
+        <!-- BUTTON SAVE -->
+        <div style="text-align:right; margin:20px 0;">
+            <button type="submit" id="btnSubmit" class="btn btn-primary btn-lg"><i class="fa fa-save"></i> Simpan
+                Asesmen</button>
+        </div>
+    </form>
+</div>
+
+<!-- HISTORY SECTION -->
+<div class="container-fluid" style="margin-top:30px;">
+    <div class="section-header" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);"><i
+            class="fa fa-history"></i> RIWAYAT ASESMEN IGD</div>
+
+    <div class="row" style="margin-bottom:20px;">
+        <div class="col-md-4">
+            <label>Dari Tanggal</label>
+            <input type="date" id="filterStartDate" class="form-control" value="<?= date('Y-m-d') ?>">
+        </div>
+        <div class="col-md-4">
+            <label>Sampai Tanggal</label>
+            <input type="date" id="filterEndDate" class="form-control" value="<?= date('Y-m-d') ?>">
+        </div>
+        <div class="col-md-4" style="padding-top:25px;">
+            <button type="button" class="btn btn-primary" onclick="loadHistory()"><i class="fa fa-search"></i>
+                Tampilkan</button>
+        </div>
+    </div>
+
+    <div id="historyContainer">
+        <div style="text-align:center; padding:40px; color:#999;">
+            <i class="fa fa-inbox" style="font-size:48px;"></i>
+            <p>Memuat riwayat...</p>
+        </div>
+    </div>
 </div>
 
 <script>
-    var canvas, ctx;
-    var isDrawing = false;
-    var lastX = 0;
-    var lastY = 0;
+    function toggleHubungan(value) {
+        document.getElementById('hubunganContainer').style.display = value === 'Alloanamnesis' ? 'block' : 'none';
+    }
 
-    $(document).ready(function () {
-        // Real-time Clock for Time Picker
-        <?php if (!isset($asesment['tanggal'])): ?>
-            setInterval(function () {
-                var now = new Date();
-                var h = now.getHours().toString().padStart(2, '0');
-                var m = now.getMinutes().toString().padStart(2, '0');
-                var s = now.getSeconds().toString().padStart(2, '0');
-                $('#jam_input').val(h + ':' + m + ':' + s);
-            }, 1000);
-        <?php endif; ?>
+    // Init
+    setTimeout(function () {
+        const anamnesis = document.querySelector('[name="anamnesis"]');
+        if (anamnesis) toggleHubungan(anamnesis.value);
+    }, 100);
 
-        initCanvas();
+    // Canvas
+    var canvas, ctx, isDrawing = false, currentColor = 'red', lastX = 0, lastY = 0;
+    var backgroundURL = '<?= base_url("assets/images/status_lokalis_igd.png") ?>';
 
-        // Update UI Helper
-        function updateUIFromForm() {
-            // Table updates
-            $('[data-bind="tanggal"]').text($('#jam_input').val() ? $('.datepicker').val() + ' ' + $('#jam_input').val() : $('.datepicker').val());
-            $('[data-bind="anamnesis"]').text($('[name="anamnesis"]').val());
-            var diag = $('[name="diagnosis"]').val();
-            $('[data-bind="diagnosis_short"]').text(diag.length > 50 ? diag.substring(0, 50) + '...' : diag);
+    setTimeout(function () {
+        canvas = document.getElementById('igdCanvas');
+        if (!canvas) return;
 
-            // Modal updates
-            $('[data-bind="keadaan"]').text($('[name="keadaan"]').val());
-            $('[data-bind="kesadaran"]').text($('[name="kesadaran"]').val());
-            $('[data-bind="gcs"]').text($('[name="gcs"]').val());
-            $('[data-bind="td"]').text($('[name="td"]').val());
-            $('[data-bind="nadi"]').text($('[name="nadi"]').val());
-            $('[data-bind="rr"]').text($('[name="rr"]').val());
-            $('[data-bind="suhu"]').text($('[name="suhu"]').val());
-            $('[data-bind="spo2"]').text($('[name="spo2"]').val());
+        ctx = canvas.getContext('2d');
+        var img = new Image();
+        img.onload = function () {
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        };
+        img.src = backgroundURL;
 
-            $('[data-bind="keluhan_utama"]').text($('[name="keluhan_utama"]').val());
-            $('[data-bind="rps"]').text($('[name="rps"]').val());
-            $('[data-bind="rpd"]').text($('[name="rpd"]').val());
-            $('[data-bind="alergi"]').text($('[name="alergi"]').val());
+        canvas.onmousedown = function (e) {
+            isDrawing = true;
+            const rect = canvas.getBoundingClientRect();
+            lastX = (e.clientX - rect.left) * (canvas.width / rect.width);
+            lastY = (e.clientY - rect.top) * (canvas.height / rect.height);
+        };
 
-            $('[data-bind="diagnosis"]').text(diag);
-            $('[data-bind="ket_lokalis"]').text($('[name="ket_lokalis"]').val());
-            $('[data-bind="ekg"]').text($('[name="ekg"]').val());
-            $('[data-bind="rad"]').text($('[name="rad"]').val());
-            $('[data-bind="lab"]').text($('[name="lab"]').val());
-            $('[data-bind="tata_laksana"]').html($('[name="tata_laksana"]').val().replace(/\n/g, "<br>"));
+        canvas.onmousemove = function (e) {
+            if (!isDrawing) return;
+            const rect = canvas.getBoundingClientRect();
+            const x = (e.clientX - rect.left) * (canvas.width / rect.width);
+            const y = (e.clientY - rect.top) * (canvas.height / rect.height);
+            ctx.beginPath();
+            ctx.strokeStyle = currentColor;
+            ctx.lineWidth = 3;
+            ctx.lineCap = 'round';
+            ctx.moveTo(lastX, lastY);
+            ctx.lineTo(x, y);
+            ctx.stroke();
+            lastX = x;
+            lastY = y;
+        };
 
-            // Update Image in Modal
-            var canvasData = document.getElementById('lokalisCanvas').toDataURL('image/png');
-            $('#img_lokalis_view').attr('src', canvasData).show();
-            $('#no_img_lokalis').hide();
-        }
-
-        // ENTER Key Navigation
-        $('#form-awal-igd').on('keydown', 'input, select', function(e) {
-            if (e.key === "Enter") {
-                e.preventDefault();
-                var self = $(this), form = self.parents('form:eq(0)'), focusable, next;
-                focusable = form.find('input,select,button,textarea').filter(':visible').not('[readonly],[disabled]');
-                next = focusable.eq(focusable.index(this) + 1);
-                if (next.length) {
-                    next.focus();
-                } else {
-                    // Optional: Submit if last field? Or do nothing? User said "jangan save".
-                    // So do nothing.
-                }
-                return false;
+        canvas.onmouseup = canvas.onmouseleave = function () {
+            if (isDrawing) {
+                isDrawing = false;
+                document.getElementById('lokalisImage').value = canvas.toDataURL('image/png');
             }
-        });
+        };
+    }, 500);
 
-        // Unbind previous handlers to prevent duplication or old code execution
-        $('#btn-save-igd').off('click').on('click', function (e) {
-            e.preventDefault();
-            // alert('Debug: Tombol Save Diklik'); // Test to ensure new code runs
+    window.setDrawColor = function (color) { currentColor = color; };
+    window.clearCanvas = function () {
+        if (!ctx || !canvas) return; // Safety check
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        var img = new Image();
+        img.onload = function () { ctx.drawImage(img, 0, 0, canvas.width, canvas.height); };
+        img.src = backgroundURL;
+        document.getElementById('lokalisImage').value = '';
+    };
 
-            // Validation
-            var requiredFields = [
-                { name: 'keluhan_utama', label: 'Keluhan Utama' },
-                { name: 'keadaan', label: 'Keadaan Umum' },
-                { name: 'kesadaran', label: 'Kesadaran' },
-                { name: 'gcs', label: 'GCS' },
-                { name: 'tb', label: 'TB (Tinggi Badan)' },
-                { name: 'bb', label: 'BB (Berat Badan)' },
-                { name: 'td', label: 'TD (Tekanan Darah)' },
-                { name: 'nadi', label: 'Nadi' },
-                { name: 'rr', label: 'RR (Respirasi)' },
-                { name: 'suhu', label: 'Suhu' },
-                { name: 'spo2', label: 'SpO2' }
-            ];
+    // Helper function to reset form and button
+    window.resetFormAndButton = function () {
+        document.getElementById('formIGDAssessment').reset();
+        if (typeof clearCanvas === 'function') clearCanvas();
+        document.getElementById('btnSubmit').innerHTML = '<i class="fa fa-save"></i> Simpan Asesmen';
+    };
 
-            var emptyFields = [];
-            requiredFields.forEach(function(field) {
-                // Use explicit selector with trim
-                var el = $('[name="' + field.name + '"]');
-                var val = el.val();
-                if(val === null || val === undefined || (typeof val === 'string' && val.trim() === '')) {
-                     emptyFields.push(field.label);
-                }
-            });
+    // Helper function to set edit mode
+    window.setEditMode = function () {
+        document.getElementById('btnSubmit').innerHTML = '<i class="fa fa-edit"></i> Update Asesmen';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
 
-            if (emptyFields.length > 0) {
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'Data Belum Lengkap',
-                    html: 'Mohon isi data berikut:<br><b style="color:red">' + emptyFields.join(', ') + '</b>'
-                });
-                return false; // Stop execution
-            }
+    // Form Submit
+    document.getElementById('formIGDAssessment').addEventListener('submit', function (e) {
+        e.preventDefault();
+        const formData = new FormData(this);
 
-            saveCanvas();
-
-            // DEBUG: Check if image data is populated
-            var imgData = $('#lokalis_image').val();
-            if(!imgData || imgData.length < 1000) {
-                 console.warn("Warning: Canvas data seems empty or too small.");
-            }
-            
-            const data = $('#form-awal-igd').serialize();
-            const btn = $(this);
-            btn.prop('disabled', true).html('<i class="fa fa-spin fa-spinner"></i> Menyimpan...');
-
-            $.post('<?= base_url("AwalMedisIGDController/save") ?>', data, function (res) {
-                btn.prop('disabled', false).html('<i class="fa fa-save"></i> Simpan');
-                if (res.status === 'success') {
-                    Swal.fire({
-                        title: 'Berhasil',
-                        text: res.message,
+        fetch('<?= base_url("AwalMedisIGDController/save") ?>', {
+            method: 'POST',
+            body: formData
+        })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    typeof Swal !== "undefined" && Swal.fire({
                         icon: 'success',
-                        timer: 1500,
+                        title: 'Berhasil!',
+                        text: data.message,
+                        timer: 3000,
                         showConfirmButton: false
                     });
-
-                    // Smooth Update without Refresh
-                    updateUIFromForm();
-                    $('#history-container').fadeIn();
-
-                    // Scroll to history to show user it's saved
-                    $('html, body').animate({
-                        scrollTop: $("#history-container").offset().top - 20
-                    }, 500);
-
+                    resetFormAndButton();
+                    setTimeout(function () { window.scrollTo({ top: 0, behavior: 'smooth' }); }, 3100);
+                    setTimeout(function () { loadHistory(); }, 500);
                 } else {
-                    Swal.fire('Gagal', res.message, 'error');
-                }
-            }, 'json').fail(function (xhr) {
-                btn.prop('disabled', false).html('<i class="fa fa-save"></i> Simpan');
-                Swal.fire('Error', 'Terjadi kesalahan sistem: ' + xhr.responseText, 'error');
-            });
-        });
-
-        $('#btn-print-igd').click(function () {
-            // Auto-Save before Printing to ensure drawing is updated
-            saveCanvas();
-
-            const data = $('#form-awal-igd').serialize();
-            const btn = $(this);
-            const originalText = btn.html();
-
-            btn.prop('disabled', true).html('<i class="fa fa-spin fa-spinner"></i> Memproses...');
-
-            $.post('<?= base_url("AwalMedisIGDController/save") ?>', data, function (res) {
-                btn.prop('disabled', false).html(originalText);
-
-                if (res.status === 'success') {
-                    // Update UI immediately (just like Save button)
-                    updateUIFromForm();
-                    $('#history-container').fadeIn();
-
-                    // Open PDF with cache busting
-                    var no_rawat = $('#igd_no_rawat').val();
-                    var timestamp = new Date().getTime();
-                    window.open('<?= base_url("AwalMedisIGDController/print_pdf?no_rawat=") ?>' + no_rawat + '&t=' + timestamp, '_blank');
-
-                } else {
-                    Swal.fire('Gagal', 'Gagal menyimpan data sebelum mencetak: ' + res.message, 'error');
-                }
-            }, 'json').fail(function (xhr) {
-                btn.prop('disabled', false).html(originalText);
-                Swal.fire('Error', 'Terjadi kesalahan sistem saat menyimpan: ' + xhr.responseText, 'error');
-            });
-        });
-
-        $('#btn-delete-igd').click(function () {
-            Swal.fire({
-                title: 'Hapus Asesmen?',
-                text: "Data akan dihapus permanen",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#d33'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    $.post('<?= base_url("AwalMedisIGDController/delete") ?>', { no_rawat: $('#igd_no_rawat').val() }, function (res) {
-                        if (res.status === 'success') {
-                            Swal.fire({
-                                title: 'Terhapus',
-                                text: 'Data berhasil dihapus',
-                                icon: 'success',
-                                timer: 3000,
-                                showConfirmButton: false
-                            });
-
-                            // Hide History and Reset Form
-                            $('#history-container').fadeOut();
-                            
-                            // Manual wipe of editable fields to ensure they clear
-                            // (form.reset() would restore values rendered by PHP)
-                            $('#form-awal-igd').find('textarea').val('');
-                            $('#form-awal-igd').find('input[type="text"]').val('');
-                            $('#form-awal-igd').find('select').prop('selectedIndex', 0);
-                            
-                            clearCanvas();
-
-                            // Scroll back to top
-                            $('html, body').animate({ scrollTop: 0 }, 500);
-
-                        } else {
-                            Swal.fire('Gagal', res.message, 'error');
-                        }
-                    }, 'json');
+                    typeof Swal !== "undefined" && Swal.fire({ icon: 'error', title: 'Gagal!', text: data.message });
                 }
             });
-        });
     });
 
-    function initCanvas() {
-        canvas = document.getElementById('lokalisCanvas');
-        ctx = canvas.getContext('2d');
+    // History Functions
+    function loadHistory() {
+        const startDate = document.getElementById('filterStartDate').value;
+        const endDate = document.getElementById('filterEndDate').value;
+        const noRkm = '<?= $no_rkm_medis ?>';
+        const container = document.getElementById('historyContainer');
 
-        // Load background image
-        var img = new Image();
-        
-        <?php
-        $clean_no_rawat = str_replace('/', '', $no_rawat);
-        $saved_file = FCPATH . 'assets/images/lokalis_igd/lokalis_' . $clean_no_rawat . '.png';
-        $saved_url = base_url('assets/images/lokalis_igd/lokalis_' . $clean_no_rawat . '.png');
+        container.innerHTML = '<div style="text-align:center; padding:40px;"><i class="fa fa-spinner fa-spin" style="font-size:32px;"></i></div>';
 
-        if (file_exists($saved_file)) {
-            echo "var existingImage = '" . $saved_url . "?t=" . time() . "';";
-        } else {
-            echo "var existingImage = '';";
-        }
-        ?>
-
-        img.onload = function () {
-            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-        };
-
-        if (existingImage) {
-            img.src = existingImage;
-        } else {
-            // Default Anatomy Image
-            img.src = '<?= base_url("assets/images/human_body_anatomy_custom.png") ?>';
-        }
-
-        // Event Listeners
-        canvas.addEventListener('mousedown', startDrawing);
-        canvas.addEventListener('mousemove', draw);
-        canvas.addEventListener('mouseup', stopDrawing);
-        canvas.addEventListener('mouseout', stopDrawing);
+        fetch('<?= base_url("AwalMedisIGDController/get_history") ?>?no_rkm_medis=' + noRkm + '&start_date=' + startDate + '&end_date=' + endDate)
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 'success' && data.data.length > 0) {
+                    let html = '<div style="display:grid; gap:15px;">';
+                    data.data.forEach(item => {
+                        const date = new Date(item.tanggal);
+                        const formattedDate = date.toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+                        html += '<div style="background:white; border:1px solid #ddd; border-radius:8px; padding:20px;">';
+                        html += '<div style="display:flex; justify-content:space-between; margin-bottom:15px; padding-bottom:15px; border-bottom:2px solid #f3f4f6;">';
+                        html += '<div><div style="font-weight:600; margin-bottom:5px;"><i class="fa fa-calendar"></i> ' + formattedDate + '</div>';
+                        html += '<div style="color:#666;"><i class="fa fa-user-md"></i> ' + (item.nm_dokter || 'Dokter') + '</div></div>';
+                        html += '<div style="display:flex; gap:8px;">';
+                        html += '<button onclick="viewDetail(\'' + item.no_rawat + '\')" class="btn btn-sm btn-info"><i class="fa fa-eye"></i> Lihat</button>';
+                        html += '<button onclick="editAssessment(\'' + item.no_rawat + '\')" class="btn btn-sm btn-warning"><i class="fa fa-edit"></i> Edit</button>';
+                        html += '<button onclick="printSinglePDF(\'' + item.no_rawat + '\')" class="btn btn-sm btn-success"><i class="fa fa-print"></i> Cetak</button>';
+                        html += '<button onclick="deleteAssessmentHistory(\'' + item.no_rawat + '\')" class="btn btn-sm btn-danger"><i class="fa fa-trash"></i> Hapus</button>';
+                        html += '</div></div>';
+                        html += '<div><strong>Keluhan:</strong> ' + (item.keluhan_utama ? item.keluhan_utama.substring(0, 100) + '...' : '-') + '</div>';
+                        html += '<div><strong>Diagnosis:</strong> ' + (item.diagnosis ? item.diagnosis.substring(0, 100) + '...' : '-') + '</div>';
+                        html += '</div>';
+                    });
+                    html += '</div>';
+                    container.innerHTML = html;
+                } else {
+                    container.innerHTML = '<div style="text-align:center; padding:40px; color:#999;"><i class="fa fa-inbox" style="font-size:48px;"></i><p>Tidak ada data</p></div>';
+                }
+            });
     }
 
-    function startDrawing(e) {
-        isDrawing = true;
-        [lastX, lastY] = [e.offsetX, e.offsetY];
+    function viewDetail(noRawat) {
+        fetch('<?= base_url("AwalMedisIGDController/get_detail") ?>?no_rawat=' + noRawat)
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    const d = data.data;
+                    const date = new Date(d.tanggal);
+                    const formattedDate = date.toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+
+                    let html = '<div style="text-align:left; max-height:600px; overflow-y:auto; padding:10px;">';
+                    html += '<div style="background:linear-gradient(135deg, #ef4444 0%, #dc2626 100%); color:white; padding:15px; border-radius:8px; margin-bottom:20px;">';
+                    html += '<h4 style="margin:0 0 10px 0;"><i class="fa fa-calendar"></i> ' + formattedDate + '</h4>';
+                    html += '<p style="margin:0;"><i class="fa fa-user-md"></i> ' + (d.nm_dokter || 'Dokter') + '</p></div>';
+
+                    html += '<div style="background:#f8fafc; padding:15px; border-radius:8px; margin-bottom:15px; border-left:4px solid #ef4444;">';
+                    html += '<h5 style="margin:0 0 10px 0; color:#ef4444;"><i class="fa fa-clipboard"></i> I. ANAMNESIS</h5>';
+                    html += '<p><strong>Jenis:</strong> ' + (d.anamnesis || '-') + '</p>';
+                    if (d.hubungan) html += '<p><strong>Hubungan:</strong> ' + d.hubungan + '</p>';
+                    html += '<p><strong>Keluhan Utama:</strong><br>' + (d.keluhan_utama || '-') + '</p>';
+                    html += '<p><strong>RPS:</strong><br>' + (d.rps || '-') + '</p>';
+                    html += '<p><strong>RPD:</strong> ' + (d.rpd || '-') + '</p>';
+                    html += '<p><strong>RPK:</strong> ' + (d.rpk || '-') + '</p>';
+                    html += '<p><strong>RPO:</strong> ' + (d.rpo || '-') + '</p>';
+                    html += '<p><strong>Alergi:</strong> ' + (d.alergi || '-') + '</p></div>';
+
+                    html += '<div style="background:#f8fafc; padding:15px; border-radius:8px; margin-bottom:15px; border-left:4px solid #10b981;">';
+                    html += '<h5 style="margin:0 0 10px 0; color:#10b981;"><i class="fa fa-heartbeat"></i> II. PEMERIKSAAN FISIK</h5>';
+                    html += '<div style="display:grid; grid-template-columns:repeat(2, 1fr); gap:10px;">';
+                    html += '<p><strong>Keadaan Umum:</strong> ' + (d.keadaan || '-') + '</p>';
+                    html += '<p><strong>Kesadaran:</strong> ' + (d.kesadaran || '-') + '</p>';
+                    html += '<p><strong>GCS:</strong> ' + (d.gcs || '-') + '</p>';
+                    html += '<p><strong>SpO₂:</strong> ' + (d.spo || '-') + '%</p>';
+                    html += '<p><strong>TD:</strong> ' + (d.td || '-') + ' mmHg</p>';
+                    html += '<p><strong>Nadi:</strong> ' + (d.nadi || '-') + ' x/mnt</p>';
+                    html += '<p><strong>RR:</strong> ' + (d.rr || '-') + ' x/mnt</p>';
+                    html += '<p><strong>Suhu:</strong> ' + (d.suhu || '-') + ' °C</p>';
+                    html += '<p><strong>BB:</strong> ' + (d.bb || '-') + ' kg</p>';
+                    html += '<p><strong>TB:</strong> ' + (d.tb || '-') + ' cm</p></div></div>';
+
+                    html += '<div style="background:#f8fafc; padding:15px; border-radius:8px; margin-bottom:15px; border-left:4px solid #f59e0b;">';
+                    html += '<h5 style="margin:0 0 10px 0; color:#f59e0b;"><i class="fa fa-user-md"></i> III. PEMERIKSAAN SISTEMIK</h5>';
+                    html += '<div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:10px; font-size:13px;">';
+                    html += '<p><strong>Kepala:</strong> ' + (d.kepala || '-') + '</p>';
+                    html += '<p><strong>Mata:</strong> ' + (d.mata || '-') + '</p>';
+                    html += '<p><strong>Gigi:</strong> ' + (d.gigi || '-') + '</p>';
+                    html += '<p><strong>Leher:</strong> ' + (d.leher || '-') + '</p>';
+                    html += '<p><strong>Thoraks:</strong> ' + (d.thoraks || '-') + '</p>';
+                    html += '<p><strong>Abdomen:</strong> ' + (d.abdomen || '-') + '</p>';
+                    html += '<p><strong>Genital:</strong> ' + (d.genital || '-') + '</p>';
+                    html += '<p><strong>Ekstremitas:</strong> ' + (d.ekstremitas || '-') + '</p></div>';
+                    if (d.ket_fisik) html += '<p><strong>Keterangan Fisik:</strong><br>' + d.ket_fisik + '</p>';
+                    html += '</div>';
+
+                    // Always show Status Lokalis section (for image)
+                    html += '<div style="background:#f8fafc; padding:15px; border-radius:8px; margin-bottom:15px; border-left:4px solid #ef4444;">';
+                    html += '<h5 style="margin:0 0 10px 0; color:#ef4444;"><i class="fa fa-image"></i> IV. STATUS LOKALIS</h5>';
+                    if (d.ket_lokalis) html += '<p><strong>Keterangan:</strong><br>' + d.ket_lokalis + '</p>';
+                    var imgFile = 'lokalis_' + d.no_rawat.replace(/\//g, '') + '.png';
+                    var imgUrl = '<?= base_url("assets/images/lokalis_igd/") ?>' + imgFile;
+                    console.log('🖼️ Lokalis Image URL:', imgUrl);
+                    console.log('📁 Image File:', imgFile);
+                    html += '<div style="text-align:center; margin-top:10px;"><img src="' + imgUrl + '" style="max-width:100%; border-radius:8px; border:2px solid #ddd;" onerror="console.error(\'❌ Image failed to load:\', this.src); this.style.display=' + "'none'" + '"></div>';
+                    html += '</div>';
+
+                    if (d.ekg || d.rad || d.lab) {
+                        html += '<div style="background:#f8fafc; padding:15px; border-radius:8px; margin-bottom:15px; border-left:4px solid #8b5cf6;">';
+                        html += '<h5 style="margin:0 0 10px 0; color:#8b5cf6;"><i class="fa fa-flask"></i> V. PEMERIKSAAN PENUNJANG</h5>';
+                        if (d.ekg) html += '<p><strong>EKG:</strong><br>' + d.ekg + '</p>';
+                        if (d.rad) html += '<p><strong>Radiologi:</strong><br>' + d.rad + '</p>';
+                        if (d.lab) html += '<p><strong>Laboratorium:</strong><br>' + d.lab + '</p>';
+                        html += '</div>';
+                    }
+
+                    html += '<div style="background:#f8fafc; padding:15px; border-radius:8px; margin-bottom:15px; border-left:4px solid #ef4444;">';
+                    html += '<h5 style="margin:0 0 10px 0; color:#ef4444;"><i class="fa fa-notes-medical"></i> VI. DIAGNOSIS & TATALAKSANA</h5>';
+                    html += '<p><strong>Diagnosis:</strong><br>' + (d.diagnosis || '-') + '</p>';
+                    html += '<p><strong>Tatalaksana:</strong><br>' + (d.tata || '-') + '</p>';
+                    html += '</div></div>';
+
+                    typeof Swal !== "undefined" && Swal.fire({
+                        title: '<span style="color:#ef4444;"><i class="fa fa-file-medical"></i> Detail Asesmen IGD</span>',
+                        html: html,
+                        width: '900px',
+                        confirmButtonText: '<i class="fa fa-times"></i> Tutup',
+                        confirmButtonColor: '#ef4444'
+                    });
+                }
+            });
     }
 
-    function draw(e) {
-        if (!isDrawing) return;
-        ctx.beginPath();
-        ctx.moveTo(lastX, lastY);
-        ctx.lineTo(e.offsetX, e.offsetY);
-        ctx.stroke();
-        [lastX, lastY] = [e.offsetX, e.offsetY];
+    function editAssessment(noRawat) {
+        fetch('<?= base_url("AwalMedisIGDController/get_detail") ?>?no_rawat=' + noRawat)
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    const d = data.data;
+
+                    // Parse tanggal dan jam dari datetime
+                    if (d.tanggal) {
+                        // Format dari database: "2025-12-21 12:00:41"
+                        // Split menjadi date dan time
+                        const parts = d.tanggal.split(' ');
+                        if (parts.length >= 2) {
+                            const dateStr = parts[0]; // YYYY-MM-DD
+                            const timeParts = parts[1].split(':');
+                            const timeStr = timeParts[0] + ':' + timeParts[1] + ':' + timeParts[2]; // HH:MM:SS
+                            document.querySelector('[name="tanggal"]').value = dateStr;
+                            document.querySelector('[name="jam"]').value = timeStr;
+                        }
+                    }
+
+                    const fields = ['no_rawat', 'anamnesis', 'hubungan', 'keluhan_utama', 'rps', 'rpd', 'rpk', 'rpo', 'alergi',
+                        'keadaan', 'kesadaran', 'gcs', 'spo', 'td', 'nadi', 'rr', 'suhu', 'bb', 'tb',
+                        'kepala', 'mata', 'gigi', 'leher', 'thoraks', 'abdomen', 'genital', 'ekstremitas',
+                        'ket_fisik', 'ket_lokalis', 'ekg', 'rad', 'lab', 'diagnosis', 'tata'];
+                    fields.forEach(f => {
+                        const el = document.querySelector('[name="' + f + '"]');
+                        if (el && d[f]) el.value = d[f];
+                    });
+                    toggleHubungan(d.anamnesis);
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                    setEditMode();
+                    typeof Swal !== "undefined" && Swal.fire({ icon: 'info', title: 'Mode Edit', text: 'Data dimuat. Silakan edit dan simpan.', timer: 2000, showConfirmButton: false });
+                }
+            });
     }
 
-    function stopDrawing() {
-     isDrawing = false;
+    function printSinglePDF(noRawat) {
+        window.open('<?= base_url("AwalMedisIGDController/print_pdf?no_rawat=") ?>' + noRawat, '_blank');
     }
 
-    function setBrushColor(color) {
-        ctx.strokeStyle = color;
-        ctx.lineWidth = 2; // Default width
+    function deleteAssessmentHistory(noRawat) {
+        typeof Swal !== "undefined" && Swal.fire({
+            title: 'Hapus Asesmen?',
+            text: 'Data yang dihapus tidak dapat dikembalikan!',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#ef4444',
+            confirmButtonText: 'Ya, Hapus!',
+            cancelButtonText: 'Batal'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                fetch('<?= base_url("AwalMedisIGDController/delete") ?>', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: 'no_rawat=' + noRawat
+                })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.status === 'success') {
+                            typeof Swal !== "undefined" && Swal.fire({ icon: 'success', title: 'Terhapus!', text: data.message, timer: 3000, showConfirmButton: false });
+                            setTimeout(function () { loadHistory(); }, 500);
+                            resetFormAndButton();
+                            setTimeout(function () { window.scrollTo({ top: 0, behavior: 'smooth' }); }, 3100);
+                        }
+                    });
+            }
+        });
     }
 
-    function clearCanvas() {
-        // Reload default image
-        var img = new Image();
-        img.onload = function () {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-        };
-        img.src = '<?= base_url("assets/images/human_body_anatomy_custom.png") ?>';
-    }
+    // Auto-load history
+    (function () {
+        let attempts = 0;
+        const checkAndLoad = setInterval(function () {
+            attempts++;
+            const startDate = document.getElementById('filterStartDate');
+            const endDate = document.getElementById('filterEndDate');
+            const container = document.getElementById('historyContainer');
+            if (startDate && endDate && container && typeof loadHistory === 'function') {
+                clearInterval(checkAndLoad);
+                loadHistory();
+            } else if (attempts >= 20) {
+                clearInterval(checkAndLoad);
+            }
+        }, 500);
+    })();
 
-    function saveCanvas() {
-        var dataURL = canvas.toDataURL('image/png');
-        $('#lokalis_image').val(dataURL);
-    }
+    // Force clear form on page load (prevent browser autocomplete)
+    (function () {
+        setTimeout(function () {
+            const form = document.getElementById('formIGDAssessment');
+            if (form) {
+                // Reset the entire form
+                form.reset();
+
+                // Explicitly clear all text inputs and textareas
+                form.querySelectorAll('input[type="text"], textarea').forEach(function (el) {
+                    el.value = '';
+                });
+
+                // Reset all selects to first option (empty option)
+                form.querySelectorAll('select').forEach(function (el) {
+                    el.selectedIndex = 0;
+                });
+
+                // Clear canvas if exists
+                if (typeof clearCanvas === 'function') {
+                    clearCanvas();
+                }
+
+                // Reset button text
+                const btnSubmit = document.getElementById('btnSubmit');
+                if (btnSubmit) {
+                    btnSubmit.innerHTML = '<i class="fa fa-save"></i> Simpan Asesmen';
+                }
+
+                console.log('✅ Form forcefully cleared on page load - all fields reset');
+            }
+        }, 800); // Run AFTER canvas init and all other scripts
+    })();
 </script>
-```

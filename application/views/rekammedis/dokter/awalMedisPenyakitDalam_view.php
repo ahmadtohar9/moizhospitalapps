@@ -1,679 +1,666 @@
-<form id="formAwalMedisPenyakitDalam">
-    <input type="hidden" name="no_rawat" id="apd_no_rawat" value="<?= $no_rawat ?>">
+<!-- ASESMEN AWAL MEDIS PENYAKIT DALAM - COMPLETE CLEAN VERSION -->
+<style>
+    .section-header {
+        background: linear-gradient(135deg, #ec4899 0%, #db2777 100%);
+        color: white;
+        padding: 10px 15px;
+        border-radius: 5px;
+        margin: 15px 0 10px 0;
+        font-weight: bold;
+    }
 
-    <div class="row" style="margin-bottom: 20px;">
-        <div class="col-md-12">
-            <h3 style="margin-top: 0;"><i class="fa fa-stethoscope"></i> Asesmen Awal Medis Penyakit Dalam</h3>
-        </div>
+    .form-group {
+        margin-bottom: 15px;
+    }
 
-        <!-- BARIS 1: TGL, JAM, ANAMNESIS, HUBUNGAN -->
-        <div class="col-md-2">
-            <div class="form-group">
-                <label>Tanggal Asesmen</label>
-                <div class="input-group">
-                    <div class="input-group-addon"><i class="fa fa-calendar"></i></div>
-                    <input type="date" class="form-control" name="tanggal_asesmen"
-                        value="<?= isset($asesment['tanggal']) ? date('Y-m-d', strtotime($asesment['tanggal'])) : $tgl_sekarang ?>">
+    .form-group label {
+        font-weight: 600;
+        margin-bottom: 5px;
+        display: block;
+    }
+
+    .canvas-wrapper {
+        border: 2px dashed #ddd;
+        padding: 10px;
+        background: #f9f9f9;
+        text-align: center;
+    }
+
+    canvas {
+        border: 1px solid #ccc;
+        cursor: crosshair;
+        max-width: 100%;
+    }
+</style>
+
+<div class="container-fluid">
+    <form id="formPENYAKIT DALAMAssessment" autocomplete="off">
+        <input type="hidden" name="no_rawat" value="<?= $no_rawat ?>">
+        <input type="hidden" name="kd_dokter" value="<?= $kd_dokter ?>">
+
+        <!-- TANGGAL & JAM ASESMEN -->
+        <div class="row" style="margin-bottom: 20px;">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label><i class="fa fa-calendar"></i> Tanggal Asesmen <span class="text-danger">*</span></label>
+                    <input type="date" class="form-control" name="tanggal" value="<?= $tgl_sekarang ?>" required>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label><i class="fa fa-clock"></i> Jam Asesmen <span class="text-danger">*</span></label>
+                    <input type="time" class="form-control" name="jam" value="<?= $jam_sekarang ?>" step="1" required>
                 </div>
             </div>
         </div>
-        <div class="col-md-2">
-            <div class="form-group">
-                <label>Jam Asesmen</label>
-                <div class="input-group">
-                    <div class="input-group-addon"><i class="fa fa-clock-o"></i></div>
-                    <!-- Tambahkan ID 'jam_asesmen' untuk script realtime -->
-                    <input type="time" class="form-control" name="jam_asesmen" id="jam_asesmen"
-                        value="<?= isset($asesment['tanggal']) ? date('H:i:s', strtotime($asesment['tanggal'])) : $jam_sekarang ?>">
+
+        <!-- I. ANAMNESIS -->
+        <div class="section-header"><i class="fa fa-clipboard"></i> I. ANAMNESIS</div>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label>Jenis Anamnesis <span class="text-danger">*</span></label>
+                    <select class="form-control" name="anamnesis" required onchange="toggleHubungan(this.value)">
+                        <option value="">-- Pilih --</option>
+                        <option value="Autoanamnesis">Autoanamnesis</option>
+                        <option value="Alloanamnesis">Alloanamnesis</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-6" id="hubunganContainer" style="display:none;">
+                <div class="form-group">
+                    <label>Hubungan dengan Pasien</label>
+                    <input type="text" class="form-control" name="hubungan" value=""
+                        placeholder="Contoh: Istri, Suami, Anak">
                 </div>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="form-group">
-                <label>Anamnesis</label>
-                <select class="form-control" name="anamnesis" id="combo_anamnesis">
-                    <option value="Autoanamnesis" <?= isset($asesment['anamnesis']) && $asesment['anamnesis'] == 'Autoanamnesis' ? 'selected' : '' ?>>Autoanamnesis</option>
-                    <option value="Alloanamnesis" <?= isset($asesment['anamnesis']) && $asesment['anamnesis'] == 'Alloanamnesis' ? 'selected' : '' ?>>Alloanamnesis</option>
-                </select>
-            </div>
-        </div>
-        <div class="col-md-5">
-            <div class="form-group">
-                <label>Hubungan (jika Alloanamnesis)</label>
-                <input type="text" class="form-control" name="hubungan" id="input_hubungan"
-                    value="<?= $asesment['hubungan'] ?? '' ?>">
-            </div>
-        </div>
-    </div>
 
-    <!-- ANAMNESIS LANJUTAN -->
-    <div class="row">
-        <div class="col-md-12">
-            <div class="form-group">
-                <label>Keluhan Utama</label>
-                <textarea class="form-control" name="keluhan_utama"
-                    rows="2"><?= $asesment['keluhan_utama'] ?? '' ?></textarea>
-            </div>
-        </div>
-        <div class="col-md-6">
-            <div class="form-group">
-                <label>Riwayat Penyakit Sekarang (RPS)</label>
-                <textarea class="form-control" name="rps" rows="3"><?= $asesment['rps'] ?? '' ?></textarea>
-            </div>
-        </div>
-        <div class="col-md-6">
-            <div class="form-group">
-                <label>Riwayat Penyakit Dahulu (RPD)</label>
-                <textarea class="form-control" name="rpd" rows="3"><?= $asesment['rpd'] ?? '' ?></textarea>
-            </div>
-        </div>
-        <div class="col-md-6">
-            <div class="form-group">
-                <label>Riwayat Penggunaan Obat (RPO)</label>
-                <textarea class="form-control" name="rpo" rows="2"><?= $asesment['rpo'] ?? '' ?></textarea>
-            </div>
-        </div>
-        <div class="col-md-6">
-            <div class="form-group">
-                <label>Riwayat Alergi</label>
-                <input type="text" class="form-control" name="alergi" value="<?= $asesment['alergi'] ?? '' ?>">
-            </div>
-        </div>
-    </div>
-
-    <!-- 2. PEMERIKSAAN FISIK -->
-    <div class="row mt-3">
-        <div class="col-md-12">
-            <h4 class="text-green" style="border-bottom: 2px solid #00a65a; padding-bottom: 5px;"><i
-                    class="fa fa-heartbeat"></i> Pemeriksaan Fisik</h4>
+        <div class="form-group">
+            <label>Keluhan Utama <span class="text-danger">*</span></label>
+            <textarea class="form-control" name="keluhan_utama" rows="2" required></textarea>
         </div>
 
-        <div class="col-md-2 col-sm-4">
-            <div class="form-group">
-                <label>Kondisi Umum</label>
-                <select class="form-control" name="kondisi">
-                    <option <?php echo (isset($asesment['kondisi']) && $asesment['kondisi'] == 'Sehat') ? 'selected' : '' ?>>Sehat</option>
-                    <option <?php echo (isset($asesment['kondisi']) && $asesment['kondisi'] == 'Sakit Ringan') ? 'selected' : '' ?>>Sakit Ringan</option>
-                    <option <?php echo (isset($asesment['kondisi']) && $asesment['kondisi'] == 'Sakit Sedang') ? 'selected' : '' ?>>Sakit Sedang</option>
-                    <option <?php echo (isset($asesment['kondisi']) && $asesment['kondisi'] == 'Sakit Berat') ? 'selected' : '' ?>>Sakit Berat</option>
-                </select>
-            </div>
-        </div>
-        <div class="col-md-2 col-sm-4">
-            <div class="form-group">
-                <label>Status Psikologis</label>
-                <select class="form-control" name="status">
-                    <option <?php echo (isset($asesment['status']) && $asesment['status'] == 'Tenang') ? 'selected' : '' ?>>Tenang</option>
-                    <option <?php echo (isset($asesment['status']) && $asesment['status'] == 'Cemas') ? 'selected' : '' ?>>Cemas</option>
-                    <option <?php echo (isset($asesment['status']) && $asesment['status'] == 'Takut') ? 'selected' : '' ?>>Takut</option>
-                    <option <?php echo (isset($asesment['status']) && $asesment['status'] == 'Marah') ? 'selected' : '' ?>>Marah</option>
-                    <option <?php echo (isset($asesment['status']) && $asesment['status'] == 'Sedih') ? 'selected' : '' ?>>Sedih</option>
-                    <option <?php echo (isset($asesment['status']) && $asesment['status'] == 'Lainnya') ? 'selected' : '' ?>>Lainnya</option>
-                </select>
-            </div>
-        </div>
-        <div class="col-md-2 col-sm-4">
-            <div class="form-group">
-                <label>GCS (E,V,M)</label>
-                <input type="text" class="form-control" name="gcs" value="<?= $asesment['gcs'] ?? '' ?>"
-                    placeholder="Contoh: 4,5,6">
-            </div>
-        </div>
-        <div class="col-md-2 col-sm-4">
-            <div class="form-group">
-                <label>TD (mmHg)</label>
-                <input type="text" class="form-control" name="td" value="<?= $asesment['td'] ?? '' ?>">
-            </div>
-        </div>
-        <div class="col-md-2 col-sm-4">
-            <div class="form-group">
-                <label>Nadi (x/mnt)</label>
-                <input type="text" class="form-control" name="nadi" value="<?= $asesment['nadi'] ?? '' ?>">
-            </div>
-        </div>
-        <div class="col-md-2 col-sm-4">
-            <div class="form-group">
-                <label>Suhu (°C)</label>
-                <input type="text" class="form-control" name="suhu" value="<?= $asesment['suhu'] ?? '' ?>">
-            </div>
-        </div>
-        <div class="col-md-2 col-sm-4">
-            <div class="form-group">
-                <label>RR (x/mnt)</label>
-                <input type="text" class="form-control" name="rr" value="<?= $asesment['rr'] ?? '' ?>">
-            </div>
-        </div>
-        <div class="col-md-2 col-sm-4">
-            <div class="form-group">
-                <label>BB (Kg)</label>
-                <input type="text" class="form-control" name="bb" value="<?= $asesment['bb'] ?? '' ?>">
-            </div>
-        </div>
-        <div class="col-md-2 col-sm-4">
-            <div class="form-group">
-                <label>Nyeri</label>
-                <input type="text" class="form-control" name="nyeri" value="<?= $asesment['nyeri'] ?? '' ?>">
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="form-group">
-                <label>Keterangan Lain</label>
-                <input type="text" class="form-control" name="lainnya" value="<?= $asesment['lainnya'] ?? '' ?>">
-            </div>
-        </div>
-    </div>
-
-    <!-- 3. STATUS LOKALIS / ORGAN -->
-    <div class="row mt-3">
-        <div class="col-md-12">
-            <h4 class="text-green" style="border-bottom: 2px solid #00a65a; padding-bottom: 5px;"><i
-                    class="fa fa-user-md"></i> Pemeriksaan Organ</h4>
+        <div class="form-group">
+            <label>Riwayat Penyakit Sekarang (RPS) <span class="text-danger">*</span></label>
+            <textarea class="form-control" name="rps" rows="3" required></textarea>
         </div>
 
-        <!-- Kepala -->
-        <div class="col-md-6">
-            <div class="form-group bg-gray-light p-2 rounded">
-                <label>Kepala</label><br>
-                <label class="radio-inline"><input type="radio" name="kepala" value="Normal"
-                        <?= isset($asesment['kepala']) && $asesment['kepala'] == 'Normal' ? 'checked' : 'checked' ?>>
-                    Normal</label>
-                <label class="radio-inline"><input type="radio" name="kepala" value="Abnormal"
-                        <?= isset($asesment['kepala']) && $asesment['kepala'] == 'Abnormal' ? 'checked' : '' ?>>
-                    Abnormal</label>
-                <input type="text" class="form-control mt-2" name="keterangan_kepala" placeholder="Keterangan..."
-                    value="<?= $asesment['keterangan_kepala'] ?? '' ?>">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label>Riwayat Penyakit Dahulu (RPD)</label>
+                    <textarea class="form-control" name="rpd" rows="2"></textarea>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label>Riwayat Penggunaan Obat (RPO)</label>
+                    <textarea class="form-control" name="rpo" rows="2"></textarea>
+                </div>
             </div>
         </div>
 
-        <!-- Thoraks -->
-        <div class="col-md-6">
-            <div class="form-group bg-gray-light p-2 rounded">
-                <label>Thoraks (Paru & Jantung)</label><br>
-                <label class="radio-inline"><input type="radio" name="thoraks" value="Normal"
-                        <?= isset($asesment['thoraks']) && $asesment['thoraks'] == 'Normal' ? 'checked' : 'checked' ?>>
-                    Normal</label>
-                <label class="radio-inline"><input type="radio" name="thoraks" value="Abnormal"
-                        <?= isset($asesment['thoraks']) && $asesment['thoraks'] == 'Abnormal' ? 'checked' : '' ?>>
-                    Abnormal</label>
-                <input type="text" class="form-control mt-2" name="keterangan_thorak" placeholder="Keterangan..."
-                    value="<?= $asesment['keterangan_thorak'] ?? '' ?>">
+        <!-- (Riwayat Kebiasaan & Operasi Removed) -->
+
+        <div class="form-group">
+            <label>Riwayat Alergi</label>
+            <input type="text" class="form-control" name="alergi" value="">
+        </div>
+
+        <!-- II. PEMERIKSAAN FISIK -->
+        <div class="section-header"><i class="fa fa-heartbeat"></i> II. PEMERIKSAAN FISIK</div>
+
+        <div class="row">
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label>Kondisi Pasien <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" name="kondisi" maxlength="500" value="" required
+                        placeholder="Kondisi umum pasien...">
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label>GCS <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" name="gcs" maxlength="10" value="" required
+                        placeholder="E4V5M6">
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label>Status Pasien <span class="text-danger">*</span></label>
+                    <select class="form-control" name="status" required>
+                        <option value="">-- Pilih --</option>
+                        <option value="Skor < 2">Skor < 2</option>
+                        <option value="Skor >= 2">Skor >= 2</option>
+                    </select>
+                </div>
             </div>
         </div>
 
-        <!-- Abdomen -->
-        <div class="col-md-6">
-            <div class="form-group bg-gray-light p-2 rounded">
-                <label>Abdomen</label><br>
-                <label class="radio-inline"><input type="radio" name="abdomen" value="Normal"
-                        <?= isset($asesment['abdomen']) && $asesment['abdomen'] == 'Normal' ? 'checked' : 'checked' ?>>
-                    Normal</label>
-                <label class="radio-inline"><input type="radio" name="abdomen" value="Abnormal"
-                        <?= isset($asesment['abdomen']) && $asesment['abdomen'] == 'Abnormal' ? 'checked' : '' ?>>
-                    Abnormal</label>
-                <input type="text" class="form-control mt-2" name="keterangan_abdomen" placeholder="Keterangan..."
-                    value="<?= $asesment['keterangan_abdomen'] ?? '' ?>">
+        <div class="row">
+            <div class="col-md-2">
+                <div class="form-group">
+                    <label>TD (mmHg)</label>
+                    <input type="text" class="form-control" name="td" maxlength="8" value="" placeholder="120/80">
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="form-group">
+                    <label>Nadi (x/mnt)</label>
+                    <input type="text" class="form-control" name="nadi" maxlength="5" value="" placeholder="80">
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="form-group">
+                    <label>RR (x/mnt)</label>
+                    <input type="text" class="form-control" name="rr" maxlength="5" value="" placeholder="20">
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="form-group">
+                    <label>Suhu (°C)</label>
+                    <input type="text" class="form-control" name="suhu" maxlength="5" value="" placeholder="36.5">
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="form-group">
+                    <label>BB (kg)</label>
+                    <input type="text" class="form-control" name="bb" maxlength="5" value="">
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="form-group">
+                    <label>Nyeri</label>
+                    <input type="text" class="form-control" name="nyeri" value="" placeholder="0-10">
+                </div>
             </div>
         </div>
 
-        <!-- Ekstremitas -->
-        <div class="col-md-6">
-            <div class="form-group bg-gray-light p-2 rounded">
-                <label>Ekstremitas</label><br>
-                <label class="radio-inline"><input type="radio" name="ekstremitas" value="Normal"
-                        <?= isset($asesment['ekstremitas']) && $asesment['ekstremitas'] == 'Normal' ? 'checked' : 'checked' ?>> Normal</label>
-                <label class="radio-inline"><input type="radio" name="ekstremitas" value="Abnormal"
-                        <?= isset($asesment['ekstremitas']) && $asesment['ekstremitas'] == 'Abnormal' ? 'checked' : '' ?>>
-                    Abnormal</label>
-                <input type="text" class="form-control mt-2" name="keterangan_ekstremitas" placeholder="Keterangan..."
-                    value="<?= $asesment['keterangan_ekstremitas'] ?? '' ?>">
-            </div>
-        </div>
-    </div>
+        <!-- (Lower Physical Removed) -->
 
-    <!-- 4. HASIL PENUNJANG -->
-    <div class="row mt-3">
-        <div class="col-md-12">
-            <h4 class="text-green" style="border-bottom: 2px solid #00a65a; padding-bottom: 5px;"><i
-                    class="fa fa-flask"></i> Pemeriksaan Penunjang</h4>
-        </div>
-        <div class="col-md-4">
-            <div class="form-group">
-                <label>Laboratorium</label>
-                <textarea class="form-control" name="lab" rows="3"><?= $asesment['lab'] ?? '' ?></textarea>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="form-group">
-                <label>Radiologi</label>
-                <textarea class="form-control" name="rad" rows="3"><?= $asesment['rad'] ?? '' ?></textarea>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="form-group">
-                <label>Penunjang Lain</label>
-                <textarea class="form-control" name="penunjanglain"
-                    rows="3"><?= $asesment['penunjanglain'] ?? '' ?></textarea>
-            </div>
-        </div>
-    </div>
+        <!-- III. PEMERIKSAAN SISTEMIK -->
+        <div class="section-header"><i class="fa fa-stethoscope"></i> III. PEMERIKSAAN SISTEMIK</div>
 
-    <!-- 5. DIAGNOSIS & PLAN -->
-    <div class="row mt-3">
-        <div class="col-md-12">
-            <h4 class="text-green" style="border-bottom: 2px solid #00a65a; padding-bottom: 5px;"><i
-                    class="fa fa-pencil-square-o"></i> Diagnosis & Perencanaan</h4>
-        </div>
-        <div class="col-md-6">
-            <div class="form-group">
-                <label>Diagnosis Asesmen</label>
-                <textarea class="form-control" name="diagnosis" rows="2"><?= $asesment['diagnosis'] ?? '' ?></textarea>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label>Kepala <span class="text-danger">*</span></label>
+                    <select class="form-control" name="kepala" required>
+                        <option value="">-- Pilih --</option>
+                        <option value="Normal">Normal</option>
+                        <option value="Abnormal">Abnormal</option>
+                        <option value="Tidak Diperiksa">Tidak Diperiksa</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Keterangan Kepala</label>
+                    <input type="text" class="form-control" name="keterangan_kepala" maxlength="30" value="">
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label>Thoraks <span class="text-danger">*</span></label>
+                    <select class="form-control" name="thoraks" required>
+                        <option value="">-- Pilih --</option>
+                        <option value="Normal">Normal</option>
+                        <option value="Abnormal">Abnormal</option>
+                        <option value="Tidak Diperiksa">Tidak Diperiksa</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Keterangan Thoraks</label>
+                    <input type="text" class="form-control" name="keterangan_thorak" maxlength="30" value="">
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label>Abdomen <span class="text-danger">*</span></label>
+                    <select class="form-control" name="abdomen" required>
+                        <option value="">-- Pilih --</option>
+                        <option value="Normal">Normal</option>
+                        <option value="Abnormal">Abnormal</option>
+                        <option value="Tidak Diperiksa">Tidak Diperiksa</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Keterangan Abdomen</label>
+                    <input type="text" class="form-control" name="keterangan_abdomen" maxlength="30" value="">
+                </div>
             </div>
         </div>
-        <div class="col-md-6">
-            <div class="form-group">
-                <label>Diagnosis Banding / Tambahan</label>
-                <textarea class="form-control" name="diagnosis2"
-                    rows="2"><?= $asesment['diagnosis2'] ?? '' ?></textarea>
-            </div>
-        </div>
-        <div class="col-md-12">
-            <div class="form-group">
-                <label>Permasalahan</label>
-                <input type="text" class="form-control" name="permasalahan"
-                    value="<?= $asesment['permasalahan'] ?? '' ?>">
-            </div>
-        </div>
-        <div class="col-md-6">
-            <div class="form-group">
-                <label>Terapi / Pengobatan</label>
-                <textarea class="form-control" name="terapi" rows="3"><?= $asesment['terapi'] ?? '' ?></textarea>
-            </div>
-        </div>
-        <div class="col-md-6">
-            <div class="form-group">
-                <label>Tindakan</label>
-                <textarea class="form-control" name="tindakan" rows="3"><?= $asesment['tindakan'] ?? '' ?></textarea>
-            </div>
-        </div>
-        <div class="col-md-12">
-            <div class="form-group">
-                <label>Edukasi</label>
-                <textarea class="form-control" name="edukasi" rows="2"><?= $asesment['edukasi'] ?? '' ?></textarea>
-            </div>
-        </div>
-    </div>
 
-    <div class="row text-right" style="margin-top: 20px; border-top: 1px solid #ddd; padding-top: 15px;">
-        <div class="col-md-12">
-            <button type="button" class="btn btn-primary" onclick="simpanAssesment()"><i class="fa fa-save"></i> Simpan
+        <div class="row">
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label>Ekstremitas <span class="text-danger">*</span></label>
+                    <select class="form-control" name="ekstremitas" required>
+                        <option value="">-- Pilih --</option>
+                        <option value="Normal">Normal</option>
+                        <option value="Abnormal">Abnormal</option>
+                        <option value="Tidak Diperiksa">Tidak Diperiksa</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Keterangan Ekstremitas</label>
+                    <input type="text" class="form-control" name="keterangan_ekstremitas" maxlength="30" value="">
+                </div>
+            </div>
+        </div>
+
+        <!-- (Urologi-specific exams removed) -->
+
+        <!-- IV. STATUS LOKALIS (PENYAKIT DALAM) -->
+        <div class="section-header"><i class="fa fa-image"></i> IV. STATUS LOKALIS & KETERANGAN LAINNYA</div>
+        <div class="form-group">
+            <label>Keterangan Lokalis / Pemeriksaan Lainnya</label>
+            <textarea class="form-control" name="lainnya" rows="5"
+                placeholder="Deskripsi status lokalis atau pemeriksaan lainnya..."></textarea>
+        </div>
+
+        <!-- V. PEMERIKSAAN PENUNJANG -->
+        <div class="section-header"><i class="fa fa-flask"></i> V. PEMERIKSAAN PENUNJANG</div>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label>Laboratorium</label>
+                    <textarea class="form-control" name="lab" rows="3"
+                        placeholder="Hasil pemeriksaan lab..."></textarea>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label>Radiologi</label>
+                    <textarea class="form-control" name="rad" rows="3"
+                        placeholder="Hasil pemeriksaan radiologi..."></textarea>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Pemeriksaan Penunjang Lain</label>
+            <textarea class="form-control" name="penunjanglain" rows="2"
+                placeholder="Pemeriksaan lainnya..."></textarea>
+        </div>
+
+        <!-- V. DIAGNOSIS & TATALAKSANA -->
+        <!-- VI. DIAGNOSIS & TATALAKSANA -->
+        <div class="section-header"><i class="fa fa-notes-medical"></i> VII. DIAGNOSIS & TATALAKSANA</div>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label>Diagnosis Utama <span class="text-danger">*</span></label>
+                    <textarea class="form-control" name="diagnosis" rows="2" required></textarea>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label>Diagnosis Sekunder</label>
+                    <textarea class="form-control" name="diagnosis2" rows="2"></textarea>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Permasalahan</label>
+            <textarea class="form-control" name="permasalahan" rows="2"></textarea>
+        </div>
+
+        <div class="row">
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label>Terapi</label>
+                    <textarea class="form-control" name="terapi" rows="3"></textarea>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label>Tindakan</label>
+                    <textarea class="form-control" name="tindakan" rows="3"></textarea>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label>Edukasi</label>
+                    <textarea class="form-control" name="edukasi" rows="3"></textarea>
+                </div>
+            </div>
+        </div>
+
+        <!-- BUTTON SAVE -->
+        <div style="text-align:right; margin:20px 0;">
+            <button type="submit" id="btnSubmit" class="btn btn-primary btn-lg"><i class="fa fa-save"></i> Simpan
                 Asesmen</button>
         </div>
-    </div>
-</form>
-
-<!-- HISTORY TABLE -->
-<div id="box-history-apd" class="box box-success box-solid"
-    style="margin-top:20px; display: <?= !empty($asesment['no_rawat']) ? 'block' : 'none' ?>;">
-    <div class="box-header with-border">
-        <h3 class="box-title"><i class="fa fa-history"></i> Riwayat Asesmen Aktif</h3>
-        <div class="box-tools pull-right">
-            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
-        </div>
-    </div>
-    <div class="box-body no-padding">
-        <table class="table table-striped table-hover">
-            <thead>
-                <tr class="bg-gray-light">
-                    <th>Tanggal Asesmen</th>
-                    <th>Dokter Pemeriksa</th>
-                    <th>Anamnesis</th>
-                    <th>Diagnosis Utama</th>
-                    <th width="150px">Aksi</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td id="apd_hist_tanggal" style="vertical-align:middle; font-weight:bold;">
-                        <?= isset($asesment['tanggal']) ? date('d-m-Y H:i', strtotime($asesment['tanggal'])) : '-' ?>
-                    </td>
-                    <td style="vertical-align:middle;"><?= $detail_pasien['nm_dokter'] ?? '-' ?></td>
-                    <td id="apd_hist_anamnesis" style="vertical-align:middle;"><?= $asesment['anamnesis'] ?? '-' ?></td>
-                    <td id="apd_hist_diagnosa" style="vertical-align:middle; color:#d73925;">
-                        <?= isset($asesment['diagnosis']) ? (strlen($asesment['diagnosis']) > 50 ? substr($asesment['diagnosis'], 0, 50) . '...' : $asesment['diagnosis']) : '-' ?>
-                    </td>
-                    <td style="vertical-align:middle;">
-                        <button type="button" class="btn btn-info btn-sm btn-flat" onclick="lihatDetailAPD()"
-                            title="Lihat Detail"><i class="fa fa-eye"></i></button>
-                        <button type="button" class="btn btn-warning btn-sm btn-flat" onclick="cetakPdfAPD()"
-                            title="Cetak PDF"><i class="fa fa-print"></i></button>
-                        <button type="button" class="btn btn-danger btn-sm btn-flat" onclick="hapusAssesment()"
-                            title="Hapus Data"><i class="fa fa-trash"></i></button>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
+    </form>
 </div>
 
-<!-- MODAL DETAIL -->
-<div class="modal fade" id="modal-detail-apd">
-    <div class="modal-dialog modal-lg" style="width: 90%;">
-        <div class="modal-content" style="border-radius: 5px;">
-            <div class="modal-header bg-blue" style="border-top-left-radius: 5px; border-top-right-radius: 5px;">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"
-                    style="color:white; opacity:1;"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title"><i class="fa fa-file-text-o"></i> Detail Asesmen Penyakit Dalam</h4>
-            </div>
-            <div class="modal-body" style="background: #ecf0f5;">
-                <div class="row">
-                    <!-- SIDEBAR PROFILE -->
-                    <div class="col-md-4">
-                        <div class="box box-primary">
-                            <div class="box-body box-profile">
-                                <img class="profile-user-img img-responsive img-circle"
-                                    src="<?= base_url('assets/dist/img/avatar5.png') ?>" alt="Patient profile picture">
-                                <h3 class="profile-username text-center"><?= $detail_pasien['nm_pasien'] ?></h3>
-                                <p class="text-muted text-center"><?= $detail_pasien['no_rkm_medis'] ?></p>
+<!-- HISTORY SECTION -->
+<div class="container-fluid" style="margin-top:30px;">
+    <div class="section-header" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);"><i
+            class="fa fa-history"></i> RIWAYAT ASESMEN PENYAKIT DALAM</div>
 
-                                <ul class="list-group list-group-unbordered">
-                                    <li class="list-group-item">
-                                        <b>Tanggal Lahir</b> <a
-                                            class="pull-right"><?= date('d-m-Y', strtotime($detail_pasien['tgl_lahir'])) ?></a>
-                                    </li>
-                                    <li class="list-group-item">
-                                        <b>JK</b> <a
-                                            class="pull-right"><?= $detail_pasien['jk'] == 'L' ? 'Laki-Laki' : 'Perempuan' ?></a>
-                                    </li>
-                                    <li class="list-group-item">
-                                        <b>Tgl Asesmen</b> <a class="pull-right" id="det_tanggal"></a>
-                                    </li>
-                                </ul>
-                                <a href="#" onclick="cetakPdfAPD()" class="btn btn-primary btn-block"><b><i
-                                            class="fa fa-print"></i> Cetak PDF</b></a>
-                            </div>
-                        </div>
+    <div class="row" style="margin-bottom:20px;">
+        <div class="col-md-4">
+            <label>Dari Tanggal</label>
+            <input type="date" id="filterStartDate" class="form-control" value="<?= date('Y-m-d') ?>">
+        </div>
+        <div class="col-md-4">
+            <label>Sampai Tanggal</label>
+            <input type="date" id="filterEndDate" class="form-control" value="<?= date('Y-m-d') ?>">
+        </div>
+        <div class="col-md-4" style="padding-top:25px;">
+            <button type="button" class="btn btn-primary" onclick="loadHistory()"><i class="fa fa-search"></i>
+                Tampilkan</button>
+        </div>
+    </div>
 
-                        <!-- VITAL SIGN BOX -->
-                        <div class="small-box bg-aqua">
-                            <div class="inner">
-                                <h3 id="det_td" style="font-size:24px">120/80</h3>
-                                <p>Tekanan Darah (mmHg)</p>
-                            </div>
-                            <div class="icon"><i class="fa fa-heartbeat"></i></div>
-                        </div>
-                        <div class="row">
-                            <div class="col-xs-6">
-                                <div class="small-box bg-green">
-                                    <div class="inner">
-                                        <h4 id="det_nadi">80</h4>
-                                        <p>Nadi (x/m)</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-xs-6">
-                                <div class="small-box bg-yellow">
-                                    <div class="inner">
-                                        <h4 id="det_suhu">36.5</h4>
-                                        <p>Suhu (°C)</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- MAIN CONTENT -->
-                    <div class="col-md-8">
-                        <div class="nav-tabs-custom">
-                            <ul class="nav nav-tabs">
-                                <li class="active"><a href="#tab_1" data-toggle="tab">Anamnesis & Fisik</a></li>
-                                <li><a href="#tab_2" data-toggle="tab">Organ & Penunjang</a></li>
-                                <li><a href="#tab_3" data-toggle="tab">Diagnosis & Plan</a></li>
-                            </ul>
-                            <div class="tab-content">
-                                <!-- TAB 1 -->
-                                <div class="tab-pane active" id="tab_1">
-                                    <strong class="text-blue"><i class="fa fa-commenting-o"></i> Keluhan Utama</strong>
-                                    <p class="text-muted" id="det_keluhan"></p>
-                                    <hr>
-                                    <strong class="text-blue"><i class="fa fa-history"></i> Riwayat Penyakit
-                                        Sekarang</strong>
-                                    <p class="text-muted" id="det_rps"></p>
-                                    <hr>
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <strong class="text-blue">RPD</strong>
-                                            <p class="text-muted" id="det_rpd"></p>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <strong class="text-blue">RPO</strong>
-                                            <p class="text-muted" id="det_rpo"></p>
-                                        </div>
-                                    </div>
-                                    <hr>
-                                    <strong class="text-red"><i class="fa fa-warning"></i> Alergi</strong>
-                                    <p class="text-danger" id="det_alergi"></p>
-                                </div>
-
-                                <!-- TAB 2 -->
-                                <div class="tab-pane" id="tab_2">
-                                    <table class="table table-bordered">
-                                        <tr>
-                                            <th width="30%">Kepala</th>
-                                            <td id="det_kepala"></td>
-                                        </tr>
-                                        <tr>
-                                            <th>Thoraks</th>
-                                            <td id="det_thoraks"></td>
-                                        </tr>
-                                        <tr>
-                                            <th>Abdomen</th>
-                                            <td id="det_abdomen"></td>
-                                        </tr>
-                                        <tr>
-                                            <th>Ekstremitas</th>
-                                            <td id="det_ekstremitas"></td>
-                                        </tr>
-                                    </table>
-                                    <br>
-                                    <strong class="text-blue">Laboratorium</strong>
-                                    <p class="text-muted" id="det_lab"></p>
-                                    <strong class="text-blue">Radiologi</strong>
-                                    <p class="text-muted" id="det_rad"></p>
-                                </div>
-
-                                <!-- TAB 3 -->
-                                <div class="tab-pane" id="tab_3">
-                                    <div class="callout callout-danger">
-                                        <h4>Diagnosis Utama</h4>
-                                        <p id="det_diagnosis"></p>
-                                    </div>
-                                    <strong class="text-blue">Diagnosis Banding</strong>
-                                    <p class="text-muted" id="det_diagnosis2"></p>
-                                    <hr>
-                                    <strong class="text-blue">Terapi / Tindakan</strong>
-                                    <p class="text-muted" id="det_terapi"></p>
-                                    <hr>
-                                    <strong class="text-blue">Edukasi</strong>
-                                    <p class="text-muted" id="det_edukasi"></p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer" style="background: #f4f4f4;">
-                <button type="button" class="btn btn-default pull-right" data-dismiss="modal">Tutup</button>
-            </div>
+    <div id="historyContainer">
+        <div style="text-align:center; padding:40px; color:#999;">
+            <i class="fa fa-inbox" style="font-size:48px;"></i>
+            <p>Memuat riwayat...</p>
         </div>
     </div>
 </div>
 
 <script>
-    // 1. Logic Anamnesis Toggle (Dihapus sesuai request)
-    // Hubungan bebas diisi kapan saja.
-
-    // 2. Logic Jam Realtime (Hanya jika data belum ada alias form baru)
-    const isEditModePD = "<?= isset($asesment['tanggal']) ? 'true' : 'false' ?>";
-
-    if (isEditModePD === 'false') {
-        let clockInterval = setInterval(() => {
-            const now = new Date();
-            const hours = String(now.getHours()).padStart(2, '0');
-            const minutes = String(now.getMinutes()).padStart(2, '0');
-            const seconds = String(now.getSeconds()).padStart(2, '0');
-
-            // Update input
-            if ($('#jam_asesmen').length) {
-                document.getElementById('jam_asesmen').value = `${hours}:${minutes}`;
-            }
-        }, 1000);
-
-        $('#jam_asesmen').on('input change', function () {
-            clearInterval(clockInterval);
-        });
+    function toggleHubungan(value) {
+        document.getElementById('hubunganContainer').style.display = value === 'Alloanamnesis' ? 'block' : 'none';
     }
 
-    function simpanAssesment() {
-        $.ajax({
-            url: "<?= base_url('AwalMedisPenyakitDalamController/save') ?>",
-            type: "POST",
-            data: $('#formAwalMedisPenyakitDalam').serialize(),
-            dataType: "json",
-            beforeSend: function () {
-                Swal.fire({
-                    title: 'Menyimpan...',
-                    text: 'Mohon tunggu',
-                    showConfirmButton: false,
-                    allowOutsideClick: false,
-                    willOpen: () => { Swal.showLoading() }
-                });
-            },
-            success: function (response) {
-                if (response.status == 'success') {
-                    Swal.fire({
+    // Init
+    setTimeout(function () {
+        const anamnesis = document.querySelector('[name="anamnesis"]');
+        if (anamnesis) toggleHubungan(anamnesis.value);
+    }, 100);
+
+    // Canvas logic removed
+
+    // Helper function to reset form and button
+    window.resetFormAndButton = function () {
+        document.getElementById('formPENYAKIT DALAMAssessment').reset();
+        if (typeof clearCanvas === 'function') clearCanvas();
+        document.getElementById('btnSubmit').innerHTML = '<i class="fa fa-save"></i> Simpan Asesmen';
+    };
+
+    // Helper function to set edit mode
+    window.setEditMode = function () {
+        document.getElementById('btnSubmit').innerHTML = '<i class="fa fa-edit"></i> Update Asesmen';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    // Form Submit
+    document.getElementById('formPENYAKIT DALAMAssessment').addEventListener('submit', function (e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+
+        fetch('<?= base_url("AwalMedisPenyakitDalamController/save") ?>', {
+            method: 'POST',
+            body: formData
+        })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    typeof Swal !== "undefined" && Swal.fire({
                         icon: 'success',
-                        title: 'Berhasil',
-                        text: response.message,
-                        timer: 1500,
+                        title: 'Berhasil!',
+                        text: data.message,
+                        timer: 3000,
                         showConfirmButton: false
-                    }).then(() => {
-                        // Update UI History without reload
-                        updateHistoryUI();
                     });
+                    resetFormAndButton();
+                    setTimeout(function () { window.scrollTo({ top: 0, behavior: 'smooth' }); }, 3100);
+                    setTimeout(function () { loadHistory(); }, 500);
                 } else {
-                    Swal.fire('Gagal', response.message, 'error');
+                    typeof Swal !== "undefined" && Swal.fire({ icon: 'error', title: 'Gagal!', text: data.message });
                 }
-            },
-            error: function (xhr, status, error) {
-                console.error(error);
-                Swal.fire('Error', 'Terjadi kesalahan server.', 'error');
-            }
-        });
+            });
+    });
+
+    // History Functions
+    function loadHistory() {
+        const startDate = document.getElementById('filterStartDate').value;
+        const endDate = document.getElementById('filterEndDate').value;
+        const noRkm = '<?= $no_rkm_medis ?>';
+        const container = document.getElementById('historyContainer');
+
+        container.innerHTML = '<div style="text-align:center; padding:40px;"><i class="fa fa-spinner fa-spin" style="font-size:32px;"></i></div>';
+
+        fetch('<?= base_url("AwalMedisPenyakitDalamController/get_history") ?>?no_rkm_medis=' + noRkm + '&start_date=' + startDate + '&end_date=' + endDate)
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 'success' && data.data.length > 0) {
+                    let html = '<div style="display:grid; gap:15px;">';
+                    data.data.forEach(item => {
+                        const date = new Date(item.tanggal);
+                        const formattedDate = date.toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+                        html += '<div style="background:white; border:1px solid #ddd; border-radius:8px; padding:20px;">';
+                        html += '<div style="display:flex; justify-content:space-between; margin-bottom:15px; padding-bottom:15px; border-bottom:2px solid #f3f4f6;">';
+                        html += '<div><div style="font-weight:600; margin-bottom:5px;"><i class="fa fa-calendar"></i> ' + formattedDate + '</div>';
+                        html += '<div style="color:#666;"><i class="fa fa-user-md"></i> ' + (item.nm_dokter || 'Dokter') + '</div></div>';
+                        html += '<div style="display:flex; gap:8px;">';
+                        html += '<button onclick="viewDetail(\'' + item.no_rawat + '\')" class="btn btn-sm btn-info"><i class="fa fa-eye"></i> Lihat</button>';
+                        html += '<button onclick="editAssessment(\'' + item.no_rawat + '\')" class="btn btn-sm btn-warning"><i class="fa fa-edit"></i> Edit</button>';
+                        html += '<button onclick="printSinglePDF(\'' + item.no_rawat + '\')" class="btn btn-sm btn-success"><i class="fa fa-print"></i> Cetak</button>';
+                        html += '<button onclick="deleteAssessmentHistory(\'' + item.no_rawat + '\')" class="btn btn-sm btn-danger"><i class="fa fa-trash"></i> Hapus</button>';
+                        html += '</div></div>';
+                        html += '<div><strong>Keluhan:</strong> ' + (item.keluhan_utama ? item.keluhan_utama.substring(0, 100) + '...' : '-') + '</div>';
+                        html += '<div><strong>Diagnosis:</strong> ' + (item.diagnosis ? item.diagnosis.substring(0, 100) + '...' : '-') + '</div>';
+                        html += '</div>';
+                    });
+                    html += '</div>';
+                    container.innerHTML = html;
+                } else {
+                    container.innerHTML = '<div style="text-align:center; padding:40px; color:#999;"><i class="fa fa-inbox" style="font-size:48px;"></i><p>Tidak ada data</p></div>';
+                }
+            });
     }
 
-    // Function to show/update History Box from current Form Values
-    function updateHistoryUI() {
-        // Show box
-        $('#box-history-apd').show();
+    function viewDetail(noRawat) {
+        fetch('<?= base_url("AwalMedisPenyakitDalamController/get_detail") ?>?no_rawat=' + noRawat)
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    const d = data.data;
+                    const date = new Date(d.tanggal);
+                    const formattedDate = date.toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' });
 
-        // Get values
-        var tgl = $('input[name="tanggal_asesmen"]').val();
-        var jam = $('input[name="jam_asesmen"]').val();
-        var anam = $('#combo_anamnesis').val();
-        var diag = $('textarea[name="diagnosis"]').val();
+                    let html = '<div style="text-align:left; max-height:600px; overflow-y:auto; padding:10px;">';
+                    html += '<div style="background:linear-gradient(135deg, #ec4899 0%, #db2777 100%); color:white; padding:15px; border-radius:8px; margin-bottom:20px;">';
+                    html += '<h4 style="margin:0 0 10px 0;"><i class="fa fa-calendar"></i> ' + formattedDate + '</h4>';
+                    html += '<p style="margin:0;"><i class="fa fa-user-md"></i> ' + (d.nm_dokter || 'Dokter') + '</p></div>';
 
-        // Format Date (YYYY-MM-DD -> DD-MM-YYYY)
-        if (tgl) {
-            var parts = tgl.split('-');
-            if (parts.length == 3) tgl = parts[2] + '-' + parts[1] + '-' + parts[0];
-        }
+                    // I. ANAMNESIS
+                    html += '<div style="background:#f8fafc; padding:15px; border-radius:8px; margin-bottom:15px; border-left:4px solid #ec4899;">';
+                    html += '<h5 style="margin:0 0 10px 0; color:#ec4899;"><i class="fa fa-clipboard"></i> I. ANAMNESIS</h5>';
+                    html += '<p><strong>Keluhan Utama:</strong><br>' + (d.keluhan_utama || '-') + '</p>';
+                    html += '<p><strong>RPS:</strong><br>' + (d.rps || '-') + '</p>';
+                    if (d.rpd) html += '<p><strong>RPD:</strong> ' + d.rpd + '</p>';
+                    if (d.rpo) html += '<p><strong>RPO:</strong> ' + d.rpo + '</p>';
+                    if (d.alergi) html += '<p><strong>Alergi:</strong> ' + d.alergi + '</p></div>';
 
-        // Update Table
-        $('#apd_hist_tanggal').text(tgl + ' ' + jam);
-        $('#apd_hist_anamnesis').text(anam);
+                    // II. PEMERIKSAAN FISIK
+                    html += '<div style="background:#f8fafc; padding:15px; border-radius:8px; margin-bottom:15px; border-left:4px solid #10b981;">';
+                    html += '<h5 style="margin:0 0 10px 0; color:#10b981;"><i class="fa fa-heartbeat"></i> II. PEMERIKSAAN FISIK</h5>';
+                    html += '<div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:10px;">';
+                    html += '<p><strong>Kondisi:</strong> ' + (d.kondisi || '-') + '</p>';
+                    html += '<p><strong>GCS:</strong> ' + (d.gcs || '-') + '</p>';
+                    html += '<p><strong>Status:</strong> ' + (d.status || '-') + '</p>';
+                    html += '<p><strong>TD:</strong> ' + (d.td || '-') + ' mmHg</p>';
+                    html += '<p><strong>Nadi:</strong> ' + (d.nadi || '-') + ' x/mnt</p>';
+                    html += '<p><strong>RR:</strong> ' + (d.rr || '-') + ' x/mnt</p>';
+                    html += '<p><strong>Suhu:</strong> ' + (d.suhu || '-') + ' °C</p>';
+                    html += '<p><strong>BB:</strong> ' + (d.bb || '-') + ' kg</p>';
+                    html += '<p><strong>Nyeri:</strong> ' + (d.nyeri || '-') + '</p></div>';
+                    html += '</div>';
 
-        var shortDiag = diag.length > 50 ? diag.substring(0, 50) + '...' : diag;
-        $('#apd_hist_diagnosa').text(shortDiag);
+                    // III. PEMERIKSAAN SISTEMIK
+                    html += '<div style="background:#f8fafc; padding:15px; border-radius:8px; margin-bottom:15px; border-left:4px solid #f59e0b;">';
+                    html += '<h5 style="margin:0 0 10px 0; color:#f59e0b;"><i class="fa fa-stethoscope"></i> III. PEMERIKSAAN SISTEMIK (PENYAKIT DALAM)</h5>';
+                    if (d.kepala) html += '<p><strong>Kepala:</strong> ' + d.kepala + (d.keterangan_kepala ? ' (' + d.keterangan_kepala + ')' : '') + '</p>';
+                    if (d.thoraks) html += '<p><strong>Thoraks:</strong> ' + d.thoraks + (d.keterangan_thorak ? ' (' + d.keterangan_thorak + ')' : '') + '</p>';
+                    if (d.abdomen) html += '<p><strong>Abdomen:</strong> ' + d.abdomen + (d.keterangan_abdomen ? ' (' + d.keterangan_abdomen + ')' : '') + '</p>';
+                    if (d.ekstremitas) html += '<p><strong>Ekstremitas:</strong> ' + d.ekstremitas + (d.keterangan_ekstremitas ? ' (' + d.keterangan_ekstremitas + ')' : '') + '</p>';
+                    html += '</div>';
+
+                    // IV. STATUS LOKALIS
+                    html += '<div style="background:#f8fafc; padding:15px; border-radius:8px; margin-bottom:15px; border-left:4px solid #ef4444;">';
+                    html += '<h5 style="margin:0 0 10px 0; color:#ef4444;"><i class="fa fa-image"></i> IV. STATUS LOKALIS</h5>';
+                    if (d.lainnya) html += '<p><strong>Keterangan:</strong><br>' + d.lainnya + '</p>';
+                    html += '</div>';
+
+                    // V. PENUNJANG
+                    if (d.lab || d.rad || d.penunjanglain) {
+                        html += '<div style="background:#f8fafc; padding:15px; border-radius:8px; margin-bottom:15px; border-left:4px solid #06b6d4;">';
+                        html += '<h5 style="margin:0 0 10px 0; color:#06b6d4;"><i class="fa fa-flask"></i> V. PEMERIKSAAN PENUNJANG</h5>';
+                        if (d.lab) html += '<p><strong>Lab:</strong><br>' + d.lab + '</p>';
+                        if (d.rad) html += '<p><strong>Radiologi:</strong><br>' + d.rad + '</p>';
+                        if (d.penunjanglain) html += '<p><strong>Lainnya:</strong><br>' + d.penunjanglain + '</p>';
+                        html += '</div>';
+                    }
+
+                    // VI. DIAGNOSIS
+                    html += '<div style="background:#f8fafc; padding:15px; border-radius:8px; margin-bottom:15px; border-left:4px solid #ec4899;">';
+                    html += '<h5 style="margin:0 0 10px 0; color:#ec4899;"><i class="fa fa-notes-medical"></i> VI. DIAGNOSIS & TATALAKSANA</h5>';
+                    html += '<p><strong>Diagnosis Utama:</strong><br>' + (d.diagnosis || '-') + '</p>';
+                    if (d.diagnosis2) html += '<p><strong>Diagnosis Sekunder:</strong><br>' + d.diagnosis2 + '</p>';
+                    if (d.permasalahan) html += '<p><strong>Permasalahan:</strong><br>' + d.permasalahan + '</p>';
+                    if (d.terapi) html += '<p><strong>Terapi:</strong><br>' + d.terapi + '</p>';
+                    if (d.tindakan) html += '<p><strong>Tindakan:</strong><br>' + d.tindakan + '</p>';
+                    if (d.edukasi) html += '<p><strong>Edukasi:</strong><br>' + d.edukasi + '</p>';
+                    html += '</div></div>';
+
+                    typeof Swal !== "undefined" && Swal.fire({
+                        title: '<span style="color:#ec4899;"><i class="fa fa-file-medical"></i> Detail Asesmen PENYAKIT DALAM</span>',
+                        html: html,
+                        width: '900px',
+                        confirmButtonText: '<i class="fa fa-times"></i> Tutup',
+                        confirmButtonColor: '#ec4899'
+                    });
+                }
+            });
     }
 
-    function hapusAssesment() {
-        Swal.fire({
-            title: 'Apakah Anda yakin?',
-            text: "Data asesmen ini akan dihapus permanen!",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#d33',
-            cancelButtonColor: '#3085d6',
-            confirmButtonText: 'Ya, hapus!'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                $.ajax({
-                    url: "<?= base_url('AwalMedisPenyakitDalamController/delete') ?>",
-                    type: "POST",
-                    data: { no_rawat: $('#apd_no_rawat').val() },
-                    dataType: "json",
-                    success: function (response) {
-                        if (response.status == 'success') {
-                            Swal.fire('Terhapus!', response.message, 'success').then(() => {
-                                $('#formAwalMedisPenyakitDalam')[0].reset();
-                                $('#box-history-apd').hide();
-                            });
-                        } else {
-                            Swal.fire('Gagal', response.message, 'error');
+    function editAssessment(noRawat) {
+        fetch('<?= base_url("AwalMedisPenyakitDalamController/get_detail") ?>?no_rawat=' + noRawat)
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    const d = data.data;
+
+                    // Parse tanggal dan jam dari datetime
+                    if (d.tanggal) {
+                        // Format dari database: "2025-12-21 12:00:41"
+                        // Split menjadi date dan time
+                        const parts = d.tanggal.split(' ');
+                        if (parts.length >= 2) {
+                            const dateStr = parts[0]; // YYYY-MM-DD
+                            const timeParts = parts[1].split(':');
+                            const timeStr = timeParts[0] + ':' + timeParts[1]; // HH:MM (buang detik)
+                            document.querySelector('[name="tanggal"]').value = dateStr;
+                            document.querySelector('[name="jam"]').value = timeStr;
                         }
                     }
-                });
+
+                    const fields = ['no_rawat', 'anamnesis', 'hubungan', 'keluhan_utama', 'rps', 'rpd', 'rpo', 'alergi',
+                        'kondisi', 'gcs', 'status', 'td', 'nadi', 'rr', 'suhu', 'bb', 'nyeri',
+                        'kepala', 'keterangan_kepala', 'thoraks', 'keterangan_thorak', 'abdomen', 'keterangan_abdomen',
+                        'ekstremitas', 'keterangan_ekstremitas',
+                        'lainnya', 'lab', 'rad', 'penunjanglain',
+                        'diagnosis', 'diagnosis2', 'permasalahan', 'terapi', 'tindakan', 'edukasi'];
+                    fields.forEach(f => {
+                        const el = document.querySelector('[name="' + f + '"]');
+                        if (el && d[f]) el.value = d[f];
+                    });
+                    toggleHubungan(d.anamnesis);
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                    setEditMode();
+                    typeof Swal !== "undefined" && Swal.fire({ icon: 'info', title: 'Mode Edit', text: 'Data dimuat. Silakan edit dan simpan.', timer: 2000, showConfirmButton: false });
+                }
+            });
+    }
+
+    function printSinglePDF(noRawat) {
+        window.open('<?= base_url("AwalMedisPenyakitDalamController/print_pdf?no_rawat=") ?>' + noRawat, '_blank');
+    }
+
+    function deleteAssessmentHistory(noRawat) {
+        typeof Swal !== "undefined" && Swal.fire({
+            title: 'Hapus Asesmen?',
+            text: 'Data yang dihapus tidak dapat dikembalikan!',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#ef4444',
+            confirmButtonText: 'Ya, Hapus!',
+            cancelButtonText: 'Batal'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                fetch('<?= base_url("AwalMedisPenyakitDalamController/delete") ?>', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: 'no_rawat=' + noRawat
+                })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.status === 'success') {
+                            typeof Swal !== "undefined" && Swal.fire({ icon: 'success', title: 'Terhapus!', text: data.message, timer: 3000, showConfirmButton: false });
+                            setTimeout(function () { loadHistory(); }, 500);
+                            resetFormAndButton();
+                            setTimeout(function () { window.scrollTo({ top: 0, behavior: 'smooth' }); }, 3100);
+                        }
+                    });
             }
-        })
+        });
     }
 
-    function cetakPdfAPD() {
-        var no_rawat = $('#apd_no_rawat').val();
-        if (!no_rawat) return;
-        var url = "<?= base_url('AwalMedisPenyakitDalamController/print_pdf?no_rawat=') ?>" + no_rawat;
-        window.open(url, '_blank');
-    }
+    // Auto-load history
+    (function () {
+        let attempts = 0;
+        const checkAndLoad = setInterval(function () {
+            attempts++;
+            const startDate = document.getElementById('filterStartDate');
+            const endDate = document.getElementById('filterEndDate');
+            const container = document.getElementById('historyContainer');
+            if (startDate && endDate && container && typeof loadHistory === 'function') {
+                clearInterval(checkAndLoad);
+                loadHistory();
+            } else if (attempts >= 20) {
+                clearInterval(checkAndLoad);
+            }
+        }, 500);
+    })();
 
-    function lihatDetailAPD() {
-        // Populate Modal from Form Values (Client Side Binding)
-        // Header
-        var tgl = $('input[name="tanggal_asesmen"]').val();
-        var parts = tgl.split('-');
-        if (parts.length == 3) tgl = parts[2] + '-' + parts[1] + '-' + parts[0];
-        $('#det_tanggal').text(tgl + ' ' + $('input[name="jam_asesmen"]').val());
+    // Force clear form on page load (prevent browser autocomplete)
+    (function () {
+        setTimeout(function () {
+            const form = document.getElementById('formPENYAKIT DALAMAssessment');
+            if (form) {
+                // Reset the entire form
+                form.reset();
 
-        // Vital
-        $('#det_td').text($('input[name="td"]').val());
-        $('#det_nadi').text($('input[name="nadi"]').val());
-        $('#det_suhu').text($('input[name="suhu"]').val());
+                // Explicitly clear all text inputs and textareas
+                form.querySelectorAll('input[type="text"], textarea').forEach(function (el) {
+                    el.value = '';
+                });
 
-        // Tab 1
-        $('#det_keluhan').text($('textarea[name="keluhan_utama"]').val());
-        $('#det_rps').text($('textarea[name="rps"]').val());
-        $('#det_rpd').text($('textarea[name="rpd"]').val());
-        $('#det_rpo').text($('textarea[name="rpo"]').val());
-        $('#det_alergi').text($('input[name="alergi"]').val());
+                // Reset all selects to first option (empty option)
+                form.querySelectorAll('select').forEach(function (el) {
+                    el.selectedIndex = 0;
+                });
 
-        // Tab 2 (Organ)
-        var kepala = $('input[name="kepala"]:checked').val() + ' ' + ($('input[name="keterangan_kepala"]').val() ? '(' + $('input[name="keterangan_kepala"]').val() + ')' : '');
-        var thoraks = $('input[name="thoraks"]:checked').val() + ' ' + ($('input[name="keterangan_thorak"]').val() ? '(' + $('input[name="keterangan_thorak"]').val() + ')' : '');
-        var abdomen = $('input[name="abdomen"]:checked').val() + ' ' + ($('input[name="keterangan_abdomen"]').val() ? '(' + $('input[name="keterangan_abdomen"]').val() + ')' : '');
-        var ekstre = $('input[name="ekstremitas"]:checked').val() + ' ' + ($('input[name="keterangan_ekstremitas"]').val() ? '(' + $('input[name="keterangan_ekstremitas"]').val() + ')' : '');
+                // Clear canvas if exists
+                if (typeof clearCanvas === 'function') {
+                    clearCanvas();
+                }
 
-        $('#det_kepala').text(kepala);
-        $('#det_thoraks').text(thoraks);
-        $('#det_abdomen').text(abdomen);
-        $('#det_ekstremitas').text(ekstre);
+                // Reset button text
+                const btnSubmit = document.getElementById('btnSubmit');
+                if (btnSubmit) {
+                    btnSubmit.innerHTML = '<i class="fa fa-save"></i> Simpan Asesmen';
+                }
 
-        $('#det_lab').text($('textarea[name="lab"]').val());
-        $('#det_rad').text($('textarea[name="rad"]').val());
-
-        // Tab 3
-        $('#det_diagnosis').text($('textarea[name="diagnosis"]').val());
-        $('#det_diagnosis2').text($('textarea[name="diagnosis2"]').val());
-        $('#det_terapi').text($('textarea[name="terapi"]').val());
-        $('#det_edukasi').text($('textarea[name="edukasi"]').val());
-
-        $('#modal-detail-apd').modal('show');
-    }
+                console.log('✅ Form forcefully cleared on page load - all fields reset');
+            }
+        }, 800); // Run AFTER canvas init and all other scripts
+    })();
 </script>

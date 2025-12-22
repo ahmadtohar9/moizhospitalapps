@@ -1,316 +1,199 @@
-<?php
-// Variabel tersedia: $setting, $detail_pasien, $assesment, $tgl, $jam, $tgl_lahir
-function safe($v){ return isset($v) && $v !== '' ? $v : '-'; }
-?>
-<!doctype html>
+<!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  <title>PENILAIAN AWAL MEDIS RAWAT JALAN MATA</title>
-  <style>
-      body { 
-          font-family: Arial, sans-serif; 
-          font-size: 9px; 
-          margin: 0;
-          padding: 0;
-          line-height: 1.2;
-      }
-
-      .head {
-          display: flex;
-          align-items: center;
-          margin-bottom: 3px;
-          padding: 2px 0;
-      }
-
-      .head-logo {
-          height: 45px;
-          margin-right: 8px;
-      }
-
-      .head-title {
-          flex: 1;
-      }
-
-      .instansi {
-          font-weight: bold;
-          font-size: 11px;
-          margin: 0;
-      }
-
-      .alamat {
-          font-size: 8px;
-          margin: 1px 0;
-      }
-
-      .kontak {
-          font-size: 7px;
-          margin: 1px 0;
-      }
-
-      .divider {
-          border-bottom: 1px solid #000;
-          margin: 2px 0 5px 0;
-      }
-
-      .judul {
-          text-align: center;
-          font-weight: bold;
-          font-size: 10px;
-          margin: 3px 0 6px 0;
-      }
-
-      table { 
-          width: 100%; 
-          border-collapse: collapse; 
-          margin-bottom: 6px;
-      }
-
-      th, td { 
-          border: 1px solid #000; 
-          padding: 3px; 
-          vertical-align: top;
-          font-size: 8px;
-      }
-
-      th { 
-          background-color: #f0f0f0; 
-          font-weight: bold;
-      }
-
-      .section-title {
-          background-color: #e0e0e0;
-          font-weight: bold;
-          padding: 3px;
-          border: 1px solid #000;
-          margin: 6px 0 4px 0;
-          font-size: 9px;
-      }
-
-      .patient-info table {
-          border: none;
-          margin-bottom: 4px;
-      }
-
-      .patient-info td {
-          border: none;
-          padding: 1px 0;
-          font-size: 8px;
-      }
-
-      .no-border td {
-          border: none;
-          padding: 0;
-      }
-
-      .text-center {
-          text-align: center;
-      }
-
-      /* Tambahan untuk spacing yang lebih ketat */
-      .section-content {
-          margin: 0;
-          padding: 0;
-      }
-
-      .compact-table {
-          margin-bottom: 4px;
-      }
-
-      .compact-table th,
-      .compact-table td {
-          padding: 2px 3px;
-      }
-</style>
+    <title>Asesmen Awal Medis Mata</title>
+    <style>
+        body { font-family: sans-serif; font-size: 11px; }
+        .header { margin-bottom: 20px; border-bottom: 2px solid #000; padding-bottom: 10px; }
+        .table-data { width: 100%; border-collapse: collapse; margin-bottom: 10px; }
+        .table-data th, .table-data td { padding: 4px; vertical-align: top; text-align: left; }
+        .table-data th { width: 150px; font-weight: bold; }
+        .section-title { font-weight: bold; font-size: 12px; margin-top: 10px; margin-bottom: 5px; 
+                         text-decoration: underline; background: #eee; padding: 2px; }
+        .box { border: 1px solid #000; padding: 5px; margin-bottom: 5px; }
+    </style>
 </head>
 <body>
+    <div class="header">
+        <table width="100%">
+            <tr>
+                <td width="10%" align="left" style="vertical-align:middle;">
+                    <img src="data:image/jpeg;base64,<?= base64_encode($setting['logo']) ?>" width="70px">
+                </td>
+                <td align="center" style="vertical-align:middle;">
+                    <h2 style="margin:0; font-size:18px;"><?= strtoupper($setting['nama_instansi']) ?></h2>
+                    <p style="margin:2px 0; font-size:12px;"><?= $setting['alamat_instansi'] ?></p>
+                    <p style="margin:0; font-size:12px;">Telp: <?= $setting['kontak'] ?> | Email: <?= $setting['email'] ?></p>
+                </td>
+                <td width="10%" align="right" style="vertical-align:middle;"></td>
+            </tr>
+        </table>
+    </div>
 
-<!-- JUDUL UTAMA -->
-<div class="judul">PENILAIAN AWAL MEDIS RAWAT JALAN MATA</div>
+    <h3 style="text-align:center; margin:0 0 20px 0; text-decoration:underline;">ASESMEN AWAL MEDIS MATA (OFTALMOLOGI)</h3>
 
-<!-- INFO PASIEN -->
-<table class="patient-info">
-  <tr class="no-border">
-    <td width="40%" style="border: none;">
-      <strong>No. RM :</strong> <?= safe($detail_pasien['no_rkm_medis'] ?? '') ?>
-    </td>
-    <td width="30%" style="border: none;">
-      <strong>Jenis Kelamin :</strong> <?= safe($detail_pasien['jk'] ?? '') ?>
-    </td>
-    <td width="30%" style="border: none;">
-      <strong>Tanggal :</strong> <?= safe($tgl) ?> <?= safe($jam) ?>
-    </td>
-  </tr>
-  <tr class="no-border">
-    <td style="border: none;">
-      <strong>Nama Pasien :</strong> <?= safe($detail_pasien['nm_pasien'] ?? '') ?>
-    </td>
-    <td style="border: none;">
-      <strong>Tanggal Lahir :</strong> <?= safe($tgl_lahir) ?>
-    </td>
-    <td style="border: none;">
-      <strong>Anamnesis:</strong> <?= safe($assesment['anamnesis'] ?? '') ?>, <?= safe($assesment['hubungan'] ?? '') ?>
-    </td>
-  </tr>
-</table>
+    <table width="100%">
+        <tr>
+            <td width="15%">No. RM</td>
+            <td width="35%">: <?= $detail_pasien['no_rkm_medis'] ?></td>
+            <td width="15%">Nama Pasien</td>
+            <td width="35%">: <?= $detail_pasien['nm_pasien'] ?></td>
+        </tr>
+        <tr>
+            <td>Tgl. Lahir</td>
+            <td>: <?= date('d-m-Y', strtotime($detail_pasien['tgl_lahir'])) ?></td>
+            <td>JK</td>
+            <td>: <?= $detail_pasien['jk'] == 'L' ? 'Laki-laki' : 'Perempuan' ?></td>
+        </tr>
+        <tr>
+            <td>Tanggal Asesmen</td>
+            <td>: <?= date('d-m-Y H:i', strtotime($asesment['tanggal'])) ?></td>
+            <td>Dokter</td>
+            <td>: <?= $detail_pasien['nm_dokter'] ?></td>
+        </tr>
+    </table>
 
-<!-- I. RWAYAT KESEHATAN -->
-<div class="section-title">I. RWAYAT KESEHATAN</div>
-<table>
-  <tr>
-    <th width="20%">Keluhan Utama</th>
-    <td colspan="3"><?= safe($assesment['keluhan_utama'] ?? '') ?></td>
-  </tr>
-  <tr>
-    <th>Riwayat Penyakit Sekarang</th>
-    <td width="30%"><?= safe($assesment['rps'] ?? '') ?></td>
-    <th width="20%">Riwayat Penyakit Dahulu</th>
-    <td width="30%"><?= safe($assesment['rpd'] ?? '') ?></td>
-  </tr>
-  <tr>
-    <th>Riwayat Penggunaan Obat</th>
-    <td><?= safe($assesment['alergi'] ?? '') ?></td>
-    <th>Riwayat Alergi</th>
-    <td><?= safe($assesment['alergi'] ?? '') ?></td>
-  </tr>
-</table>
+    <div class="section-title">I. ANAMNESIS (<?= $asesment['anamnesis'] ?>)</div>
+    <?php if ($asesment['anamnesis'] == 'Alloanamnesis'): ?>
+        <p><b>Hubungan:</b> <?= $asesment['hubungan'] ?></p>
+    <?php endif; ?>
 
-<!-- II. PEMERIKSAAN FISIK -->
-<div class="section-title">II. PEMERIKSAAN FISIK</div>
-<table>
-  <tr>
-    <th width="16%">TD</th>
-    <td width="16%"><?= safe($assesment['td'] ?? '') ?> mmHg</td>
-    <th width="16%">BB</th>
-    <td width="16%"><?= safe($assesment['bb'] ?? '') ?> Kg</td>
-    <th width="16%">Suhu</th>
-    <td width="16%"><?= safe($assesment['suhu'] ?? '') ?> °C</td>
-  </tr>
-  <tr>
-    <th>Nadi</th>
-    <td><?= safe($assesment['nadi'] ?? '') ?> x/menit</td>
-    <th>RR</th>
-    <td><?= safe($assesment['rr'] ?? '') ?> x/menit</td>
-    <th>Nyeri</th>
-    <td><?= safe($assesment['nyeri'] ?? '') ?></td>
-  </tr>
-</table>
-<table>
-  <tr>
-    <th width="20%">Status Nutrisi</th>
-    <td><?= safe($assesment['bb'] ?? '') ?></td>
-  </tr>
-</table>
+    <table class="table-data">
+        <tr><th>Keluhan Utama</th><td>: <?= nl2br($asesment['keluhan_utama']) ?></td></tr>
+        <tr><th>Riw. Penyakit Sekarang</th><td>: <?= nl2br($asesment['rps']) ?></td></tr>
+        <tr><th>Riw. Penyakit Dahulu</th><td>: <?= nl2br($asesment['rpd']) ?></td></tr>
+        <tr><th>Riw. Penggunaan Obat</th><td>: <?= nl2br($asesment['rpo']) ?></td></tr>
+        <tr><th>Riwayat Alergi</th><td>: <?= $asesment['alergi'] ?></td></tr>
+    </table>
 
-<!-- III. STATUS OFTAMOLOGIS -->
-<div class="section-title">III. STATUS OFTAMOLOGIS</div>
-<table>
-  <tr>
-    <th width="50%">OD (Oculus Dextra)</th>
-    <th width="50%">OS (Oculus Sinistra)</th>
-  </tr>
-  <tr>
-    <td>
-      <table style="border: none;">
-        <tr><td>Visus SC</td><td>: <?= safe($assesment['visuskanan'] ?? '') ?></td></tr>
-        <tr><td>CC</td><td>: <?= safe($assesment['cckanan'] ?? '') ?></td></tr>
-        <tr><td>Palpebra</td><td>: <?= safe($assesment['palkanan'] ?? '') ?></td></tr>
-        <tr><td>Conjungtiwa</td><td>: <?= safe($assesment['conkanan'] ?? '') ?></td></tr>
-        <tr><td>Cornea</td><td>: <?= safe($assesment['corneakanan'] ?? '') ?></td></tr>
-        <tr><td>COA</td><td>: <?= safe($assesment['coakanan'] ?? '') ?></td></tr>
-        <tr><td>Iris/Pupil</td><td>: <?= safe($assesment['pupilkanan'] ?? '') ?></td></tr>
-        <tr><td>Lensa</td><td>: <?= safe($assesment['lensakanan'] ?? '') ?></td></tr>
-        <tr><td>Fundus Media</td><td>: <?= safe($assesment['funduskanan'] ?? '') ?></td></tr>
-        <tr><td>Papil</td><td>: <?= safe($assesment['papilkanan'] ?? '') ?></td></tr>
-        <tr><td>Retina</td><td>: <?= safe($assesment['retinakanan'] ?? '') ?></td></tr>
-        <tr><td>Makula</td><td>: <?= safe($assesment['makulakanan'] ?? '') ?></td></tr>
-        <tr><td>TIO</td><td>: <?= safe($assesment['tiokanan'] ?? '') ?></td></tr>
-        <tr><td>MBO</td><td>: <?= safe($assesment['mbokanan'] ?? '') ?></td></tr>
-      </table>
-    </td>
-    <td>
-      <table style="border: none;">
-        <tr><td>Visus SC</td><td>: <?= safe($assesment['visuskiri'] ?? '') ?></td></tr>
-        <tr><td>CC</td><td>: <?= safe($assesment['cckiri'] ?? '') ?></td></tr>
-        <tr><td>Palpebra</td><td>: <?= safe($assesment['palkiri'] ?? '') ?></td></tr>
-        <tr><td>Conjungtiwa</td><td>: <?= safe($assesment['conkiri'] ?? '') ?></td></tr>
-        <tr><td>Cornea</td><td>: <?= safe($assesment['corneakiri'] ?? '') ?></td></tr>
-        <tr><td>COA</td><td>: <?= safe($assesment['coakiri'] ?? '') ?></td></tr>
-        <tr><td>Iris/Pupil</td><td>: <?= safe($assesment['pupilkiri'] ?? '') ?></td></tr>
-        <tr><td>Lensa</td><td>: <?= safe($assesment['lensakiri'] ?? '') ?></td></tr>
-        <tr><td>Fundus Media</td><td>: <?= safe($assesment['funduskiri'] ?? '') ?></td></tr>
-        <tr><td>Papil</td><td>: <?= safe($assesment['papilkiri'] ?? '') ?></td></tr>
-        <tr><td>Retina</td><td>: <?= safe($assesment['retinakiri'] ?? '') ?></td></tr>
-        <tr><td>Makula</td><td>: <?= safe($assesment['makulakiri'] ?? '') ?></td></tr>
-        <tr><td>TIO</td><td>: <?= safe($assesment['tiokiri'] ?? '') ?></td></tr>
-        <tr><td>MBO</td><td>: <?= safe($assesment['mbokiri'] ?? '') ?></td></tr>
-      </table>
-    </td>
-  </tr>
-</table>
+    <div class="section-title">II. PEMERIKSAAN FISIK</div>
+    <table width="100%" cellpadding="3">
+        <tr>
+            <td width="25%"><b>Status:</b> <?= $asesment['status'] ?></td>
+            <td width="25%"><b>TD:</b> <?= $asesment['td'] ?> mmHg</td>
+            <td width="25%"><b>Nadi:</b> <?= $asesment['nadi'] ?> x/mnt</td>
+            <td width="25%"><b>RR:</b> <?= $asesment['rr'] ?> x/mnt</td>
+        </tr>
+        <tr>
+            <td><b>Suhu:</b> <?= $asesment['suhu'] ?> °C</td>
+            <td><b>BB:</b> <?= $asesment['bb'] ?> kg</td>
+            <td colspan="2"><b>Nyeri:</b> <?= $asesment['nyeri'] ?></td>
+        </tr>
+    </table>
 
-<!-- IV. PEMERIKSAAN PENUNJANG -->
-<div class="section-title">IV. PEMERIKSAAN PENUNJANG</div>
-<table>
-  <tr>
-    <th width="25%">Laboratorium</th>
-    <td width="25%"><?= safe($assesment['lab'] ?? '') ?></td>
-    <th width="25%">Radiologi</th>
-    <td width="25%"><?= safe($assesment['rad'] ?? '') ?></td>
-  </tr>
-  <tr>
-    <th>Penunjang Lainnya</th>
-    <td><?= safe($assesment['penunjang'] ?? '') ?></td>
-    <th>Tes Penglihatan</th>
-    <td><?= safe($assesment['tes'] ?? '') ?></td>
-  </tr>
-  <tr>
-    <th>Pemeriksaan Lain</th>
-    <td colspan="3"><?= safe($assesment['pemeriksaan'] ?? '') ?></td>
-  </tr>
-</table>
+    <div class="section-title">III. PEMERIKSAAN MATA (OFTALMOLOGI)</div>
+    
+    <p><b>Visus OD:</b> <?= $asesment['visuskanan'] ?: '-' ?> | <b>Visus OS:</b> <?= $asesment['visuskiri'] ?: '-' ?></p>
 
-<!-- V. DIAGNOSIS -->
-<div class="section-title">V. DIAGNOSIS</div>
-<table>
-  <tr>
-    <th width="20%">Asesmen Kerja</th>
-    <td width="30%"><?= safe($assesment['diagnosis'] ?? '') ?></td>
-    <th width="20%">Asesmen Banding</th>
-    <td width="30%"><?= safe($assesment['diagnosisbdg'] ?? '') ?></td>
-  </tr>
-</table>
+    <!-- Gambar Mata OD & OS Side by Side -->
+    <table width="100%" cellpadding="5" style="border-collapse: collapse;">
+        <tr>
+            <td width="50%" style="vertical-align: top; border: 1px solid #ccc; padding: 10px;">
+                <h4 style="text-align:center; margin:5px 0;">OD (Mata Kanan)</h4>
+                <div style="text-align:center; margin:10px 0;">
+                    <?php 
+                    $clean_no_rawat = str_replace('/', '', $asesment['no_rawat']);
+                    $img_od_path = FCPATH . 'assets/images/lokalis_mata/mata_od_' . $clean_no_rawat . '.png';
+                    if (file_exists($img_od_path)): 
+                    ?>
+                        <img src="<?= $img_od_path ?>" style="max-width:90%; border:1px solid #ccc;">
+                    <?php else: ?>
+                        <img src="<?= FCPATH . 'assets/images/mata/mata_od_template.png' ?>" style="max-width:90%; border:1px solid #ccc;">
+                    <?php endif; ?>
+                </div>
+                <ul style="font-size:10px; margin:5px 0; padding-left:20px;">
+                    <?php if (!empty($asesment['cckanan'])): ?><li><b>CC:</b> <?= $asesment['cckanan'] ?></li><?php endif; ?>
+                    <?php if (!empty($asesment['palkanan'])): ?><li><b>Palpebra:</b> <?= $asesment['palkanan'] ?></li><?php endif; ?>
+                    <?php if (!empty($asesment['conkanan'])): ?><li><b>Conjunctiva:</b> <?= $asesment['conkanan'] ?></li><?php endif; ?>
+                    <?php if (!empty($asesment['corneakanan'])): ?><li><b>Cornea:</b> <?= $asesment['corneakanan'] ?></li><?php endif; ?>
+                    <?php if (!empty($asesment['coakanan'])): ?><li><b>COA:</b> <?= $asesment['coakanan'] ?></li><?php endif; ?>
+                    <?php if (!empty($asesment['pupilkanan'])): ?><li><b>Pupil:</b> <?= $asesment['pupilkanan'] ?></li><?php endif; ?>
+                    <?php if (!empty($asesment['lensakanan'])): ?><li><b>Lensa:</b> <?= $asesment['lensakanan'] ?></li><?php endif; ?>
+                    <?php if (!empty($asesment['funduskanan'])): ?><li><b>Fundus:</b> <?= $asesment['funduskanan'] ?></li><?php endif; ?>
+                    <?php if (!empty($asesment['papilkanan'])): ?><li><b>Papil:</b> <?= $asesment['papilkanan'] ?></li><?php endif; ?>
+                    <?php if (!empty($asesment['retinakanan'])): ?><li><b>Retina:</b> <?= $asesment['retinakanan'] ?></li><?php endif; ?>
+                    <?php if (!empty($asesment['makulakanan'])): ?><li><b>Makula:</b> <?= $asesment['makulakanan'] ?></li><?php endif; ?>
+                    <?php if (!empty($asesment['tiokanan'])): ?><li><b>TIO:</b> <?= $asesment['tiokanan'] ?></li><?php endif; ?>
+                    <?php if (!empty($asesment['mbokanan'])): ?><li><b>MBO:</b> <?= $asesment['mbokanan'] ?></li><?php endif; ?>
+                </ul>
+            </td>
+            <td width="50%" style="vertical-align: top; border: 1px solid #ccc; padding: 10px;">
+                <h4 style="text-align:center; margin:5px 0;">OS (Mata Kiri)</h4>
+                <div style="text-align:center; margin:10px 0;">
+                    <?php 
+                    $img_os_path = FCPATH . 'assets/images/lokalis_mata/mata_os_' . $clean_no_rawat . '.png';
+                    if (file_exists($img_os_path)): 
+                    ?>
+                        <img src="<?= $img_os_path ?>" style="max-width:90%; border:1px solid #ccc;">
+                    <?php else: ?>
+                        <img src="<?= FCPATH . 'assets/images/mata/mata_os_template.png' ?>" style="max-width:90%; border:1px solid #ccc;">
+                    <?php endif; ?>
+                </div>
+                <ul style="font-size:10px; margin:5px 0; padding-left:20px;">
+                    <?php if (!empty($asesment['cckiri'])): ?><li><b>CC:</b> <?= $asesment['cckiri'] ?></li><?php endif; ?>
+                    <?php if (!empty($asesment['palkiri'])): ?><li><b>Palpebra:</b> <?= $asesment['palkiri'] ?></li><?php endif; ?>
+                    <?php if (!empty($asesment['conkiri'])): ?><li><b>Conjunctiva:</b> <?= $asesment['conkiri'] ?></li><?php endif; ?>
+                    <?php if (!empty($asesment['corneakiri'])): ?><li><b>Cornea:</b> <?= $asesment['corneakiri'] ?></li><?php endif; ?>
+                    <?php if (!empty($asesment['coakiri'])): ?><li><b>COA:</b> <?= $asesment['coakiri'] ?></li><?php endif; ?>
+                    <?php if (!empty($asesment['pupilkiri'])): ?><li><b>Pupil:</b> <?= $asesment['pupilkiri'] ?></li><?php endif; ?>
+                    <?php if (!empty($asesment['lensakiri'])): ?><li><b>Lensa:</b> <?= $asesment['lensakiri'] ?></li><?php endif; ?>
+                    <?php if (!empty($asesment['funduskiri'])): ?><li><b>Fundus:</b> <?= $asesment['funduskiri'] ?></li><?php endif; ?>
+                    <?php if (!empty($asesment['papilkiri'])): ?><li><b>Papil:</b> <?= $asesment['papilkiri'] ?></li><?php endif; ?>
+                    <?php if (!empty($asesment['retinakiri'])): ?><li><b>Retina:</b> <?= $asesment['retinakiri'] ?></li><?php endif; ?>
+                    <?php if (!empty($asesment['makulakiri'])): ?><li><b>Makula:</b> <?= $asesment['makulakiri'] ?></li><?php endif; ?>
+                    <?php if (!empty($asesment['tiokiri'])): ?><li><b>TIO:</b> <?= $asesment['tiokiri'] ?></li><?php endif; ?>
+                    <?php if (!empty($asesment['mbokiri'])): ?><li><b>MBO:</b> <?= $asesment['mbokiri'] ?></li><?php endif; ?>
+                </ul>
+            </td>
+        </tr>
+    </table>
 
-<!-- VI. PERMASALAHAN & TATALAKSANA -->
-<div class="section-title">VI. PERMASALAHAN & TATALAKSANA</div>
-<table>
-  <tr>
-    <th width="20%">Permasalahan</th>
-    <td width="30%"><?= safe($assesment['permasalahan'] ?? '') ?></td>
-    <th width="20%">Terapi/Pengobatan</th>
-    <td width="30%"><?= safe($assesment['terapi'] ?? '') ?></td>
-  </tr>
-  <tr>
-    <th>Tindakan/Rencana Tindakan</th>
-    <td colspan="3"><?= safe($assesment['tindakan'] ?? '') ?></td>
-  </tr>
-</table>
+    <div class="section-title">IV. PEMERIKSAAN PENUNJANG</div>
+    <table class="table-data">
+        <?php if (!empty($asesment['lab'])): ?>
+            <tr><th>Laboratorium</th><td>: <?= nl2br($asesment['lab']) ?></td></tr>
+        <?php endif; ?>
+        <?php if (!empty($asesment['rad'])): ?>
+            <tr><th>Radiologi</th><td>: <?= nl2br($asesment['rad']) ?></td></tr>
+        <?php endif; ?>
+        <?php if (!empty($asesment['penunjang'])): ?>
+            <tr><th>Penunjang Lainnya</th><td>: <?= nl2br($asesment['penunjang']) ?></td></tr>
+        <?php endif; ?>
+        <?php if (!empty($asesment['tes'])): ?>
+            <tr><th>Tes</th><td>: <?= nl2br($asesment['tes']) ?></td></tr>
+        <?php endif; ?>
+        <?php if (!empty($asesment['pemeriksaan'])): ?>
+            <tr><th>Pemeriksaan</th><td>: <?= nl2br($asesment['pemeriksaan']) ?></td></tr>
+        <?php endif; ?>
+    </table>
+    <?php if (empty($asesment['lab']) && empty($asesment['rad']) && empty($asesment['penunjang']) && empty($asesment['tes']) && empty($asesment['pemeriksaan'])): ?>
+        <p>-</p>
+    <?php endif; ?>
 
-<!-- VII. EDUKASI -->
-<div class="section-title">VII. EDUKASI</div>
-<table>
-  <tr>
-    <td><?= safe($assesment['edukasi'] ?? '') ?></td>
-  </tr>
-</table>
+    <div class="section-title">V. DIAGNOSIS & TATALAKSANA</div>
+    <table class="table-data">
+        <tr><th>Diagnosis</th><td>: <?= nl2br($asesment['diagnosis']) ?></td></tr>
+        <?php if (!empty($asesment['diagnosisbdg'])): ?>
+            <tr><th>Diagnosis Banding</th><td>: <?= nl2br($asesment['diagnosisbdg']) ?></td></tr>
+        <?php endif; ?>
+        <?php if (!empty($asesment['permasalahan'])): ?>
+            <tr><th>Permasalahan</th><td>: <?= nl2br($asesment['permasalahan']) ?></td></tr>
+        <?php endif; ?>
+        <?php if (!empty($asesment['terapi'])): ?>
+            <tr><th>Terapi</th><td>: <?= nl2br($asesment['terapi']) ?></td></tr>
+        <?php endif; ?>
+        <?php if (!empty($asesment['tindakan'])): ?>
+            <tr><th>Tindakan</th><td>: <?= nl2br($asesment['tindakan']) ?></td></tr>
+        <?php endif; ?>
+        <?php if (!empty($asesment['edukasi'])): ?>
+            <tr><th>Edukasi</th><td>: <?= nl2br($asesment['edukasi']) ?></td></tr>
+        <?php endif; ?>
+    </table>
 
-<!-- TANDA TANGAN -->
-<div style="margin-top: 20px; text-align: right;">
-  <div style="margin-bottom: 50px;">
-    Dokter Pemeriksa,<br><br><br><br>
-    <strong><?= safe($assesment['kd_dokter'] ?? '') ?></strong>
-  </div>
-</div>
-
+    <div style="margin-top: 30px; float: right; width: 200px; text-align: center;">
+        <p>Dokter Penanggung Jawab,</p>
+        <br><br><br>
+        <p><b>( <?= $detail_pasien['nm_dokter'] ?> )</b></p>
+    </div>
 </body>
 </html>

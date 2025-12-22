@@ -1,9 +1,9 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class AwalMedisPenyakitDalamModel extends CI_Model
+class AwalMedisKandunganModel extends CI_Model
 {
-    private $table = 'penilaian_medis_ralan_penyakit_dalam';
+    private $table = 'penilaian_medis_ralan_kandungan';
 
     public function get_by_no_rawat($no_rawat)
     {

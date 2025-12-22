@@ -150,8 +150,8 @@ class RekamMedisRalanController extends CI_Controller
             ], // Assesmen Penyakit Dalam
 
             'AwalMedisDokterMataRalanController/index' => ['model' => 'awalMedisDokterMataRalanModel', 'view' => 'rekammedis/dokter/awalMedisDokterMata_view'],
-            'PenilaianMedisMataController/index' => ['model' => 'PenilaianMedisMataModel', 'view' => 'penilaian_medis_mata/form'],
-            'PenilaianMedisKandunganController/index' => ['model' => 'PenilaianMedisKandunganModel', 'view' => 'penilaian_medis_kandungan/form'],
+            'AwalMedisMataController/index' => ['model' => 'AwalMedisMataModel', 'view' => 'rekammedis/dokter/awalMedisMata_view'],
+            'AwalMedisKandunganController/index' => ['model' => 'AwalMedisKandunganModel', 'view' => 'rekammedis/dokter/awalMedisKandungan_view'],
 
             // ==================== AUTO-GENERATED MEDICAL ASSESSMENTS ====================
             'AwalMedisAnakController/index' => ['model' => 'AwalMedisAnakModel', 'view' => 'rekammedis/dokter/awalMedisAnak_view'],
@@ -259,19 +259,18 @@ class RekamMedisRalanController extends CI_Controller
                 $data['dokters'] = $this->FormulirKfrModel->get_dokters();
             }
 
-            // [PATCH] Inject data Penilaian Medis Mata
-            if ($decodedUrl === 'PenilaianMedisMataController/index') {
-                $this->load->model('PenilaianMedisMataModel');
-                date_default_timezone_set('Asia/Jakarta');
+            // [PATCH] Inject data Awal Medis Mata
+            if ($decodedUrl === 'AwalMedisMataController/index') {
+                $this->load->model('AwalMedisMataModel');
+                $data['asesment'] = $this->AwalMedisMataModel->get_by_no_rawat($no_rawat);
                 $data['tgl_sekarang'] = date('Y-m-d');
                 $data['jam_sekarang'] = date('H:i:s');
             }
 
-            // [PATCH] Inject data Penilaian Medis Kandungan
-            if ($decodedUrl === 'PenilaianMedisKandunganController/index') {
-                $this->load->model('PenilaianMedisKandunganModel');
-                date_default_timezone_set('Asia/Jakarta');
-                $data['pasien'] = $this->PenilaianMedisKandunganModel->get_pasien_info($no_rawat);
+            // [PATCH] Inject data Awal Medis Kandungan
+            if ($decodedUrl === 'AwalMedisKandunganController/index') {
+                $this->load->model('AwalMedisKandunganModel');
+                $data['asesment'] = $this->AwalMedisKandunganModel->get_by_no_rawat($no_rawat);
                 $data['tgl_sekarang'] = date('Y-m-d');
                 $data['jam_sekarang'] = date('H:i:s');
             }

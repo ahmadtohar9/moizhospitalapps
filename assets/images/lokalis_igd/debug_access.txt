@@ -1,5 +1,5 @@
-2025-12-19 23:36:32 - Access Check. Post Keys: no_rawat, kd_dokter, lokalis_image, tanggal, jam, anamnesis, hubungan, keluhan_utama, rps, rpd, rpk, rpo, alergi, keadaan, kesadaran, gcs, tb, bb, td, nadi, rr, suhu, spo2, kepala, mata, gigi, leher, thoraks, abdomen, genital, ekstremitas, ket_fisik, ket_lokalis, ekg, rad, lab, diagnosis, tata_laksana
+2025-12-21 17:35:47 - Access Check. Post Keys: no_rawat, kd_dokter, lokalis_image, tanggal, jam, anamnesis, hubungan, keluhan_utama, rps, rpd, rpk, rpo, alergi, keadaan, kesadaran, gcs, td, nadi, suhu, rr, bb, tb, spo2, kepala, mata, gigi, leher, thoraks, abdomen, genital, ekstremitas, ket_fisik, ket_lokalis, lab, rad, ekg, diagnosis, tata_laksana
 Image Block Entered.
-Decoded Size: 151963
-Attempting write to: /Applications/XAMPP/xamppfiles/htdocs/moizhospitalapps/assets/images/lokalis_igd/lokalis_20251218000001.png
-Write Success. Bytes: 151963
+Decoded Size: 155760
+Attempting write to: /Applications/XAMPP/xamppfiles/htdocs/moizhospitalapps/assets/images/lokalis_igd/lokalis_20251220000001.png
+Write Success. Bytes: 155760

@@ -2,12 +2,12 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 date_default_timezone_set('Asia/Jakarta');
 
-class AwalMedisIGDController extends CI_Controller
+class AwalMedisMataController extends CI_Controller
 {
     public function __construct()
     {
         parent::__construct();
-        $this->load->model('AwalMedisIGDModel');
+        $this->load->model('AwalMedisMataModel');
         $this->load->model('RekamMedisRalanModel');
         $this->load->model('MenuModel');
 
@@ -50,7 +50,7 @@ class AwalMedisIGDController extends CI_Controller
         $data['asesment'] = null; // Explicitly set to null to prevent any data loading
         $data['no_rkm_medis'] = $data['detail_pasien']['no_rkm_medis'] ?? '';
 
-        $this->load->view('rekammedis/dokter/awalMedisIGD_view', $data);
+        $this->load->view('rekammedis/dokter/awalMedisMata_view', $data);
     }
 
     public function get_history()
@@ -66,7 +66,7 @@ class AwalMedisIGDController extends CI_Controller
             return;
         }
 
-        $history = $this->AwalMedisIGDModel->get_history($no_rkm_medis, $start_date, $end_date);
+        $history = $this->AwalMedisMataModel->get_history($no_rkm_medis, $start_date, $end_date);
         echo json_encode(['status' => 'success', 'data' => $history]);
     }
 
@@ -80,7 +80,7 @@ class AwalMedisIGDController extends CI_Controller
             return;
         }
 
-        $detail = $this->AwalMedisIGDModel->get_by_no_rawat($no_rawat);
+        $detail = $this->AwalMedisMataModel->get_by_no_rawat($no_rawat);
         if ($detail) {
             echo json_encode(['status' => 'success', 'data' => $detail]);
         } else {
@@ -108,24 +108,44 @@ class AwalMedisIGDController extends CI_Controller
             $post['tanggal'] = "$tgl $jam";
             unset($post['jam']);
 
-            if (!empty($post['lokalis_image'])) {
-                $img = $post['lokalis_image'];
+
+            // Save Mata OD (Kanan) Image
+            if (!empty($post['mata_od_image'])) {
+                $img = $post['mata_od_image'];
                 $img = str_replace('data:image/png;base64,', '', $img);
                 $img = str_replace(' ', '+', $img);
                 $data = base64_decode($img);
 
                 if ($data) {
-                    $dir = FCPATH . 'assets/images/lokalis_igd/';
+                    $dir = FCPATH . 'assets/images/lokalis_mata/';
                     if (!is_dir($dir))
                         mkdir($dir, 0777, true);
 
-                    $filename = 'lokalis_' . str_replace('/', '', $post['no_rawat']) . '.png';
+                    $filename = 'mata_od_' . str_replace('/', '', $post['no_rawat']) . '.png';
                     file_put_contents($dir . $filename, $data);
                 }
             }
-            unset($post['lokalis_image']);
+            unset($post['mata_od_image']);
 
-            // Whitelist: only save columns that exist in table
+            // Save Mata OS (Kiri) Image
+            if (!empty($post['mata_os_image'])) {
+                $img = $post['mata_os_image'];
+                $img = str_replace('data:image/png;base64,', '', $img);
+                $img = str_replace(' ', '+', $img);
+                $data = base64_decode($img);
+
+                if ($data) {
+                    $dir = FCPATH . 'assets/images/lokalis_mata/';
+                    if (!is_dir($dir))
+                        mkdir($dir, 0777, true);
+
+                    $filename = 'mata_os_' . str_replace('/', '', $post['no_rawat']) . '.png';
+                    file_put_contents($dir . $filename, $data);
+                }
+            }
+            unset($post['mata_os_image']);
+
+            // Whitelist: only save columns that exist in penilaian_medis_ralan_mata table
             $allowed = [
                 'no_rawat',
                 'tanggal',
@@ -135,41 +155,61 @@ class AwalMedisIGDController extends CI_Controller
                 'keluhan_utama',
                 'rps',
                 'rpd',
-                'rpk',
                 'rpo',
                 'alergi',
-                'keadaan',
-                'gcs',
-                'kesadaran',
+                'status',
                 'td',
                 'nadi',
                 'rr',
                 'suhu',
-                'spo',
+                'nyeri',
                 'bb',
-                'tb',
-                'kepala',
-                'mata',
-                'gigi',
-                'leher',
-                'thoraks',
-                'abdomen',
-                'genital',
-                'ekstremitas',
-                'ket_fisik',
-                'ket_lokalis',
-                'ekg',
-                'rad',
+                'visuskanan',
+                'visuskiri',
+                'cckanan',
+                'cckiri',
+                'palkanan',
+                'palkiri',
+                'conkanan',
+                'conkiri',
+                'corneakanan',
+                'corneakiri',
+                'coakanan',
+                'coakiri',
+                'pupilkanan',
+                'pupilkiri',
+                'lensakanan',
+                'lensakiri',
+                'funduskanan',
+                'funduskiri',
+                'papilkanan',
+                'papilkiri',
+                'retinakanan',
+                'retinakiri',
+                'makulakanan',
+                'makulakiri',
+                'tiokanan',
+                'tiokiri',
+                'mbokanan',
+                'mbokiri',
                 'lab',
+                'rad',
+                'penunjang',
+                'tes',
+                'pemeriksaan',
                 'diagnosis',
-                'tata'
+                'diagnosisbdg',
+                'permasalahan',
+                'terapi',
+                'tindakan',
+                'edukasi'
             ];
             $post = array_intersect_key($post, array_flip($allowed));
 
-            if ($this->AwalMedisIGDModel->exists($post['no_rawat'])) {
-                $this->AwalMedisIGDModel->update($post['no_rawat'], $post);
+            if ($this->AwalMedisMataModel->exists($post['no_rawat'])) {
+                $this->AwalMedisMataModel->update($post['no_rawat'], $post);
             } else {
-                $this->AwalMedisIGDModel->insert($post);
+                $this->AwalMedisMataModel->insert($post);
             }
 
             echo json_encode(['status' => 'success', 'message' => 'Data berhasil disimpan.']);
@@ -185,11 +225,11 @@ class AwalMedisIGDController extends CI_Controller
         $no_rawat = $this->input->post('no_rawat');
 
         $clean = str_replace('/', '', $no_rawat);
-        $path = FCPATH . 'assets/images/lokalis_igd/lokalis_' . $clean . '.png';
+        $path = FCPATH . 'assets/images/lokalis_mata/lokalis_' . $clean . '.png';
         if (file_exists($path))
             unlink($path);
 
-        if ($this->AwalMedisIGDModel->delete($no_rawat)) {
+        if ($this->AwalMedisMataModel->delete($no_rawat)) {
             echo json_encode(['status' => 'success', 'message' => 'Data berhasil dihapus.']);
         } else {
             echo json_encode(['status' => 'error', 'message' => 'Gagal menghapus data.']);
@@ -211,20 +251,20 @@ class AwalMedisIGDController extends CI_Controller
             $data['detail_pasien'] = $this->RekamMedisRalanModel->get_patient_detail(str_replace('/', '', $no_rawat));
         }
 
-        $data['asesment'] = $this->AwalMedisIGDModel->get_by_no_rawat($no_rawat);
+        $data['asesment'] = $this->AwalMedisMataModel->get_by_no_rawat($no_rawat);
 
         $clean_no_rawat = str_replace('/', '', $no_rawat);
-        $lokalis_path = FCPATH . 'assets/images/lokalis_igd/lokalis_' . $clean_no_rawat . '.png';
+        $lokalis_path = FCPATH . 'assets/images/lokalis_mata/lokalis_' . $clean_no_rawat . '.png';
         if (file_exists($lokalis_path)) {
             $data['lokalis_path'] = $lokalis_path;
         } else {
-            $data['lokalis_path'] = FCPATH . 'assets/images/human_body_anatomy_igd.png';
+            $data['lokalis_path'] = FCPATH . 'assets/images/human_body_anatomy_anak.png';
         }
 
         $this->load->model('SettingModel');
         $data['setting'] = $this->SettingModel->get_setting();
 
-        $html = $this->load->view('rekammedis/dokter/pdf_awal_medis_igd', $data, true);
+        $html = $this->load->view('rekammedis/dokter/pdf_awal_medis_mata', $data, true);
 
         $mpdf = new \Mpdf\Mpdf([
             'format' => 'A4',
@@ -234,6 +274,6 @@ class AwalMedisIGDController extends CI_Controller
             'margin_right' => 10
         ]);
         $mpdf->WriteHTML($html);
-        $mpdf->Output('Asesmen_IGD_' . $clean_no_rawat . '.pdf', 'I');
+        $mpdf->Output('Asesmen_Mata_' . $clean_no_rawat . '.pdf', 'I');
     }
 }

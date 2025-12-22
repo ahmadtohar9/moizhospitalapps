@@ -203,6 +203,13 @@
     RP_PROGRAM_REHAB_MEDIK: '<?= site_url("admin/riwayatPasien/detail_program_rehab_medik") ?>',
     RP_PENILAIAN_MATA: '<?= site_url("admin/riwayatPasien/detail_penilaian_medis_mata") ?>',
     RP_PENILAIAN_KANDUNGAN: '<?= site_url("admin/riwayatPasien/detail_penilaian_medis_kandungan") ?>',
+    RP_PENILAIAN_ANAK: '<?= site_url("admin/riwayatPasien/detail_penilaian_medis_anak") ?>',
+    RP_PENILAIAN_BEDAH: '<?= site_url("admin/riwayatPasien/detail_penilaian_medis_bedah") ?>',
+    RP_PENILAIAN_THT: '<?= site_url("admin/riwayatPasien/detail_penilaian_medis_tht") ?>',
+    RP_PENILAIAN_JANTUNG: '<?= site_url("admin/riwayatPasien/detail_penilaian_medis_jantung") ?>',
+    RP_PENILAIAN_KULITDANKELAMIN: '<?= site_url("admin/riwayatPasien/detail_penilaian_medis_kulitdankelamin") ?>',
+    RP_PENILAIAN_NEUROLOGI: '<?= site_url("admin/riwayatPasien/detail_penilaian_medis_neurologi") ?>',
+    RP_PENILAIAN_PARU: '<?= site_url("admin/riwayatPasien/detail_penilaian_medis_paru") ?>',
     RP_LAPORAN_TINDAKAN: '<?= site_url("admin/riwayatPasien/detail_laporan_tindakan") ?>',
     RP_INFO: '<?= site_url("admin/riwayatPasien/info") ?>'
   };

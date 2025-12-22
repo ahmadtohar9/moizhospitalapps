@@ -375,6 +375,13 @@ $route['admin/riwayatPasien/detail_formulir_kfr'] = 'RiwayatPasienController/det
 $route['admin/riwayatPasien/detail_program_rehab_medik'] = 'RiwayatPasienController/detail_program_rehab_medik';
 $route['admin/riwayatPasien/detail_penilaian_medis_mata'] = 'RiwayatPasienController/detail_penilaian_medis_mata';
 $route['admin/riwayatPasien/detail_penilaian_medis_kandungan'] = 'RiwayatPasienController/detail_penilaian_medis_kandungan';
+$route['admin/riwayatPasien/detail_penilaian_medis_anak'] = 'RiwayatPasienController/detail_penilaian_medis_anak';
+$route['admin/riwayatPasien/detail_penilaian_medis_bedah'] = 'RiwayatPasienController/detail_penilaian_medis_bedah';
+$route['admin/riwayatPasien/detail_penilaian_medis_tht'] = 'RiwayatPasienController/detail_penilaian_medis_tht';
+$route['admin/riwayatPasien/detail_penilaian_medis_jantung'] = 'RiwayatPasienController/detail_penilaian_medis_jantung';
+$route['admin/riwayatPasien/detail_penilaian_medis_kulitdankelamin'] = 'RiwayatPasienController/detail_penilaian_medis_kulitdankelamin';
+$route['admin/riwayatPasien/detail_penilaian_medis_neurologi'] = 'RiwayatPasienController/detail_penilaian_medis_neurologi';
+$route['admin/riwayatPasien/detail_penilaian_medis_paru'] = 'RiwayatPasienController/detail_penilaian_medis_paru';
 $route['admin/riwayatPasien/info'] = 'RiwayatPasienController/info';
 $route['RiwayatPasien/get_detail'] = 'RiwayatPasienController/get_detail';
 

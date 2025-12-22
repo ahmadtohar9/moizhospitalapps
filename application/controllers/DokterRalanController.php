@@ -120,6 +120,104 @@ class DokterRalanController extends CI_Controller
         redirect(site_url("rekam-medis/{$tahun}/{$bulan}/{$tanggal}/{$no_rawat}/dokter"));
     }
 
+    /**
+     * Update status periksa pasien (AJAX endpoint)
+     * Only accessible by perawat (role 2) and admin (role 1)
+     */
+    public function update_status()
+    {
+        // Check if request is AJAX
+        if (!$this->input->is_ajax_request()) {
+            show_error('Direct access not allowed', 403);
+        }
+
+        // Get current user role
+        $role_id = (int) $this->session->userdata('role_id');
+        $user_id = $this->session->userdata('user_id');
+
+        // Only perawat (2) and admin (1) can update status
+        if (!in_array($role_id, [1, 2])) {
+            $this->output
+                ->set_content_type('application/json')
+                ->set_output(json_encode([
+                    'success' => false,
+                    'message' => 'Anda tidak memiliki akses untuk mengubah status.'
+                ]));
+            return;
+        }
+
+        // Get POST data
+        $no_rawat = $this->input->post('no_rawat', true);
+        $new_status = $this->input->post('new_status', true);
+
+        // Validate input
+        if (empty($no_rawat) || empty($new_status)) {
+            $this->output
+                ->set_content_type('application/json')
+                ->set_output(json_encode([
+                    'success' => false,
+                    'message' => 'Data tidak lengkap.'
+                ]));
+            return;
+        }
+
+        // Validate status value
+        $valid_statuses = ['Belum', 'Sudah', 'Batal', 'Berkas Diterima', 'Dirujuk', 'Meninggal', 'Dirawat', 'Pulang Paksa'];
+        if (!in_array($new_status, $valid_statuses)) {
+            $this->output
+                ->set_content_type('application/json')
+                ->set_output(json_encode([
+                    'success' => false,
+                    'message' => 'Status tidak valid.'
+                ]));
+            return;
+        }
+
+        // Get old status for logging
+        $old_data = $this->db->select('stts')->from('reg_periksa')->where('no_rawat', $no_rawat)->get()->row_array();
+
+        if (!$old_data) {
+            $this->output
+                ->set_content_type('application/json')
+                ->set_output(json_encode([
+                    'success' => false,
+                    'message' => 'Data pasien tidak ditemukan.'
+                ]));
+            return;
+        }
+
+        $old_status = $old_data['stts'];
+
+        // Update status
+        $this->db->where('no_rawat', $no_rawat);
+        $updated = $this->db->update('reg_periksa', ['stts' => $new_status]);
+
+        if ($updated) {
+            // Log the change (optional - create log table if needed)
+            // $this->db->insert('status_change_log', [
+            //     'no_rawat' => $no_rawat,
+            //     'old_status' => $old_status,
+            //     'new_status' => $new_status,
+            //     'changed_by' => $user_id,
+            //     'changed_at' => date('Y-m-d H:i:s')
+            // ]);
+
+            $this->output
+                ->set_content_type('application/json')
+                ->set_output(json_encode([
+                    'success' => true,
+                    'message' => "Status berhasil diubah dari '{$old_status}' ke '{$new_status}'.",
+                    'new_status' => $new_status
+                ]));
+        } else {
+            $this->output
+                ->set_content_type('application/json')
+                ->set_output(json_encode([
+                    'success' => false,
+                    'message' => 'Gagal mengubah status.'
+                ]));
+        }
+    }
 
 
 }

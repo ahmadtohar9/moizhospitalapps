@@ -97,6 +97,37 @@
     color: white;
 }
 
+.card--anak .rp-card-head {
+    background: #1e40af;
+    color: white;
+}
+
+.card--bedah .rp-card-head {
+    background: #1e40af;
+    color: white;
+}
+
+.card--tht .rp-card-head {
+    background: #1e40af;
+    color: white;
+}
+
+.card--jantung .rp-card-head {
+    background: #1e40af;
+    color: white;
+}
+
+.card--kandungan .rp-card-head {
+    background: #1e40af;
+    color: white;
+}
+
+.card--mata .rp-card-head {
+    background: #1e40af;
+    color: white;
+}
+
+
 /* ===== HEADER STYLING - HIGH CONTRAST ===== */
 .rp-hdr {
     padding: 24px;
@@ -583,4 +614,18 @@
 
 .btn-print-bulk-premium.success:hover {
     background: linear-gradient(135deg, #38ef7d 0%, #11998e 100%);
+}
+.card--kulitdankelamin .rp-card-head {
+    background: #1e40af;
+    color: white;
+}
+
+.card--neurologi .rp-card-head {
+    background: #1e40af;
+    color: white;
+}
+
+.card--paru .rp-card-head {
+    background: #1e40af;
+    color: white;
 }

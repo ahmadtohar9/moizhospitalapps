@@ -186,6 +186,41 @@ class RiwayatPasienController extends CI_Controller
         $this->_get_detail("get_penilaian_medis_kandungan_by_norawat");
     }
 
+    public function detail_penilaian_medis_anak()
+    {
+        $this->_get_detail('get_penilaian_medis_anak_by_norawat');
+    }
+
+    public function detail_penilaian_medis_bedah()
+    {
+        $this->_get_detail('get_penilaian_medis_bedah_by_norawat');
+    }
+
+    public function detail_penilaian_medis_tht()
+    {
+        $this->_get_detail('get_penilaian_medis_tht_by_norawat');
+    }
+
+    public function detail_penilaian_medis_jantung()
+    {
+        $this->_get_detail('get_penilaian_medis_jantung_by_norawat');
+    }
+
+    public function detail_penilaian_medis_kulitdankelamin()
+    {
+        $this->_get_detail('get_penilaian_medis_kulitdankelamin_by_norawat');
+    }
+
+    public function detail_penilaian_medis_neurologi()
+    {
+        $this->_get_detail('get_penilaian_medis_neurologi_by_norawat');
+    }
+
+    public function detail_penilaian_medis_paru()
+    {
+        $this->_get_detail('get_penilaian_medis_paru_by_norawat');
+    }
+
 
     public function rad_list()
     {
@@ -421,6 +456,10 @@ class RiwayatPasienController extends CI_Controller
                 'rehab' => $this->RiwayatPasien_model->get_program_rehab_medik_by_norawat($no_rawat),
                 'mata' => $this->RiwayatPasien_model->get_penilaian_medis_mata_by_norawat($no_rawat),
                 'kandungan' => $this->RiwayatPasien_model->get_penilaian_medis_kandungan_by_norawat($no_rawat),
+                'anak' => $this->RiwayatPasien_model->get_penilaian_medis_anak_by_norawat($no_rawat),
+                'bedah' => $this->RiwayatPasien_model->get_penilaian_medis_bedah_by_norawat($no_rawat),
+                'tht' => $this->RiwayatPasien_model->get_penilaian_medis_tht_by_norawat($no_rawat),
+                'jantung' => $this->RiwayatPasien_model->get_penilaian_medis_jantung_by_norawat($no_rawat),
             ];
 
             echo json_encode(['success' => true, 'data' => $data]);

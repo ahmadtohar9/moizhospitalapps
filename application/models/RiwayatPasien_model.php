@@ -285,6 +285,33 @@ class RiwayatPasien_model extends CI_Model
             ->get()->result_array();
     }
 
+    /**
+     * Get Penilaian Medis Kulit & Kelamin by no_rawat
+     */
+    public function get_penilaian_medis_kulitdankelamin_by_norawat($no_rawat)
+    {
+        $row = $this->db->select("
+            pk.*,
+            d.nm_dokter
+        ")
+            ->from('penilaian_medis_ralan_kulitdankelamin pk')
+            ->join('dokter d', 'd.kd_dokter = pk.kd_dokter', 'left')
+            ->where('pk.no_rawat', $no_rawat)
+            ->get()->row_array();
+
+        if ($row) {
+            $clean_no_rawat = str_replace('/', '', $no_rawat);
+            $path = 'assets/images/lokalis_kulit/lokalis_' . $clean_no_rawat . '.png';
+            if (file_exists(FCPATH . $path)) {
+                $row['lokalis_url'] = base_url($path);
+            } else {
+                $row['lokalis_url'] = null;
+            }
+        }
+
+        return $row;
+    }
+
     public function get_lab_by_norawat($no_rawat)
     {
         return $this->db->select('
@@ -664,19 +691,19 @@ class RiwayatPasien_model extends CI_Model
             ->get()->row_array();
 
         if ($row) {
-            // Format filename sama dengan controller: 2025_12_17_000001
-            $filename = str_replace('/', '_', $no_rawat);
+            // Format filename: hapus slash jadi 20251220000001
+            $clean_no_rawat = str_replace('/', '', $no_rawat);
 
-            // Gambar OD (Mata Kanan)
-            $path_od = 'assets/images/mata/' . $filename . '_od.png';
+            // Gambar OD (Mata Kanan) - di folder lokalis_mata
+            $path_od = 'assets/images/lokalis_mata/mata_od_' . $clean_no_rawat . '.png';
             if (file_exists(FCPATH . $path_od)) {
                 $row['gambar_od_url'] = base_url($path_od);
             } else {
                 $row['gambar_od_url'] = null;
             }
 
-            // Gambar OS (Mata Kiri)
-            $path_os = 'assets/images/mata/' . $filename . '_os.png';
+            // Gambar OS (Mata Kiri) - di folder lokalis_mata
+            $path_os = 'assets/images/lokalis_mata/mata_os_' . $clean_no_rawat . '.png';
             if (file_exists(FCPATH . $path_os)) {
                 $row['gambar_os_url'] = base_url($path_os);
             } else {
@@ -700,6 +727,114 @@ class RiwayatPasien_model extends CI_Model
             ->join('dokter d', 'd.kd_dokter = pk.kd_dokter', 'left')
             ->where('pk.no_rawat', $no_rawat)
             ->get()->row_array();
+
+        return $row;
+    }
+
+    /**
+     * Get Penilaian Medis Anak (Pediatri) by no_rawat
+     */
+    public function get_penilaian_medis_anak_by_norawat($no_rawat)
+    {
+        $row = $this->db->select("
+            pa.*,
+            d.nm_dokter
+        ")
+            ->from('penilaian_medis_ralan_anak pa')
+            ->join('dokter d', 'd.kd_dokter = pa.kd_dokter', 'left')
+            ->where('pa.no_rawat', $no_rawat)
+            ->get()->row_array();
+
+        if ($row) {
+            $clean_no_rawat = str_replace('/', '', $no_rawat);
+            $path = 'assets/images/lokalis_anak/lokalis_' . $clean_no_rawat . '.png';
+            if (file_exists(FCPATH . $path)) {
+                $row['lokalis_url'] = base_url($path);
+            } else {
+                $row['lokalis_url'] = null;
+            }
+        }
+
+        return $row;
+    }
+
+    /**
+     * Get Penilaian Medis Bedah by no_rawat
+     */
+    public function get_penilaian_medis_bedah_by_norawat($no_rawat)
+    {
+        $row = $this->db->select("
+            pb.*,
+            d.nm_dokter
+        ")
+            ->from('penilaian_medis_ralan_bedah pb')
+            ->join('dokter d', 'd.kd_dokter = pb.kd_dokter', 'left')
+            ->where('pb.no_rawat', $no_rawat)
+            ->get()->row_array();
+
+        if ($row) {
+            $clean_no_rawat = str_replace('/', '', $no_rawat);
+            $path = 'assets/images/lokalis_bedah/lokalis_' . $clean_no_rawat . '.png';
+            if (file_exists(FCPATH . $path)) {
+                $row['lokalis_url'] = base_url($path);
+            } else {
+                $row['lokalis_url'] = null;
+            }
+        }
+
+        return $row;
+    }
+
+    /**
+     * Get Penilaian Medis THT by no_rawat
+     */
+    public function get_penilaian_medis_tht_by_norawat($no_rawat)
+    {
+        $row = $this->db->select("
+            pt.*,
+            d.nm_dokter
+        ")
+            ->from('penilaian_medis_ralan_tht pt')
+            ->join('dokter d', 'd.kd_dokter = pt.kd_dokter', 'left')
+            ->where('pt.no_rawat', $no_rawat)
+            ->get()->row_array();
+
+        if ($row) {
+            $clean_no_rawat = str_replace('/', '', $no_rawat);
+            $path = 'assets/images/lokalis_tht/lokalis_' . $clean_no_rawat . '.png';
+            if (file_exists(FCPATH . $path)) {
+                $row['lokalis_url'] = base_url($path);
+            } else {
+                $row['lokalis_url'] = null;
+            }
+        }
+
+        return $row;
+    }
+
+    /**
+     * Get Penilaian Medis Jantung (Kardiologi) by no_rawat
+     */
+    public function get_penilaian_medis_jantung_by_norawat($no_rawat)
+    {
+        $row = $this->db->select("
+            pj.*,
+            d.nm_dokter
+        ")
+            ->from('penilaian_medis_ralan_jantung pj')
+            ->join('dokter d', 'd.kd_dokter = pj.kd_dokter', 'left')
+            ->where('pj.no_rawat', $no_rawat)
+            ->get()->row_array();
+
+        if ($row) {
+            $clean_no_rawat = str_replace('/', '', $no_rawat);
+            $path = 'assets/images/lokalis_jantung/lokalis_' . $clean_no_rawat . '.png';
+            if (file_exists(FCPATH . $path)) {
+                $row['lokalis_url'] = base_url($path);
+            } else {
+                $row['lokalis_url'] = null;
+            }
+        }
 
         return $row;
     }
@@ -746,9 +881,74 @@ class RiwayatPasien_model extends CI_Model
         // 11. Asesmen Mata
         $data['asesmen_mata'] = $this->get_penilaian_medis_mata_by_norawat($no_rawat);
 
-        // 12. Resume Medis
+        // 12. Asesmen Anak (Pediatri)
+        $data['asesmen_anak'] = $this->get_penilaian_medis_anak_by_norawat($no_rawat);
+
+        // 13. Asesmen Bedah
+        $data['asesmen_bedah'] = $this->get_penilaian_medis_bedah_by_norawat($no_rawat);
+
+        // 14. Asesmen THT
+        $data['asesmen_tht'] = $this->get_penilaian_medis_tht_by_norawat($no_rawat);
+
+        // 15. Asesmen Jantung (Kardiologi)
+        $data['asesmen_jantung'] = $this->get_penilaian_medis_jantung_by_norawat($no_rawat);
+
+        // 16. Asesmen Kulit & Kelamin (Dermatologi)
+        $data['asesmen_kulitdankelamin'] = $this->get_penilaian_medis_kulitdankelamin_by_norawat($no_rawat);
+
+        // 17. Asesmen Neurologi
+        $data['asesmen_neurologi'] = $this->get_penilaian_medis_neurologi_by_norawat($no_rawat);
+
+        // 18. Asesmen Paru (Pulmonologi)
+        $data['asesmen_paru'] = $this->get_penilaian_medis_paru_by_norawat($no_rawat);
+
+        // 19. Resume Medis
         $data['resume'] = $this->get_summary_by_norawat($no_rawat);
 
         return $data;
+    }
+
+    /**
+     * Get Penilaian Medis Neurologi by no_rawat
+     */
+    public function get_penilaian_medis_neurologi_by_norawat($no_rawat)
+    {
+        $row = $this->db->select("
+            pn.*,
+            d.nm_dokter
+        ")
+            ->from('penilaian_medis_ralan_neurologi pn')
+            ->join('dokter d', 'd.kd_dokter = pn.kd_dokter', 'left')
+            ->where('pn.no_rawat', $no_rawat)
+            ->get()->row_array();
+
+        return $row;
+    }
+
+    /**
+     * Get Penilaian Medis Paru by no_rawat
+     */
+    public function get_penilaian_medis_paru_by_norawat($no_rawat)
+    {
+        $row = $this->db->select("
+            pp.*,
+            d.nm_dokter
+        ")
+            ->from('penilaian_medis_ralan_paru pp')
+            ->join('dokter d', 'd.kd_dokter = pp.kd_dokter', 'left')
+            ->where('pp.no_rawat', $no_rawat)
+            ->get()->row_array();
+
+        if ($row) {
+            $clean_no_rawat = str_replace('/', '', $no_rawat);
+            $path = 'assets/images/lokalis_paru/lokalis_' . $clean_no_rawat . '.png';
+            if (file_exists(FCPATH . $path)) {
+                $row['lokalis_url'] = base_url($path);
+            } else {
+                $row['lokalis_url'] = null;
+            }
+        }
+
+        return $row;
     }
 }

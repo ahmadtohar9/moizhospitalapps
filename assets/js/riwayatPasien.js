@@ -236,7 +236,7 @@ $(function () {
             penunjang: 'fa-user-md', laptind: 'fa-file-text', kfr: 'fa-file-medical', rehab: 'fa-heartbeat',
             anak: 'fa-child', bedah: 'fa-cut', tht: 'fa-deaf', jantung: 'fa-heartbeat',
             kulitdankelamin: 'fa-medkit', neurologi: 'fa-brain', paru: 'fa-lungs',
-            kandungan: 'fa-female', mata: 'fa-eye'
+            kandungan: 'fa-female', mata: 'fa-eye', psikiatrik: 'fa-brain'
         };
         return map[kind] || 'fa-file-o';
     }

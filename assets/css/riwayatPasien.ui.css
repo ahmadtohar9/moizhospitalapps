@@ -127,6 +127,26 @@
     color: white;
 }
 
+.card--kulitdankelamin .rp-card-head {
+    background: #1e40af;
+    color: white;
+}
+
+.card--neurologi .rp-card-head {
+    background: #1e40af;
+    color: white;
+}
+
+.card--paru .rp-card-head {
+    background: #1e40af;
+    color: white;
+}
+
+.card--psikiatrik .rp-card-head {
+    background: #1e40af;
+    color: white;
+}
+
 
 /* ===== HEADER STYLING - HIGH CONTRAST ===== */
 .rp-hdr {
@@ -614,18 +634,4 @@
 
 .btn-print-bulk-premium.success:hover {
     background: linear-gradient(135deg, #38ef7d 0%, #11998e 100%);
-}
-.card--kulitdankelamin .rp-card-head {
-    background: #1e40af;
-    color: white;
-}
-
-.card--neurologi .rp-card-head {
-    background: #1e40af;
-    color: white;
-}
-
-.card--paru .rp-card-head {
-    background: #1e40af;
-    color: white;
 }

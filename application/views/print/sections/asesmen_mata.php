@@ -19,196 +19,338 @@ if (!function_exists('val')) {
 }
 ?>
 
-<div class="print-section" style="margin: 20px 0;">
-    <h3 style="background-color: #e0e0e0; padding: 8px; margin: 10px 0; font-size: 12pt;">
-        PENILAIAN AWAL MEDIS RAWAT JALAN MATA
+<div class="print-section" style="margin-bottom: 20px;">
+    <h3 style="background-color: #e1f5fe; padding: 8px; margin: 15px 0 10px 0; border-left: 4px solid #03a9f4;">
+        👁️ ASESMEN AWAL MEDIS MATA (OFTALMOLOGI)
     </h3>
 
-    <!-- I. RIWAYAT KESEHATAN -->
+    <table style="width: 100%; margin-bottom: 15px;">
+        <tr>
+            <td style="width: 25%; font-weight: bold;">Tanggal Pemeriksaan</td>
+            <td>: <?= val($mata->tanggal ?? '') ?></td>
+        </tr>
+        <tr>
+            <td style="font-weight: bold;">Dokter Pemeriksa</td>
+            <td>: <?= val($mata->nm_dokter ?? '') ?></td>
+        </tr>
+    </table>
+
+    <!-- I. ANAMNESIS -->
+    <div style="background: #f5f5f5; padding: 5px; margin: 10px 0; font-weight: bold;">
+        I. ANAMNESIS (<?= val($mata->anamnesis ?? '-') ?>)
+    </div>
+    <?php if (!empty($mata->hubungan)): ?>
+        <p style="margin: 5px 0;"><strong>Hubungan:</strong> <?= $mata->hubungan ?></p>
+    <?php endif; ?>
+
     <table style="width: 100%; margin-bottom: 10px;">
         <tr>
-            <th colspan="4" style="background-color: #f0f0f0; padding: 5px;">I. RIWAYAT KESEHATAN</th>
+            <td style="width: 200px; font-weight: bold;">Keluhan Utama</td>
+            <td>: <?= nl2br(val($mata->keluhan_utama ?? '')) ?></td>
         </tr>
         <tr>
-            <td colspan="4" style="padding: 5px;"><strong>Anamnesis:</strong> <?= val($mata->anamnesis ?? '') ?>,
-                <?= val($mata->hubungan ?? '') ?></td>
+            <td style="font-weight: bold;">Riw. Penyakit Sekarang</td>
+            <td>: <?= nl2br(val($mata->rps ?? '')) ?></td>
         </tr>
         <tr>
-            <td colspan="4" style="padding: 5px;"><strong>Keluhan Utama:</strong> <?= val($mata->keluhan_utama ?? '') ?>
-            </td>
+            <td style="font-weight: bold;">Riw. Penyakit Dahulu</td>
+            <td>: <?= nl2br(val($mata->rpd ?? '')) ?></td>
         </tr>
         <tr>
-            <td style="width: 25%; padding: 5px; font-weight: bold;">Riwayat Penyakit Sekarang</td>
-            <td style="width: 25%; padding: 5px;"><?= val($mata->rps ?? '') ?></td>
-            <td style="width: 25%; padding: 5px; font-weight: bold;">Riwayat Penyakit Dahulu</td>
-            <td style="width: 25%; padding: 5px;"><?= val($mata->rpd ?? '') ?></td>
+            <td style="font-weight: bold;">Riw. Penggunaan Obat</td>
+            <td>: <?= nl2br(val($mata->rpo ?? '')) ?></td>
         </tr>
         <tr>
-            <td style="padding: 5px; font-weight: bold;">Riwayat Penggunaan Obat</td>
-            <td style="padding: 5px;"><?= val($mata->alergi ?? '') ?></td>
-            <td style="padding: 5px; font-weight: bold;">Riwayat Alergi</td>
-            <td style="padding: 5px;"><?= val($mata->alergi ?? '') ?></td>
+            <td style="font-weight: bold;">Riwayat Alergi</td>
+            <td>: <?= val($mata->alergi ?? '') ?></td>
         </tr>
     </table>
 
     <!-- II. PEMERIKSAAN FISIK -->
+    <div style="background: #f5f5f5; padding: 5px; margin: 10px 0; font-weight: bold;">
+        II. PEMERIKSAAN FISIK
+    </div>
     <table style="width: 100%; margin-bottom: 10px;">
         <tr>
-            <th colspan="6" style="background-color: #f0f0f0; padding: 5px;">II. PEMERIKSAAN FISIK</th>
+            <td style="width: 25%;"><strong>Status:</strong> <?= val($mata->status ?? '') ?></td>
+            <td style="width: 25%;"><strong>TD:</strong> <?= val($mata->td ?? '') ?> mmHg</td>
+            <td style="width: 25%;"><strong>Nadi:</strong> <?= val($mata->nadi ?? '') ?> x/mnt</td>
+            <td style="width: 25%;"><strong>RR:</strong> <?= val($mata->rr ?? '') ?> x/mnt</td>
         </tr>
         <tr>
-            <td style="width: 16%; padding: 5px; font-weight: bold;">TD</td>
-            <td style="width: 16%; padding: 5px;"><?= val($mata->td ?? '') ?> mmHg</td>
-            <td style="width: 16%; padding: 5px; font-weight: bold;">BB</td>
-            <td style="width: 16%; padding: 5px;"><?= val($mata->bb ?? '') ?> Kg</td>
-            <td style="width: 16%; padding: 5px; font-weight: bold;">Suhu</td>
-            <td style="width: 16%; padding: 5px;"><?= val($mata->suhu ?? '') ?> °C</td>
-        </tr>
-        <tr>
-            <td style="padding: 5px; font-weight: bold;">Nadi</td>
-            <td style="padding: 5px;"><?= val($mata->nadi ?? '') ?> x/menit</td>
-            <td style="padding: 5px; font-weight: bold;">RR</td>
-            <td style="padding: 5px;"><?= val($mata->rr ?? '') ?> x/menit</td>
-            <td style="padding: 5px; font-weight: bold;">Nyeri</td>
-            <td style="padding: 5px;"><?= val($mata->nyeri ?? '') ?></td>
+            <td><strong>Suhu:</strong> <?= val($mata->suhu ?? '') ?> °C</td>
+            <td><strong>BB:</strong> <?= val($mata->bb ?? '') ?> kg</td>
+            <td colspan="2"><strong>Nyeri:</strong> <?= val($mata->nyeri ?? '') ?></td>
         </tr>
     </table>
 
-    <!-- III. STATUS OFTAMOLOGIS -->
-    <table style="width: 100%; margin-bottom: 10px;">
+    <!-- III. PEMERIKSAAN MATA -->
+    <div style="background: #f5f5f5; padding: 5px; margin: 10px 0; font-weight: bold;">
+        III. STATUS OFTALMOLOGIS
+    </div>
+
+    <div
+        style="background-color: #fff3e0; padding: 5px; text-align: center; font-weight: bold; border: 1px solid #ffe0b2; margin-bottom: 10px;">
+        Visus OD: <?= val($mata->visuskanan ?? '') ?> &nbsp;&nbsp;|&nbsp;&nbsp; Visus OS:
+        <?= val($mata->visuskiri ?? '') ?>
+    </div>
+
+    <!-- Layout 2 Kolom untuk OD dan OS -->
+    <table style="width: 100%; border-collapse: separate; border-spacing: 5px;">
         <tr>
-            <th colspan="2" style="background-color: #f0f0f0; padding: 5px; text-align: center;">III. STATUS OFTAMOLOGIS
-            </th>
-        </tr>
-        <tr>
-            <th style="width: 50%; padding: 5px; text-align: center;">OD (Oculus Dextra)</th>
-            <th style="width: 50%; padding: 5px; text-align: center;">OS (Oculus Sinistra)</th>
-        </tr>
-        <tr>
-            <td style="padding: 5px; vertical-align: top;">
-                <strong>• Visus SC:</strong> <?= val($mata->visuskanan ?? '') ?><br>
-                <strong>• CC:</strong> <?= val($mata->cckanan ?? '') ?><br>
-                <strong>• Palpebra:</strong> <?= val($mata->palkanan ?? '') ?><br>
-                <strong>• Conjungtiwa:</strong> <?= val($mata->conkanan ?? '') ?><br>
-                <strong>• Cornea:</strong> <?= val($mata->corneakanan ?? '') ?><br>
-                <strong>• COA:</strong> <?= val($mata->coakanan ?? '') ?><br>
-                <strong>• Iris/Pupil:</strong> <?= val($mata->pupilkanan ?? '') ?><br>
-                <strong>• Lensa:</strong> <?= val($mata->lensakanan ?? '') ?><br>
-                <strong>• Fundus Media:</strong> <?= val($mata->funduskanan ?? '') ?><br>
-                <strong>• Papil:</strong> <?= val($mata->papilkanan ?? '') ?><br>
-                <strong>• Retina:</strong> <?= val($mata->retinakanan ?? '') ?><br>
-                <strong>• Makula:</strong> <?= val($mata->makulakanan ?? '') ?><br>
-                <strong>• TIO:</strong> <?= val($mata->tiokanan ?? '') ?><br>
-                <strong>• MBO:</strong> <?= val($mata->mbokanan ?? '') ?>
+            <!-- OD (KANAN) -->
+            <td style="width: 50%; vertical-align: top; border: 1px solid #ccc; padding: 10px;">
+                <div
+                    style="text-align: center; border-bottom: 2px solid #2196F3; margin-bottom: 10px; padding-bottom: 5px;">
+                    <strong style="color: #2196F3;">OD (MATA KANAN)</strong>
+                </div>
+
+                <!-- GAMBAR OD -->
+                <div style="text-align: center; margin-bottom: 15px;">
+                    <?php
+                    $clean_no_rawat = str_replace('/', '', $d->no_rawat);
+                    $path_od = FCPATH . 'assets/images/lokalis_mata/mata_od_' . $clean_no_rawat . '.png';
+                    $url_od = base_url('assets/images/lokalis_mata/mata_od_' . $clean_no_rawat . '.png');
+                    $template_od = base_url('assets/images/mata/mata_od_template.png');
+
+                    if (file_exists($path_od)): ?>
+                        <img src="<?= $url_od ?>" style="max-width: 100%; border: 1px solid #ddd; padding: 2px;">
+                    <?php else: ?>
+                        <div
+                            style="color: #999; font-style: italic; font-size: 10px; border: 1px dashed #ccc; padding: 20px;">
+                            (Tidak ada gambar OD)
+                        </div>
+                    <?php endif; ?>
+                </div>
+
+                <!-- DETAIL OD -->
+                <table style="width: 100%; font-size: 11px;">
+                    <?php if (!empty($mata->cckanan)): ?>
+                        <tr>
+                            <td width="30%"><b>CC</b></td>
+                            <td>: <?= $mata->cckanan ?></td>
+                        </tr><?php endif; ?>
+                    <?php if (!empty($mata->palkanan)): ?>
+                        <tr>
+                            <td><b>Palpebra</b></td>
+                            <td>: <?= $mata->palkanan ?></td>
+                        </tr><?php endif; ?>
+                    <?php if (!empty($mata->conkanan)): ?>
+                        <tr>
+                            <td><b>Conjunctiva</b></td>
+                            <td>: <?= $mata->conkanan ?></td>
+                        </tr><?php endif; ?>
+                    <?php if (!empty($mata->corneakanan)): ?>
+                        <tr>
+                            <td><b>Cornea</b></td>
+                            <td>: <?= $mata->corneakanan ?></td>
+                        </tr><?php endif; ?>
+                    <?php if (!empty($mata->coakanan)): ?>
+                        <tr>
+                            <td><b>COA</b></td>
+                            <td>: <?= $mata->coakanan ?></td>
+                        </tr><?php endif; ?>
+                    <?php if (!empty($mata->pupilkanan)): ?>
+                        <tr>
+                            <td><b>Pupil</b></td>
+                            <td>: <?= $mata->pupilkanan ?></td>
+                        </tr><?php endif; ?>
+                    <?php if (!empty($mata->lensakanan)): ?>
+                        <tr>
+                            <td><b>Lensa</b></td>
+                            <td>: <?= $mata->lensakanan ?></td>
+                        </tr><?php endif; ?>
+                    <?php if (!empty($mata->funduskanan)): ?>
+                        <tr>
+                            <td><b>Fundus</b></td>
+                            <td>: <?= $mata->funduskanan ?></td>
+                        </tr><?php endif; ?>
+                    <?php if (!empty($mata->papilkanan)): ?>
+                        <tr>
+                            <td><b>Papil</b></td>
+                            <td>: <?= $mata->papilkanan ?></td>
+                        </tr><?php endif; ?>
+                    <?php if (!empty($mata->retinakanan)): ?>
+                        <tr>
+                            <td><b>Retina</b></td>
+                            <td>: <?= $mata->retinakanan ?></td>
+                        </tr><?php endif; ?>
+                    <?php if (!empty($mata->makulakanan)): ?>
+                        <tr>
+                            <td><b>Makula</b></td>
+                            <td>: <?= $mata->makulakanan ?></td>
+                        </tr><?php endif; ?>
+                    <?php if (!empty($mata->tiokanan)): ?>
+                        <tr>
+                            <td><b>TIO</b></td>
+                            <td>: <?= $mata->tiokanan ?></td>
+                        </tr><?php endif; ?>
+                    <?php if (!empty($mata->mbokanan)): ?>
+                        <tr>
+                            <td><b>MBO</b></td>
+                            <td>: <?= $mata->mbokanan ?></td>
+                        </tr><?php endif; ?>
+                </table>
             </td>
-            <td style="padding: 5px; vertical-align: top;">
-                <strong>• Visus SC:</strong> <?= val($mata->visuskiri ?? '') ?><br>
-                <strong>• CC:</strong> <?= val($mata->cckiri ?? '') ?><br>
-                <strong>• Palpebra:</strong> <?= val($mata->palkiri ?? '') ?><br>
-                <strong>• Conjungtiwa:</strong> <?= val($mata->conkiri ?? '') ?><br>
-                <strong>• Cornea:</strong> <?= val($mata->corneakiri ?? '') ?><br>
-                <strong>• COA:</strong> <?= val($mata->coakiri ?? '') ?><br>
-                <strong>• Iris/Pupil:</strong> <?= val($mata->pupilkiri ?? '') ?><br>
-                <strong>• Lensa:</strong> <?= val($mata->lensakiri ?? '') ?><br>
-                <strong>• Fundus Media:</strong> <?= val($mata->funduskiri ?? '') ?><br>
-                <strong>• Papil:</strong> <?= val($mata->papilkiri ?? '') ?><br>
-                <strong>• Retina:</strong> <?= val($mata->retinakiri ?? '') ?><br>
-                <strong>• Makula:</strong> <?= val($mata->makulakiri ?? '') ?><br>
-                <strong>• TIO:</strong> <?= val($mata->tiokiri ?? '') ?><br>
-                <strong>• MBO:</strong> <?= val($mata->mbokiri ?? '') ?>
+
+            <!-- OS (KIRI) -->
+            <td style="width: 50%; vertical-align: top; border: 1px solid #ccc; padding: 10px;">
+                <div
+                    style="text-align: center; border-bottom: 2px solid #4CAF50; margin-bottom: 10px; padding-bottom: 5px;">
+                    <strong style="color: #4CAF50;">OS (MATA KIRI)</strong>
+                </div>
+
+                <!-- GAMBAR OS -->
+                <div style="text-align: center; margin-bottom: 15px;">
+                    <?php
+                    $path_os = FCPATH . 'assets/images/lokalis_mata/mata_os_' . $clean_no_rawat . '.png';
+                    $url_os = base_url('assets/images/lokalis_mata/mata_os_' . $clean_no_rawat . '.png');
+
+                    if (file_exists($path_os)): ?>
+                        <img src="<?= $url_os ?>" style="max-width: 100%; border: 1px solid #ddd; padding: 2px;">
+                    <?php else: ?>
+                        <div
+                            style="color: #999; font-style: italic; font-size: 10px; border: 1px dashed #ccc; padding: 20px;">
+                            (Tidak ada gambar OS)
+                        </div>
+                    <?php endif; ?>
+                </div>
+
+                <!-- DETAIL OS -->
+                <table style="width: 100%; font-size: 11px;">
+                    <?php if (!empty($mata->cckiri)): ?>
+                        <tr>
+                            <td width="30%"><b>CC</b></td>
+                            <td>: <?= $mata->cckiri ?></td>
+                        </tr><?php endif; ?>
+                    <?php if (!empty($mata->palkiri)): ?>
+                        <tr>
+                            <td><b>Palpebra</b></td>
+                            <td>: <?= $mata->palkiri ?></td>
+                        </tr><?php endif; ?>
+                    <?php if (!empty($mata->conkiri)): ?>
+                        <tr>
+                            <td><b>Conjunctiva</b></td>
+                            <td>: <?= $mata->conkiri ?></td>
+                        </tr><?php endif; ?>
+                    <?php if (!empty($mata->corneakiri)): ?>
+                        <tr>
+                            <td><b>Cornea</b></td>
+                            <td>: <?= $mata->corneakiri ?></td>
+                        </tr><?php endif; ?>
+                    <?php if (!empty($mata->coakiri)): ?>
+                        <tr>
+                            <td><b>COA</b></td>
+                            <td>: <?= $mata->coakiri ?></td>
+                        </tr><?php endif; ?>
+                    <?php if (!empty($mata->pupilkiri)): ?>
+                        <tr>
+                            <td><b>Pupil</b></td>
+                            <td>: <?= $mata->pupilkiri ?></td>
+                        </tr><?php endif; ?>
+                    <?php if (!empty($mata->lensakiri)): ?>
+                        <tr>
+                            <td><b>Lensa</b></td>
+                            <td>: <?= $mata->lensakiri ?></td>
+                        </tr><?php endif; ?>
+                    <?php if (!empty($mata->funduskiri)): ?>
+                        <tr>
+                            <td><b>Fundus</b></td>
+                            <td>: <?= $mata->funduskiri ?></td>
+                        </tr><?php endif; ?>
+                    <?php if (!empty($mata->papilkiri)): ?>
+                        <tr>
+                            <td><b>Papil</b></td>
+                            <td>: <?= $mata->papilkiri ?></td>
+                        </tr><?php endif; ?>
+                    <?php if (!empty($mata->retinakiri)): ?>
+                        <tr>
+                            <td><b>Retina</b></td>
+                            <td>: <?= $mata->retinakiri ?></td>
+                        </tr><?php endif; ?>
+                    <?php if (!empty($mata->makulakiri)): ?>
+                        <tr>
+                            <td><b>Makula</b></td>
+                            <td>: <?= $mata->makulakiri ?></td>
+                        </tr><?php endif; ?>
+                    <?php if (!empty($mata->tiokiri)): ?>
+                        <tr>
+                            <td><b>TIO</b></td>
+                            <td>: <?= $mata->tiokiri ?></td>
+                        </tr><?php endif; ?>
+                    <?php if (!empty($mata->mbokiri)): ?>
+                        <tr>
+                            <td><b>MBO</b></td>
+                            <td>: <?= $mata->mbokiri ?></td>
+                        </tr><?php endif; ?>
+                </table>
             </td>
         </tr>
     </table>
-
-    <!-- GAMBAR DIAGRAM MATA -->
-    <?php if (isset($mata->gambar_od_url) || isset($mata->gambar_os_url)): ?>
-        <table style="width: 100%; margin-bottom: 10px;">
-            <tr>
-                <th colspan="2" style="background-color: #f0f0f0; padding: 5px; text-align: center;">DIAGRAM MATA</th>
-            </tr>
-            <tr>
-                <td style="width: 50%; padding: 10px; text-align: center;">
-                    <?php if (isset($mata->gambar_od_url) && $mata->gambar_od_url): ?>
-                        <strong>OD (Kanan)</strong><br>
-                        <img src="<?= $mata->gambar_od_url ?>"
-                            style="max-width: 250px; max-height: 250px; border: 1px solid #ccc; margin-top: 5px;">
-                    <?php else: ?>
-                        <em>Tidak ada gambar OD</em>
-                    <?php endif; ?>
-                </td>
-                <td style="width: 50%; padding: 10px; text-align: center;">
-                    <?php if (isset($mata->gambar_os_url) && $mata->gambar_os_url): ?>
-                        <strong>OS (Kiri)</strong><br>
-                        <img src="<?= $mata->gambar_os_url ?>"
-                            style="max-width: 250px; max-height: 250px; border: 1px solid #ccc; margin-top: 5px;">
-                    <?php else: ?>
-                        <em>Tidak ada gambar OS</em>
-                    <?php endif; ?>
-                </td>
-            </tr>
-        </table>
-    <?php endif; ?>
 
     <!-- IV. PEMERIKSAAN PENUNJANG -->
+    <div style="background: #f5f5f5; padding: 5px; margin: 10px 0; font-weight: bold;">
+        IV. PEMERIKSAAN PENUNJANG
+    </div>
     <table style="width: 100%; margin-bottom: 10px;">
-        <tr>
-            <th colspan="4" style="background-color: #f0f0f0; padding: 5px;">IV. PEMERIKSAAN PENUNJANG</th>
-        </tr>
-        <tr>
-            <td style="width: 25%; padding: 5px; font-weight: bold;">Laboratorium</td>
-            <td style="width: 25%; padding: 5px;"><?= val($mata->lab ?? '') ?></td>
-            <td style="width: 25%; padding: 5px; font-weight: bold;">Radiologi</td>
-            <td style="width: 25%; padding: 5px;"><?= val($mata->rad ?? '') ?></td>
-        </tr>
-        <tr>
-            <td style="padding: 5px; font-weight: bold;">Penunjang Lainnya</td>
-            <td style="padding: 5px;"><?= val($mata->penunjang ?? '') ?></td>
-            <td style="padding: 5px; font-weight: bold;">Tes Penglihatan</td>
-            <td style="padding: 5px;"><?= val($mata->tes ?? '') ?></td>
-        </tr>
-        <tr>
-            <td style="padding: 5px; font-weight: bold;">Pemeriksaan Lain</td>
-            <td colspan="3" style="padding: 5px;"><?= val($mata->pemeriksaan ?? '') ?></td>
-        </tr>
+        <?php if (!empty($mata->lab)): ?>
+            <tr>
+                <td style="width: 200px; font-weight: bold;">Laboratorium</td>
+                <td>: <?= nl2br($mata->lab) ?></td>
+            </tr><?php endif; ?>
+        <?php if (!empty($mata->rad)): ?>
+            <tr>
+                <td style="font-weight: bold;">Radiologi</td>
+                <td>: <?= nl2br($mata->rad) ?></td>
+            </tr><?php endif; ?>
+        <?php if (!empty($mata->tes)): ?>
+            <tr>
+                <td style="font-weight: bold;">Tes Penglihatan</td>
+                <td>: <?= nl2br($mata->tes) ?></td>
+            </tr><?php endif; ?>
+        <?php if (!empty($mata->penunjang)): ?>
+            <tr>
+                <td style="font-weight: bold;">Penunjang Lain</td>
+                <td>: <?= nl2br($mata->penunjang) ?></td>
+            </tr><?php endif; ?>
+        <?php if (!empty($mata->pemeriksaan)): ?>
+            <tr>
+                <td style="font-weight: bold;">Pemeriksaan Lain</td>
+                <td>: <?= nl2br($mata->pemeriksaan) ?></td>
+            </tr><?php endif; ?>
     </table>
 
-    <!-- V. DIAGNOSIS -->
+    <!-- V. DIAGNOSIS & TATALAKSANA -->
+    <div style="background: #f5f5f5; padding: 5px; margin: 10px 0; font-weight: bold;">
+        V. DIAGNOSIS & TATALAKSANA
+    </div>
     <table style="width: 100%; margin-bottom: 10px;">
         <tr>
-            <th colspan="4" style="background-color: #f0f0f0; padding: 5px;">V. DIAGNOSIS</th>
+            <td style="width: 200px; font-weight: bold;">Diagnosis Kerja</td>
+            <td>: <?= nl2br(val($mata->diagnosis ?? '')) ?></td>
+        </tr>
+        <?php if (!empty($mata->diagnosisbdg)): ?>
+            <tr>
+                <td style="font-weight: bold;">Diagnosis Banding</td>
+                <td>: <?= nl2br($mata->diagnosisbdg) ?></td>
+            </tr><?php endif; ?>
+        <?php if (!empty($mata->permasalahan)): ?>
+            <tr>
+                <td style="font-weight: bold;">Permasalahan</td>
+                <td>: <?= nl2br($mata->permasalahan) ?></td>
+            </tr><?php endif; ?>
+        <tr>
+            <td style="font-weight: bold;">Terapi/Pengobatan</td>
+            <td>: <?= nl2br(val($mata->terapi ?? '')) ?></td>
         </tr>
         <tr>
-            <td style="width: 25%; padding: 5px; font-weight: bold;">Asesmen Kerja</td>
-            <td style="width: 25%; padding: 5px;"><?= val($mata->diagnosis ?? '') ?></td>
-            <td style="width: 25%; padding: 5px; font-weight: bold;">Asesmen Banding</td>
-            <td style="width: 25%; padding: 5px;"><?= val($mata->diagnosisbdg ?? '') ?></td>
+            <td style="font-weight: bold;">Tindakan</td>
+            <td>: <?= nl2br(val($mata->tindakan ?? '')) ?></td>
         </tr>
-    </table>
-
-    <!-- VI. PERMASALAHAN & TATALAKSANA -->
-    <table style="width: 100%; margin-bottom: 10px;">
-        <tr>
-            <th colspan="4" style="background-color: #f0f0f0; padding: 5px;">VI. PERMASALAHAN & TATALAKSANA</th>
-        </tr>
-        <tr>
-            <td style="width: 25%; padding: 5px; font-weight: bold;">Permasalahan</td>
-            <td style="width: 25%; padding: 5px;"><?= val($mata->permasalahan ?? '') ?></td>
-            <td style="width: 25%; padding: 5px; font-weight: bold;">Terapi/Pengobatan</td>
-            <td style="width: 25%; padding: 5px;"><?= val($mata->terapi ?? '') ?></td>
-        </tr>
-        <tr>
-            <td style="padding: 5px; font-weight: bold;">Tindakan/Rencana Tindakan</td>
-            <td colspan="3" style="padding: 5px;"><?= val($mata->tindakan ?? '') ?></td>
-        </tr>
-    </table>
-
-    <!-- VII. EDUKASI -->
-    <table style="width: 100%; margin-bottom: 10px;">
-        <tr>
-            <th style="background-color: #f0f0f0; padding: 5px;">VII. EDUKASI</th>
-        </tr>
-        <tr>
-            <td style="padding: 5px;"><?= val($mata->edukasi ?? '') ?></td>
-        </tr>
+        <?php if (!empty($mata->edukasi)): ?>
+            <tr>
+                <td style="font-weight: bold;">Edukasi</td>
+                <td>: <?= nl2br($mata->edukasi) ?></td>
+            </tr><?php endif; ?>
     </table>
 </div>

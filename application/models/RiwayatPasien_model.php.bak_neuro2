@@ -813,24 +813,6 @@ class RiwayatPasien_model extends CI_Model
     }
 
     /**
-     * Get Penilaian Medis Psikiatrik by no_rawat
-     */
-    public function get_penilaian_medis_psikiatrik_by_norawat($no_rawat)
-    {
-        $row = $this->db->select("
-            pp.*,
-            d.nm_dokter
-        ")
-            ->from('penilaian_medis_ralan_psikiatrik pp')
-            ->join('dokter d', 'd.kd_dokter = pp.kd_dokter', 'left')
-            ->where('pp.no_rawat', $no_rawat)
-            ->get()->row_array();
-
-        return $row;
-    }
-
-
-    /**
      * Get Penilaian Medis Jantung (Kardiologi) by no_rawat
      */
     public function get_penilaian_medis_jantung_by_norawat($no_rawat)
@@ -917,29 +899,12 @@ class RiwayatPasien_model extends CI_Model
         // 17. Asesmen Neurologi
         $data['asesmen_neurologi'] = $this->get_penilaian_medis_neurologi_by_norawat($no_rawat);
 
-        // 18. Asesmen Paru (Pulmonologi)
-        $data['asesmen_paru'] = $this->get_penilaian_medis_paru_by_norawat($no_rawat);
-
-        // 19. Asesmen Psikiatrik
-        $data['asesmen_psikiatrik'] = $this->get_penilaian_medis_psikiatrik_by_norawat($no_rawat);
-
-        // 20. Resume Medis
+        // 18. Resume Medis        // 17. Resume Medis
         $data['resume'] = $this->get_summary_by_norawat($no_rawat);
-
-        // 21. Asesmen Gawat Darurat Psikiatri
-        $data['asesmen_gawat_darurat_psikiatri'] = $this->get_asesmen_gawat_darurat_psikiatri_by_norawat($no_rawat);
-
-        // 21. Asesmen Geriatri
-        $data['asesmen_geriatri'] = $this->get_asesmen_geriatri_by_norawat($no_rawat);
-
-        // 22. Asesmen Rehab Medik
-        $data['asesmen_rehab_medik'] = $this->get_asesmen_medis_rehab_by_norawat($no_rawat);
-
-        // 23. Asesmen Urologi
-        $data['asesmen_urologi'] = $this->get_asesmen_urologi_by_norawat($no_rawat);
 
         return $data;
     }
+}
 
     /**
      * Get Penilaian Medis Neurologi by no_rawat
@@ -957,119 +922,3 @@ class RiwayatPasien_model extends CI_Model
 
         return $row;
     }
-
-    /**
-     * Get Penilaian Medis Paru by no_rawat
-     */
-    public function get_penilaian_medis_paru_by_norawat($no_rawat)
-    {
-        $row = $this->db->select("
-            pp.*,
-            d.nm_dokter
-        ")
-            ->from('penilaian_medis_ralan_paru pp')
-            ->join('dokter d', 'd.kd_dokter = pp.kd_dokter', 'left')
-            ->where('pp.no_rawat', $no_rawat)
-            ->get()->row_array();
-
-        if ($row) {
-            $clean_no_rawat = str_replace('/', '', $no_rawat);
-            $path = 'assets/images/lokalis_paru/lokalis_' . $clean_no_rawat . '.png';
-            if (file_exists(FCPATH . $path)) {
-                $row['lokalis_url'] = base_url($path);
-            } else {
-                $row['lokalis_url'] = null;
-            }
-        }
-
-        return $row;
-    }
-
-    /**
-     * Get Asesmen Gawat Darurat Psikiatri by no_rawat
-     */
-    public function get_asesmen_gawat_darurat_psikiatri_by_norawat($no_rawat)
-    {
-        $row = $this->db->select("
-            ag.*,
-            d.nm_dokter
-        ")
-            ->from('penilaian_medis_ralan_gawat_darurat_psikiatri ag')
-            ->join('dokter d', 'd.kd_dokter = ag.kd_dokter', 'left')
-            ->where('ag.no_rawat', $no_rawat)
-            ->get()->row_array();
-
-        if ($row) {
-            $clean_no_rawat = str_replace('/', '', $no_rawat);
-            $path = 'assets/images/lokalis_igd_psikiatri/lokalis_' . $clean_no_rawat . '.png';
-            if (file_exists(FCPATH . $path)) {
-                $row['lokalis_url'] = base_url($path);
-            } else {
-                $row['lokalis_url'] = null;
-            }
-        }
-
-        return $row;
-    }
-
-    /**
-     * Get Asesmen Geriatri by no_rawat
-     */
-    public function get_asesmen_geriatri_by_norawat($no_rawat)
-    {
-        $row = $this->db->select("
-            pg.*,
-            d.nm_dokter
-        ")
-            ->from('penilaian_medis_ralan_geriatri pg')
-            ->join('dokter d', 'd.kd_dokter = pg.kd_dokter', 'left')
-            ->where('pg.no_rawat', $no_rawat)
-            ->get()->row_array();
-
-        if ($row) {
-            $clean_no_rawat = str_replace('/', '', $no_rawat);
-            // Check for lokalis image if it exists (assuming consistent naming convention)
-            $path = 'assets/images/lokalis_geriatri/lokalis_' . $clean_no_rawat . '.png';
-            if (file_exists(FCPATH . $path)) {
-                $row['lokalis_url'] = base_url($path);
-            } else {
-                $row['lokalis_url'] = null;
-            }
-        }
-
-        return $row;
-    }
-
-    /**
-     * Get Asesmen Rehab Medik by no_rawat
-     */
-    public function get_asesmen_medis_rehab_by_norawat($no_rawat)
-    {
-        $row = $this->db->select("
-            pm.*,
-            d.nm_dokter
-        ")
-            ->from('penilaian_medis_ralan_rehab_medik pm')
-            ->join('dokter d', 'd.kd_dokter = pm.kd_dokter', 'left')
-            ->where('pm.no_rawat', $no_rawat)
-            ->get()->row_array();
-        return $row;
-    }
-
-    /**
-     * Get Asesmen Urologi by no_rawat
-     */
-    public function get_asesmen_urologi_by_norawat($no_rawat)
-    {
-        $row = $this->db->select("
-            pu.*,
-            d.nm_dokter
-        ")
-            ->from('penilaian_medis_ralan_urologi pu')
-            ->join('dokter d', 'd.kd_dokter = pu.kd_dokter', 'left')
-            ->where('pu.no_rawat', $no_rawat)
-            ->get()->row_array();
-
-        return $row;
-    }
-}

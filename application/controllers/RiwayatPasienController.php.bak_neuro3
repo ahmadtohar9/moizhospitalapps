@@ -151,26 +151,6 @@ class RiwayatPasienController extends CI_Controller
         $this->_get_detail('get_laporan_tindakan_by_norawat');
     }
 
-    public function detail_asesmen_gawat_darurat_psikiatri()
-    {
-        $this->_get_detail('get_asesmen_gawat_darurat_psikiatri_by_norawat');
-    }
-
-    public function detail_asesmen_geriatri()
-    {
-        $this->_get_detail('get_asesmen_geriatri_by_norawat');
-    }
-
-    public function detail_asesmen_rehab_medik()
-    {
-        $this->_get_detail('get_asesmen_medis_rehab_by_norawat');
-    }
-
-    public function detail_asesmen_urologi()
-    {
-        $this->_get_detail('get_asesmen_urologi_by_norawat');
-    }
-
     public function detail_asesmen_igd()
     {
         $this->_get_detail('get_asesmen_igd_by_norawat');
@@ -229,21 +209,6 @@ class RiwayatPasienController extends CI_Controller
     public function detail_penilaian_medis_kulitdankelamin()
     {
         $this->_get_detail('get_penilaian_medis_kulitdankelamin_by_norawat');
-    }
-
-    public function detail_penilaian_medis_neurologi()
-    {
-        $this->_get_detail('get_penilaian_medis_neurologi_by_norawat');
-    }
-
-    public function detail_penilaian_medis_paru()
-    {
-        $this->_get_detail('get_penilaian_medis_paru_by_norawat');
-    }
-
-    public function detail_penilaian_medis_psikiatrik()
-    {
-        $this->_get_detail('get_penilaian_medis_psikiatrik_by_norawat');
     }
 
 
@@ -485,17 +450,6 @@ class RiwayatPasienController extends CI_Controller
                 'bedah' => $this->RiwayatPasien_model->get_penilaian_medis_bedah_by_norawat($no_rawat),
                 'tht' => $this->RiwayatPasien_model->get_penilaian_medis_tht_by_norawat($no_rawat),
                 'jantung' => $this->RiwayatPasien_model->get_penilaian_medis_jantung_by_norawat($no_rawat),
-                'kulitdankelamin' => $this->RiwayatPasien_model->get_penilaian_medis_kulitdankelamin_by_norawat($no_rawat),
-                'neurologi' => $this->RiwayatPasien_model->get_penilaian_medis_neurologi_by_norawat($no_rawat),
-                'paru' => $this->RiwayatPasien_model->get_penilaian_medis_paru_by_norawat($no_rawat),
-                'psikiatrik' => $this->RiwayatPasien_model->get_penilaian_medis_psikiatrik_by_norawat($no_rawat),
-                'igdPsikiatri' => $this->RiwayatPasien_model->get_asesmen_gawat_darurat_psikiatri_by_norawat($no_rawat),
-                'geriatri' => $this->RiwayatPasien_model->get_asesmen_geriatri_by_norawat($no_rawat),
-                'asesmenRehabMedik' => $this->RiwayatPasien_model->get_asesmen_medis_rehab_by_norawat($no_rawat),
-                'asesmenUrologi' => $this->RiwayatPasien_model->get_asesmen_urologi_by_norawat($no_rawat),
-                'operasi' => $this->RiwayatPasien_model->get_operasi_by_no_rawat($no_rawat),
-                'penunjang' => $this->RiwayatPasien_model->get_penunjang_by_norawat($no_rawat),
-                'laptind' => $this->RiwayatPasien_model->get_laporan_tindakan_by_norawat($no_rawat),
             ];
 
             echo json_encode(['success' => true, 'data' => $data]);

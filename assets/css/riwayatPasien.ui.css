@@ -147,6 +147,26 @@
     color: white;
 }
 
+.card--igd_psikiatri .rp-card-head {
+    background: #1e40af;
+    color: white;
+}
+
+.card--geriatri .rp-card-head {
+    background: #1e40af;
+    color: white;
+}
+
+.card--rehab .rp-card-head {
+    background: #1e40af;
+    color: white;
+}
+
+.card--urologi .rp-card-head {
+    background: #1e40af;
+    color: white;
+}
+
 
 /* ===== HEADER STYLING - HIGH CONTRAST ===== */
 .rp-hdr {

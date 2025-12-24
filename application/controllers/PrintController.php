@@ -119,6 +119,100 @@ class PrintController extends CI_Controller
             }
         }
 
+        // --- TAMBAHAN ASESMEN BARU ---
+
+        // 5.1 ASESMEN ANAK
+        $d->anak = $this->db->get_where('penilaian_medis_ralan_anak', ['no_rawat' => $no_rawat])->row();
+        if ($d->anak) {
+            $clean_no_rawat = str_replace('/', '', $no_rawat);
+            $path = 'assets/images/lokalis_anak/lokalis_' . $clean_no_rawat . '.png';
+            if (file_exists(FCPATH . $path)) {
+                $d->anak->lokalis_url = base_url($path);
+            }
+        }
+
+        // 5.2 ASESMEN BEDAH
+        $d->bedah = $this->db->get_where('penilaian_medis_ralan_bedah', ['no_rawat' => $no_rawat])->row();
+        if ($d->bedah) {
+            $clean_no_rawat = str_replace('/', '', $no_rawat);
+            $path = 'assets/images/lokalis_bedah/lokalis_' . $clean_no_rawat . '.png';
+            if (file_exists(FCPATH . $path)) {
+                $d->bedah->lokalis_url = base_url($path);
+            }
+        }
+
+        // 5.3 ASESMEN THT
+        $d->tht = $this->db->get_where('penilaian_medis_ralan_tht', ['no_rawat' => $no_rawat])->row();
+        if ($d->tht) {
+            $clean_no_rawat = str_replace('/', '', $no_rawat);
+            $path = 'assets/images/lokalis_tht/lokalis_' . $clean_no_rawat . '.png';
+            if (file_exists(FCPATH . $path)) {
+                $d->tht->lokalis_url = base_url($path);
+            }
+        }
+
+        // 5.4 ASESMEN JANTUNG
+        $d->jantung = $this->db->get_where('penilaian_medis_ralan_jantung', ['no_rawat' => $no_rawat])->row();
+        if ($d->jantung) {
+            $clean_no_rawat = str_replace('/', '', $no_rawat);
+            $path = 'assets/images/lokalis_jantung/lokalis_' . $clean_no_rawat . '.png';
+            if (file_exists(FCPATH . $path)) {
+                $d->jantung->lokalis_url = base_url($path);
+            }
+        }
+
+        // 5.5 ASESMEN KULIT & KELAMIN
+        $d->kulitdankelamin = $this->db->get_where('penilaian_medis_ralan_kulitdankelamin', ['no_rawat' => $no_rawat])->row();
+        if ($d->kulitdankelamin) {
+            $clean_no_rawat = str_replace('/', '', $no_rawat);
+            $path = 'assets/images/lokalis_kulitdankelamin/lokalis_' . $clean_no_rawat . '.png';
+            if (file_exists(FCPATH . $path)) {
+                $d->kulitdankelamin->lokalis_url = base_url($path);
+            }
+        }
+
+        // 5.6 ASESMEN NEUROLOGI
+        $d->neurologi = $this->db->get_where('penilaian_medis_ralan_neurologi', ['no_rawat' => $no_rawat])->row();
+        if ($d->neurologi) {
+            $clean_no_rawat = str_replace('/', '', $no_rawat);
+            $path = 'assets/images/lokalis_neurologi/lokalis_' . $clean_no_rawat . '.png';
+            if (file_exists(FCPATH . $path)) {
+                $d->neurologi->lokalis_url = base_url($path);
+            }
+        }
+
+        // 5.7 ASESMEN PARU
+        $d->paru = $this->db->get_where('penilaian_medis_ralan_paru', ['no_rawat' => $no_rawat])->row();
+        if ($d->paru) {
+            $clean_no_rawat = str_replace('/', '', $no_rawat);
+            $path = 'assets/images/lokalis_paru/lokalis_' . $clean_no_rawat . '.png';
+            if (file_exists(FCPATH . $path)) {
+                $d->paru->lokalis_url = base_url($path);
+            }
+        }
+
+        // 5.8 ASESMEN PSIKIATRIK
+        $d->psikiatrik = $this->db->get_where('penilaian_medis_ralan_psikiatrik', ['no_rawat' => $no_rawat])->row();
+
+        // 5.9 ASESMEN IGD PSIKIATRI
+        $d->igdPsikiatri = $this->db->get_where('penilaian_medis_ralan_gawat_darurat_psikiatri', ['no_rawat' => $no_rawat])->row();
+        if ($d->igdPsikiatri) {
+            $clean_no_rawat = str_replace('/', '', $no_rawat);
+            $path = 'assets/images/lokalis_igd_psikiatri/lokalis_' . $clean_no_rawat . '.png';
+            if (file_exists(FCPATH . $path)) {
+                $d->igdPsikiatri->lokalis_url = base_url($path);
+            }
+        }
+
+        // 5.10 ASESMEN GERIATRI
+        $d->geriatri = $this->db->get_where('penilaian_medis_ralan_geriatri', ['no_rawat' => $no_rawat])->row();
+
+        // 5.11 ASESMEN REHAB MEDIK (MEDIS)
+        $d->asesmenRehabMedik = $this->db->get_where('penilaian_medis_ralan_rehab_medik', ['no_rawat' => $no_rawat])->row();
+
+        // 5.12 ASESMEN UROLOGI
+        $d->asesmenUrologi = $this->db->get_where('penilaian_medis_ralan_urologi', ['no_rawat' => $no_rawat])->row();
+
         // 6. RESUME MEDIS
         $d->resume = $this->db->get_where('resume_pasien', ['no_rawat' => $no_rawat])->row();
 
@@ -1002,6 +1096,42 @@ class PrintController extends CI_Controller
                 ->order_by('ak.tanggal', 'DESC')
                 ->get()->result();
 
+            // ASESMEN ANAK (PEDIATRI)
+            $d->anak = $this->db->get_where('penilaian_medis_ralan_anak', ['no_rawat' => $no_rawat])->row();
+
+            // ASESMEN BEDAH
+            $d->bedah = $this->db->get_where('penilaian_medis_ralan_bedah', ['no_rawat' => $no_rawat])->row();
+
+            // ASESMEN THT
+            $d->tht = $this->db->get_where('penilaian_medis_ralan_tht', ['no_rawat' => $no_rawat])->row();
+
+            // ASESMEN JANTUNG (KARDIOLOGI)
+            $d->jantung = $this->db->get_where('penilaian_medis_ralan_jantung', ['no_rawat' => $no_rawat])->row();
+
+            // ASESMEN KULIT DAN KELAMIN (DERMATOLOGI)
+            $d->kulitdankelamin = $this->db->get_where('penilaian_medis_ralan_kulitdankelamin', ['no_rawat' => $no_rawat])->row();
+
+            // ASESMEN NEUROLOGI
+            $d->neurologi = $this->db->get_where('penilaian_medis_ralan_neurologi', ['no_rawat' => $no_rawat])->row();
+
+            // ASESMEN PARU (PULMONOLOGI)
+            $d->paru = $this->db->get_where('penilaian_medis_ralan_paru', ['no_rawat' => $no_rawat])->row();
+
+            // ASESMEN PSIKIATRIK
+            $d->psikiatrik = $this->db->get_where('penilaian_medis_ralan_psikiatrik', ['no_rawat' => $no_rawat])->row();
+
+            // ASESMEN GAWAT DARURAT PSIKIATRI
+            $d->igdPsikiatri = $this->db->get_where('penilaian_medis_ralan_gawat_darurat_psikiatri', ['no_rawat' => $no_rawat])->row();
+
+            // ASESMEN GERIATRI
+            $d->geriatri = $this->db->get_where('penilaian_medis_ralan_geriatri', ['no_rawat' => $no_rawat])->row();
+
+            // ASESMEN REHAB MEDIK
+            $d->asesmenRehabMedik = $this->db->get_where('penilaian_medis_ralan_rehab_medik', ['no_rawat' => $no_rawat])->row();
+
+            // ASESMEN UROLOGI
+            $d->asesmenUrologi = $this->db->get_where('penilaian_medis_ralan_urologi', ['no_rawat' => $no_rawat])->row();
+
             $sections = [];
             $section_map = [
                 'igd' => 'asesmen_igd.php',
@@ -1009,6 +1139,18 @@ class PrintController extends CI_Controller
                 'mata' => 'asesmen_mata.php',
                 'penyakit_dalam' => 'asesmen_penyakit_dalam.php',
                 'orthopedi' => 'asesmen_orthopedi.php',
+                'anak' => 'asesmen_anak.php',
+                'bedah' => 'asesmen_bedah.php',
+                'tht' => 'asesmen_tht.php',
+                'jantung' => 'asesmen_jantung.php',
+                'kulitdankelamin' => 'asesmen_kulitdankelamin.php',
+                'neurologi' => 'asesmen_neurologi.php',
+                'paru' => 'asesmen_paru.php',
+                'psikiatrik' => 'asesmen_psikiatrik.php',
+                'igdPsikiatri' => 'asesmen_gawatdaruratpsikiatri.php',
+                'geriatri' => 'asesmen_geriatri.php',
+                'asesmenRehabMedik' => 'asesmen_rehabmedik.php',
+                'asesmenUrologi' => 'asesmen_urologi.php',
                 'kfr' => 'formulir_kfr.php',
                 'rehab_medik' => 'program_rehab_medik.php',
                 'asesmen_keperawatan' => 'asesmen_keperawatan.php',

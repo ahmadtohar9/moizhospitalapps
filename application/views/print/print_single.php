@@ -51,18 +51,23 @@
                 margin: 0 !important;
                 padding: 0 !important;
             }
+
             table {
                 margin: 5px 0 !important;
             }
+
             h1 {
                 margin: 5px 0 !important;
             }
+
             hr {
                 margin: 3px 0 !important;
             }
+
             .print-section {
                 margin: 10px 0 !important;
             }
+
             .no-print {
                 display: none !important;
             }
@@ -180,6 +185,69 @@
     if (!empty($d->kandungan)) {
         include APPPATH . 'views/print/sections/asesmen_kandungan.php';
     }
+
+    // --- TAMBAHAN ASESMEN BARU ---
+    
+    // 5.1 Anak (Pediatri)
+    if (!empty($d->anak)) {
+        include APPPATH . 'views/print/sections/asesmen_anak.php';
+    }
+
+    // 5.2 Bedah
+    if (!empty($d->bedah)) {
+        include APPPATH . 'views/print/sections/asesmen_bedah.php';
+    }
+
+    // 5.3 THT
+    if (!empty($d->tht)) {
+        include APPPATH . 'views/print/sections/asesmen_tht.php';
+    }
+
+    // 5.4 Jantung
+    if (!empty($d->jantung)) {
+        include APPPATH . 'views/print/sections/asesmen_jantung.php';
+    }
+
+    // 5.5 Kulit & Kelamin
+    if (!empty($d->kulitdankelamin)) {
+        include APPPATH . 'views/print/sections/asesmen_kulitdankelamin.php';
+    }
+
+    // 5.6 Neurologi
+    if (!empty($d->neurologi)) {
+        include APPPATH . 'views/print/sections/asesmen_neurologi.php';
+    }
+
+    // 5.7 Paru
+    if (!empty($d->paru)) {
+        include APPPATH . 'views/print/sections/asesmen_paru.php';
+    }
+
+    // 5.8 Psikiatrik
+    if (!empty($d->psikiatrik)) {
+        include APPPATH . 'views/print/sections/asesmen_psikiatrik.php';
+    }
+
+    // 5.9 IGD Psikiatri
+    if (!empty($d->igdPsikiatri)) {
+        include APPPATH . 'views/print/sections/asesmen_gawatdaruratpsikiatri.php';
+    }
+
+    // 5.10 Geriatri
+    if (!empty($d->geriatri)) {
+        include APPPATH . 'views/print/sections/asesmen_geriatri.php';
+    }
+
+    // 5.11 Rehab Medik (Asesmen Medis)
+    if (!empty($d->asesmenRehabMedik)) {
+        include APPPATH . 'views/print/sections/asesmen_rehabmedik.php';
+    }
+
+    // 5.12 Urologi
+    if (!empty($d->asesmenUrologi)) {
+        include APPPATH . 'views/print/sections/asesmen_urologi.php';
+    }
+
 
     // 6. SOAP
     if (!empty($d->soap)) {

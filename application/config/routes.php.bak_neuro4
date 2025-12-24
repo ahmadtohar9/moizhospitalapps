@@ -380,13 +380,6 @@ $route['admin/riwayatPasien/detail_penilaian_medis_bedah'] = 'RiwayatPasienContr
 $route['admin/riwayatPasien/detail_penilaian_medis_tht'] = 'RiwayatPasienController/detail_penilaian_medis_tht';
 $route['admin/riwayatPasien/detail_penilaian_medis_jantung'] = 'RiwayatPasienController/detail_penilaian_medis_jantung';
 $route['admin/riwayatPasien/detail_penilaian_medis_kulitdankelamin'] = 'RiwayatPasienController/detail_penilaian_medis_kulitdankelamin';
-$route['admin/riwayatPasien/detail_penilaian_medis_neurologi'] = 'RiwayatPasienController/detail_penilaian_medis_neurologi';
-$route['admin/riwayatPasien/detail_penilaian_medis_paru'] = 'RiwayatPasienController/detail_penilaian_medis_paru';
-$route['admin/riwayatPasien/detail_penilaian_medis_psikiatrik'] = 'RiwayatPasienController/detail_penilaian_medis_psikiatrik';
-$route['admin/riwayatPasien/detail_asesmen_gawat_darurat_psikiatri'] = 'RiwayatPasienController/detail_asesmen_gawat_darurat_psikiatri';
-$route['admin/riwayatPasien/detail_asesmen_geriatri'] = 'RiwayatPasienController/detail_asesmen_geriatri';
-$route['admin/riwayatPasien/detail_asesmen_rehab_medik'] = 'RiwayatPasienController/detail_asesmen_rehab_medik';
-$route['admin/riwayatPasien/detail_asesmen_urologi'] = 'RiwayatPasienController/detail_asesmen_urologi';
 $route['admin/riwayatPasien/info'] = 'RiwayatPasienController/info';
 $route['RiwayatPasien/get_detail'] = 'RiwayatPasienController/get_detail';
 

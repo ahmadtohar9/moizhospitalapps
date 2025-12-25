@@ -286,6 +286,7 @@
     <h1>Data Pasien Rawat Jalan</h1>
   </section>
   <section class="content">
+
     <div class="box box-success">
       <div class="box-header">
         <h3 class="box-title">Filter Data</h3>
@@ -295,12 +296,12 @@
           <div class="row">
             <div class="col-md-2 col-sm-6">
               <label for="start_date">Tanggal Mulai</label>
-              <input type="date" id="start_date" class="form-control">
+              <input type="date" id="start_date" class="form-control" value="<?= date('Y-m-d'); ?>">
             </div>
 
             <div class="col-md-2 col-sm-6">
               <label for="end_date">Tanggal Akhir</label>
-              <input type="date" id="end_date" class="form-control">
+              <input type="date" id="end_date" class="form-control" value="<?= date('Y-m-d'); ?>">
             </div>
 
             <div class="col-md-3 col-sm-6">
@@ -351,6 +352,7 @@
               <tr>
                 <th>No</th>
                 <th>No.Rawat</th>
+                <th>No.Reg</th>
                 <th>RM</th>
                 <th>Pasien</th>
                 <th>Dokter</th>
@@ -371,5 +373,11 @@
 <script>
   const API_URL = "<?= base_url('DokterRalanController/get_data'); ?>";
   const UPDATE_STATUS_URL = "<?= base_url('DokterRalanController/update_status'); ?>";
+  const ANTRIAN_API_URL = "<?= base_url('AntrianController/'); ?>";
+  const KD_DOKTER = "<?= $this->session->userdata('kd_dokter'); ?>";
+
+  // Debug
+  console.log('🔍 Debug Info:');
+  console.log('KD_DOKTER:', KD_DOKTER);
 </script>
 <script src="<?= base_url('assets/js/dokterRalan.js'); ?>"></script>

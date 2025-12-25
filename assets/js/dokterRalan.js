@@ -99,10 +99,6 @@ document.addEventListener('DOMContentLoaded', function () {
     document.head.appendChild(style);
   }
 
-  // ===== Default tanggal: hari ini =====
-  const today = new Date().toISOString().split('T')[0];
-  if (!startDateInput.value) startDateInput.value = today;
-  if (!endDateInput.value) endDateInput.value = today;
 
   // ===== State untuk auto-refresh & highlight =====
   let knownKeys = new Set();        // set of no_rawat yang sudah terlihat
@@ -138,6 +134,27 @@ document.addEventListener('DOMContentLoaded', function () {
     columns: [
       { data: null, render: (data, type, row, meta) => meta.row + 1 },
       { data: 'no_rawat' },
+      {
+        data: null,
+        orderable: false,
+        render: function (data, type, row) {
+          const noReg = row.no_reg || '';
+          const noRawat = row.no_rawat || '';
+          const nmPasien = row.nm_pasien || '';
+          const statusPeriksa = String(row.status_periksa || '').toLowerCase();
+          const sudahDipanggil = (row.sudah_dipanggil == 1);
+
+          let html = noReg ? `<span class="badge bg-blue">${noReg}</span>` : '-';
+
+          // Always show Panggil/Panggil Ulang button regardless of status
+          const btnText = sudahDipanggil ? 'Panggil Ulang' : 'Panggil';
+          const btnIcon = sudahDipanggil ? 'fa-redo' : 'fa-bullhorn';
+          const btnClass = sudahDipanggil ? 'btn-warning' : 'btn-primary';
+          html += `<br><button class="btn ${btnClass} btn-xs btn-panggil-pasien" data-no-rawat="${noRawat}" data-nama="${nmPasien}" style="margin-top:5px;"><i class="fa ${btnIcon}"></i> ${btnText}</button>`;
+
+          return html;
+        }
+      },
       { data: 'no_rkm_medis' },
       { data: 'nm_pasien' },
       { data: 'nm_dokter' },
@@ -173,10 +190,21 @@ document.addEventListener('DOMContentLoaded', function () {
         data: null,
         orderable: false,
         render: function (data, type, row) {
-          return `<button class="btn btn-success btn-sm"
-                    onclick="redirectToForm('${row.no_rawat || ''}', '${row.tgl_registrasi || ''}')">
-                    <i class="fa fa-sign-in"></i> Aksi
-                  </button>`;
+          const noRawat = row.no_rawat || '';
+          const tglReg = row.tgl_registrasi || '';
+          const nmPasien = row.nm_pasien || '';
+          const statusPeriksa = String(row.status_periksa || '').toLowerCase();
+
+          let buttons = '';
+
+
+          // Tombol Aksi (Rekam Medis)
+          buttons += `<button class="btn btn-success btn-xs"
+                        onclick="redirectToForm('${noRawat}', '${tglReg}')">
+                        <i class="fa fa-sign-in"></i> Aksi
+                      </button>`;
+
+          return buttons;
         }
       }
     ],
@@ -478,4 +506,55 @@ document.addEventListener('DOMContentLoaded', function () {
       }
     });
   }
+
+  // ===== Tombol Panggil Pasien =====
+  $(document).on('click', '.btn-panggil-pasien', function () {
+    const btn = $(this);
+    const noRawat = btn.data('no-rawat');
+    const namaPasien = btn.data('nama');
+
+    // Disable button (no confirm dialog)
+    btn.prop('disabled', true).html('<i class="fa fa-spinner fa-spin"></i> Memanggil...');
+
+    // Call API
+    $.ajax({
+      url: ANTRIAN_API_URL + 'panggil_pasien',
+      method: 'POST',
+      dataType: 'json',
+      data: {
+        no_rawat: noRawat
+      },
+      success: function (response) {
+        if (response.success) {
+          // Show success notification with SweetAlert2 (center, animated)
+          Swal.fire({
+            icon: 'success',
+            title: 'Berhasil!',
+            html: `<strong>${namaPasien}</strong><br>telah dipanggil`,
+            timer: 2000,
+            timerProgressBar: true,
+            showConfirmButton: false,
+            position: 'center',
+            backdrop: true,
+            showClass: {
+              popup: 'animate__animated animate__bounceIn animate__faster'
+            },
+            hideClass: {
+              popup: 'animate__animated animate__fadeOut animate__faster'
+            }
+          });
+
+          // Reload table
+          pasienTable.ajax.reload(null, false);
+        } else {
+          console.error('Failed to call patient:', response.message);
+          btn.prop('disabled', false).html('<i class="fa fa-bullhorn"></i> Panggil');
+        }
+      },
+      error: function (xhr, status, error) {
+        console.error('Error calling patient:', error);
+        btn.prop('disabled', false).html('<i class="fa fa-bullhorn"></i> Panggil');
+      }
+    });
+  });
 });

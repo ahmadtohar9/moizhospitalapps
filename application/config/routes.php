@@ -6,6 +6,22 @@ $route['auth/logout'] = 'auth/logout';
 $route['admin/dashboard'] = 'AdminController/index';
 $route['user/dashboard'] = 'UserController/index';
 
+/* ===================== ANTRIAN POLI ===================== */
+$route['antrian'] = 'AntrianController/index';
+$route['antrian/dashboard'] = 'AntrianController/index';
+$route['antrian/display/(:any)'] = 'AntrianController/display_poli/$1';
+$route['antrian/panel'] = 'AntrianController/panel_pemanggilan';
+$route['antrian/api/get_data'] = 'AntrianController/get_antrian_data';
+$route['antrian/api/latest_call'] = 'AntrianController/get_latest_call';
+$route['antrian/api/panggil'] = 'AntrianController/panggil_pasien';
+$route['antrian/api/panggil_ulang'] = 'AntrianController/panggil_ulang';
+$route['antrian/api/update_status'] = 'AntrianController/update_status';
+$route['antrian/api/statistik'] = 'AntrianController/get_statistik';
+$route['antrian/api/menunggu'] = 'AntrianController/get_antrian_menunggu';
+$route['antrian/api/doctor_queues'] = 'AntrianController/get_doctor_queues';
+$route['antrian/api/reset'] = 'AntrianController/reset_antrian';
+$route['antrian/api/poli_list'] = 'AntrianController/get_poli_list';
+
 /* ===================== PRINT CONTROLLER ===================== */
 // $route['print/riwayat_pasien/(:any)'] = 'PrintController/riwayat_pasien/$1';
 // $route['print/resume_medis/(:any)'] = 'PrintController/resume_medis/$1';

@@ -112,22 +112,27 @@
     });
     html += `
       <tr>
-        <td colspan="2" class="pl-3">
-          <button class="btn btn-secondary btn-sm copy-soap" data-soap='${JSON.stringify(d).replace(/'/g, "&apos;")}'>
+        <td colspan="2" class="pl-3" style="white-space: nowrap;">
+          <button class="soap-action-btn soap-action-copy btn-sm copy-soap" data-soap='${JSON.stringify(d).replace(/'/g, "&apos;")}'>
             <i class="fa fa-copy"></i> Copy
           </button>
-          <button class="btn btn-success btn-sm edit-soap"
+          <button class="soap-action-btn soap-action-edit btn-sm edit-soap"
             data-no_rawat="${d.no_rawat || ''}"
             data-tgl_perawatan="${d.tgl_perawatan || ''}"
             data-jam_rawat="${d.jam_rawat || ''}">
             <i class="fa fa-edit"></i> Edit
           </button>
-          <button class="btn btn-danger btn-sm delete-soap"
+          <button class="soap-action-btn soap-action-delete btn-sm delete-soap"
             data-no_rawat="${d.no_rawat || ''}"
             data-tgl_perawatan="${d.tgl_perawatan || ''}"
             data-jam_rawat="${d.jam_rawat || ''}">
             <i class="fa fa-trash"></i> Hapus
           </button>
+          <a href="${window.API.soapRalan.printPdf}?no_rawat=${encodeURIComponent(d.no_rawat || '')}&tgl_perawatan=${d.tgl_perawatan || ''}&jam_rawat=${encodeURIComponent(d.jam_rawat || '')}" 
+             target="_blank" 
+             class="soap-action-btn btn-sm">
+            <i class="fa fa-print"></i> PDF
+          </a>
         </td>
         <td colspan="9"></td>
       </tr>`;
@@ -149,9 +154,13 @@
         '<td><strong>' + (data.jam_rawat || '-') + '</strong></td>' +
         '<td><strong>' + (data.nm_petugas || '-') + '</strong></td>' +
         '<td rowspan="2" class="text-center align-middle">' +
-        '<button class="btn btn-info btn-sm copy-soap" data-soap=\'' + safeSOAP + '\'>' +
+        '<button class="soap-action-btn soap-action-copy btn-sm copy-soap" data-soap=\'' + safeSOAP + '\'>' +
         '<i class="fa fa-copy"></i> Copy' +
         '</button>' +
+        '<a href="' + window.API.soapRalan.printPdf + '?no_rawat=' + encodeURIComponent(data.no_rawat || '') + '&tgl_perawatan=' + (data.tgl_perawatan || '') + '&jam_rawat=' + encodeURIComponent(data.jam_rawat || '') + '" ' +
+        'target="_blank" class="soap-action-btn btn-sm" style="background: #10b981; color: white; text-decoration: none; margin-left: 4px;">' +
+        '<i class="fa fa-print"></i>' +
+        '</a>' +
         '</td>' +
         '</tr>' +
         '<tr class="bg-warning-subtle">' +
@@ -206,7 +215,7 @@
       $form[0].reset();
       $oJam.val('');
       var $btnSubmit = $form.find('button[type="submit"]');
-      $btnSubmit.prop('disabled', false).removeClass('btn-success').addClass('btn-primary')
+      $btnSubmit.prop('disabled', false).removeClass('btn-success').addClass('soap-btn-save')
         .html('<i class="fa fa-save"></i> Simpan SOAP');
       updateDateTime(); // Reset ke waktu sekarang
     }
@@ -273,7 +282,8 @@
       $.get(API.getRiwayat, { no_rkm_medis: noRM, page: riwPage, size: riwSize }, function (response) {
         handleJSONorError(response, function (res) {
           var rows = '';
-          if (res.status === 'success' && Array.isArray(res.data)) {
+          // Fix: check 'success' instead of 'status'
+          if (res.success && Array.isArray(res.data)) {
             allRiwayatData = res.data;
             riwTotal = +res.total || 0; riwPage = +res.page || 1; riwSize = +res.size || 50;
             rows = renderRiwayatRows(allRiwayatData, false);
@@ -432,7 +442,7 @@
 
           // Update tombol submit
           var $btnSubmit = $form.find('button[type="submit"]');
-          $btnSubmit.removeClass('btn-primary').addClass('btn-success')
+          $btnSubmit.removeClass('soap-btn-save').addClass('btn-success')
             .html('<i class="fa fa-save"></i> Update SOAP');
 
           // Scroll ke form
@@ -537,6 +547,60 @@
         }
       }
     });
+
+
+
+
+    // ---------- Filter Tanggal Riwayat (Modal) ----------
+    // Open modal when clicking filter button
+    $('#btnFilterRiwayat').on('click', function () {
+      $('#modalFilterSOAP').modal('show');
+    });
+
+    // Cetak PDF dengan Filter
+    $('#btnCetakFilteredPDF').on('click', function () {
+      var dariTgl = $('#filter_dari_tgl').val();
+      var sampaiTgl = $('#filter_sampai_tgl').val();
+      var noRawat = $('#no_rawat').val();
+
+      if (!dariTgl || !sampaiTgl) {
+        if (window.Swal) {
+          Swal.fire({
+            icon: 'warning',
+            title: 'Perhatian',
+            text: 'Silakan pilih rentang tanggal terlebih dahulu!'
+          });
+        } else {
+          alert('Silakan pilih rentang tanggal terlebih dahulu!');
+        }
+        return;
+      }
+
+      if (dariTgl > sampaiTgl) {
+        if (window.Swal) {
+          Swal.fire({
+            icon: 'warning',
+            title: 'Perhatian',
+            text: 'Tanggal awal tidak boleh lebih besar dari tanggal akhir!'
+          });
+        } else {
+          alert('Tanggal awal tidak boleh lebih besar dari tanggal akhir!');
+        }
+        return;
+      }
+
+      // Close modal (jQuery way)
+      $('#modalFilterSOAP').modal('hide');
+
+      // Open PDF
+      var url = window.API.soapRalan.printPdf + '?no_rawat=' + encodeURIComponent(noRawat) +
+        '&dari_tgl=' + dariTgl + '&sampai_tgl=' + sampaiTgl;
+      window.open(url, '_blank');
+    });
+
+
+
+
 
     // ---------- Batal ----------
     $('#cancelEdit').on('click', function () {

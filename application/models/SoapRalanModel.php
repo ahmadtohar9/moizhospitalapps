@@ -13,9 +13,10 @@ class SoapRalanModel extends CI_Model
      * ----------------------- UTILITIES -----------------------
      * ========================================================= */
 
-    private function required($data, $fields){
-        foreach($fields as $f){
-            if(!isset($data[$f]) || $data[$f]===''){
+    private function required($data, $fields)
+    {
+        foreach ($fields as $f) {
+            if (!isset($data[$f]) || $data[$f] === '') {
                 throw new InvalidArgumentException("Field wajib: {$f}");
             }
         }
@@ -44,19 +45,19 @@ class SoapRalanModel extends CI_Model
         $data = $this->onlyTableFields($this->table, $data);
 
         // validasi minimal key
-        $this->required($data, ['no_rawat','tgl_perawatan','jam_rawat','nip']);
+        $this->required($data, ['no_rawat', 'tgl_perawatan', 'jam_rawat', 'nip']);
 
         // idempotensi
         $exists = $this->db->get_where($this->table, [
-            'no_rawat'      => $data['no_rawat'],
+            'no_rawat' => $data['no_rawat'],
             'tgl_perawatan' => $data['tgl_perawatan'],
-            'jam_rawat'     => $data['jam_rawat'],
-            'nip'           => $data['nip'],
+            'jam_rawat' => $data['jam_rawat'],
+            'nip' => $data['nip'],
         ])->num_rows() > 0;
 
         if ($exists) {
             log_message('debug', 'Skip insert: duplikat key SOAP (idempotent).');
-            return ['ok'=>true, 'skipped'=>true];
+            return ['ok' => true, 'skipped' => true];
         }
 
         // Set default values untuk field SOAP yang mungkin kosong
@@ -84,26 +85,27 @@ class SoapRalanModel extends CI_Model
 
         $this->db->trans_start();
         $okInsert = $this->db->insert($this->table, $data);
-        $aff      = $this->db->affected_rows();
+        $aff = $this->db->affected_rows();
         $insertId = $this->db->insert_id();
         $this->db->trans_complete();
 
         if (!$okInsert || !$this->db->trans_status() || $aff < 1) {
             $dberr = $this->db->error();
-            log_message('error', 'Gagal insert '.$this->table.': '.print_r($dberr,true).' data='.json_encode($data));
-            return ['ok'=>false, 'error'=>'Gagal menyimpan data'];
+            log_message('error', 'Gagal insert ' . $this->table . ': ' . print_r($dberr, true) . ' data=' . json_encode($data));
+            return ['ok' => false, 'error' => 'Gagal menyimpan data'];
         }
 
-        return ['ok'=>true, 'id'=>$insertId];
+        return ['ok' => true, 'id' => $insertId];
     }
 
     /* =========================================================
      * ------------------------- UPDATE ------------------------
      * ========================================================= */
 
-    public function updateById($id, array $data, $expectedJamRawat=null)
+    public function updateById($id, array $data, $expectedJamRawat = null)
     {
-        if (!$id) return false;
+        if (!$id)
+            return false;
 
         unset($data['jam_rawat']); // jam_rawat immutable via FE
         $data = $this->onlyTableFields($this->table, $data);
@@ -114,11 +116,11 @@ class SoapRalanModel extends CI_Model
             $this->db->where('jam_rawat', $expectedJamRawat); // optimistic concurrency
         }
         $okUpdate = $this->db->update($this->table, $data);
-        $aff      = $this->db->affected_rows();
+        $aff = $this->db->affected_rows();
         $this->db->trans_complete();
 
         if (!$okUpdate || !$this->db->trans_status()) {
-            log_message('error','DB update error: '.print_r($this->db->error(),true));
+            log_message('error', 'DB update error: ' . print_r($this->db->error(), true));
             return false;
         }
         return $aff > 0;
@@ -131,12 +133,12 @@ class SoapRalanModel extends CI_Model
     {
         // Pastikan key baru tidak bentrok
         $exists = $this->db->get_where($this->table, [
-            'no_rawat'      => $no_rawat,
+            'no_rawat' => $no_rawat,
             'tgl_perawatan' => $tgl_perawatan,
-            'jam_rawat'     => $new_jam
+            'jam_rawat' => $new_jam
         ])->num_rows() > 0;
         if ($exists) {
-            return ['ok'=>false, 'code'=>'duplicate_key'];
+            return ['ok' => false, 'code' => 'duplicate_key'];
         }
 
         // Hanya kolom valid, jam_rawat diganti via ->set
@@ -145,9 +147,9 @@ class SoapRalanModel extends CI_Model
 
         $this->db->trans_start();
         $this->db->where([
-            'no_rawat'      => $no_rawat,
+            'no_rawat' => $no_rawat,
             'tgl_perawatan' => $tgl_perawatan,
-            'jam_rawat'     => $old_jam
+            'jam_rawat' => $old_jam
         ]);
         $this->db->set('jam_rawat', $new_jam);
         $ok = $this->db->update($this->table, $data);
@@ -155,10 +157,10 @@ class SoapRalanModel extends CI_Model
         $this->db->trans_complete();
 
         if (!$ok || !$this->db->trans_status()) {
-            log_message('error','DB updateKeyAndData error: '.print_r($this->db->error(),true));
-            return ['ok'=>false, 'code'=>'db_error'];
+            log_message('error', 'DB updateKeyAndData error: ' . print_r($this->db->error(), true));
+            return ['ok' => false, 'code' => 'db_error'];
         }
-        return ($aff > 0) ? ['ok'=>true] : ['ok'=>false, 'code'=>'no_change'];
+        return ($aff > 0) ? ['ok' => true] : ['ok' => false, 'code' => 'no_change'];
     }
 
     /**
@@ -171,13 +173,13 @@ class SoapRalanModel extends CI_Model
         $data = $this->onlyTableFields($this->table, $data);
 
         $this->db->trans_start();
-        $this->db->where(compact('no_rawat','tgl_perawatan','jam_rawat'));
+        $this->db->where(compact('no_rawat', 'tgl_perawatan', 'jam_rawat'));
         $okUpdate = $this->db->update($this->table, $data);
-        $aff      = $this->db->affected_rows();
+        $aff = $this->db->affected_rows();
         $this->db->trans_complete();
 
         if (!$okUpdate || !$this->db->trans_status()) {
-            log_message('error','DB update error: '.print_r($this->db->error(),true));
+            log_message('error', 'DB update error: ' . print_r($this->db->error(), true));
             return false;
         }
         return $aff > 0;
@@ -190,27 +192,29 @@ class SoapRalanModel extends CI_Model
     /**
      * Hapus entri dengan guard 48 jam dan opsi batasi NIP.
      */
-    public function deleteByNoRawatAndTime($no_rawat, $tgl_perawatan, $jam_rawat, $nip=null, $enforce48h=true)
+    public function deleteByNoRawatAndTime($no_rawat, $tgl_perawatan, $jam_rawat, $nip = null, $enforce48h = true)
     {
-        if(!$no_rawat || !$tgl_perawatan || !$jam_rawat) return false;
+        if (!$no_rawat || !$tgl_perawatan || !$jam_rawat)
+            return false;
 
         if ($enforce48h) {
-            $ts = strtotime($tgl_perawatan.' '.$jam_rawat);
+            $ts = strtotime($tgl_perawatan . ' ' . $jam_rawat);
             if ($ts && (time() - $ts) > 172800) { // > 48 jam
-                log_message('error','Delete ditolak: melewati batas 48 jam');
+                log_message('error', 'Delete ditolak: melewati batas 48 jam');
                 return false;
             }
         }
 
         $this->db->trans_start();
-        $this->db->where(compact('no_rawat','tgl_perawatan','jam_rawat'));
-        if ($nip) $this->db->where('nip', $nip);
+        $this->db->where(compact('no_rawat', 'tgl_perawatan', 'jam_rawat'));
+        if ($nip)
+            $this->db->where('nip', $nip);
         $okDelete = $this->db->delete($this->table);
-        $aff      = $this->db->affected_rows();
+        $aff = $this->db->affected_rows();
         $this->db->trans_complete();
 
         if (!$okDelete || !$this->db->trans_status()) {
-            log_message('error','DB delete error: '.print_r($this->db->error(),true));
+            log_message('error', 'DB delete error: ' . print_r($this->db->error(), true));
             return false;
         }
         return $aff > 0;
@@ -224,9 +228,10 @@ class SoapRalanModel extends CI_Model
      * DAPATKAN SEMUA SOAP per no_rawat (bisa >1 entri).
      * Sekarang termasuk semua field SOAP lengkap
      */
-    public function getAllByNoRawat($no_rawat, $limit=null, $offset=0)
+    public function getAllByNoRawat($no_rawat, $limit = null, $offset = 0)
     {
-        if(!$no_rawat) return [];
+        if (!$no_rawat)
+            return [];
 
         $this->db->select('
             pr.no_rawat, pr.tgl_perawatan, pr.jam_rawat,
@@ -236,28 +241,30 @@ class SoapRalanModel extends CI_Model
             pr.tinggi, pr.berat, pr.spo2, pr.gcs,
             pr.nip, pg.nama AS nm_petugas
         ');
-        $this->db->from($this->table.' pr');
+        $this->db->from($this->table . ' pr');
         $this->db->join('pegawai pg', 'pr.nip = pg.nik', 'left');
         $this->db->where('pr.no_rawat', $no_rawat);
         $this->db->order_by('pr.tgl_perawatan', 'DESC');
         $this->db->order_by('pr.jam_rawat', 'DESC');
-        if ($limit !== null) $this->db->limit((int)$limit, (int)$offset);
+        if ($limit !== null)
+            $this->db->limit((int) $limit, (int) $offset);
         return $this->db->get()->result_array();
     }
 
     /** Hitung total entri SOAP per no_rawat */
     public function countByNoRawat($no_rawat)
     {
-        if(!$no_rawat) return 0;
+        if (!$no_rawat)
+            return 0;
         $this->db->from($this->table);
         $this->db->where('no_rawat', $no_rawat);
-        return (int)$this->db->count_all_results();
+        return (int) $this->db->count_all_results();
     }
 
     /**
      * Paket paginasi praktis: return ['items'=>[], 'total'=>N]
      */
-    public function getPagedByNoRawat($no_rawat, $limit=50, $offset=0)
+    public function getPagedByNoRawat($no_rawat, $limit = 50, $offset = 0)
     {
         return [
             'items' => $this->getAllByNoRawat($no_rawat, $limit, $offset),
@@ -269,9 +276,10 @@ class SoapRalanModel extends CI_Model
      * Riwayat lintas kunjungan (per no_rkm_medis).
      * Sekarang include field SOAP lengkap
      */
-    public function getAllByNoRM($no_rkm_medis, $limit=50, $offset=0)
+    public function getAllByNoRM($no_rkm_medis, $limit = 50, $offset = 0)
     {
-        if(!$no_rkm_medis) return [];
+        if (!$no_rkm_medis)
+            return [];
 
         $this->db->select('
             rp.no_rkm_medis, rp.no_rawat,
@@ -283,22 +291,24 @@ class SoapRalanModel extends CI_Model
             pr.nip, pg.nama AS nm_petugas
         ');
         $this->db->from('reg_periksa rp');
-        $this->db->join($this->table.' pr', 'rp.no_rawat = pr.no_rawat', 'inner');
+        $this->db->join($this->table . ' pr', 'rp.no_rawat = pr.no_rawat', 'inner');
         $this->db->join('pegawai pg', 'pr.nip = pg.nik', 'left');
         $this->db->where('rp.no_rkm_medis', $no_rkm_medis);
         $this->db->order_by('pr.tgl_perawatan', 'DESC');
         $this->db->order_by('pr.jam_rawat', 'DESC');
-        if ($limit !== null) $this->db->limit((int)$limit, (int)$offset);
+        if ($limit !== null)
+            $this->db->limit((int) $limit, (int) $offset);
         return $this->db->get()->result_array();
     }
 
     public function countAllByNoRM($no_rkm_medis)
     {
-        if(!$no_rkm_medis) return 0;
+        if (!$no_rkm_medis)
+            return 0;
         $this->db->from('reg_periksa rp');
-        $this->db->join($this->table.' pr', 'rp.no_rawat = pr.no_rawat', 'inner');
+        $this->db->join($this->table . ' pr', 'rp.no_rawat = pr.no_rawat', 'inner');
         $this->db->where('rp.no_rkm_medis', $no_rkm_medis);
-        return (int)$this->db->count_all_results();
+        return (int) $this->db->count_all_results();
     }
 
     /**
@@ -306,7 +316,8 @@ class SoapRalanModel extends CI_Model
      */
     public function getLastTTV($no_rawat)
     {
-        if(!$no_rawat) return null;
+        if (!$no_rawat)
+            return null;
 
         $this->db->select('
             tgl_perawatan, jam_rawat,
@@ -326,8 +337,9 @@ class SoapRalanModel extends CI_Model
      */
     public function getLastByNoRawat($no_rawat)
     {
-        if(!$no_rawat) return null;
-        
+        if (!$no_rawat)
+            return null;
+
         $this->db->select('
             no_rawat, tgl_perawatan, jam_rawat,
             keluhan, pemeriksaan, penilaian, rtl, instruksi, evaluasi,
@@ -345,7 +357,7 @@ class SoapRalanModel extends CI_Model
     /* --------- Backward compatibility alias (jika JS lama pakai getHasil) --------- */
 
     /** DEPRECATED alias: gunakan getAllByNoRawat */
-    public function getHasil($no_rawat, $limit=50, $offset=0)
+    public function getHasil($no_rawat, $limit = 50, $offset = 0)
     {
         return $this->getAllByNoRawat($no_rawat, $limit, $offset);
     }
@@ -356,7 +368,7 @@ class SoapRalanModel extends CI_Model
     }
 
     /** DEPRECATED alias: gunakan getAllByNoRM */
-    public function getRiwayatByNoRM($no_rkm_medis, $limit=50, $offset=0)
+    public function getRiwayatByNoRM($no_rkm_medis, $limit = 50, $offset = 0)
     {
         return $this->getAllByNoRM($no_rkm_medis, $limit, $offset);
     }
@@ -366,14 +378,44 @@ class SoapRalanModel extends CI_Model
         return $this->countAllByNoRM($no_rkm_medis);
     }
 
+    /**
+     * Get riwayat SOAP filtered by date range
+     * For filter preview functionality
+     */
+    public function getRiwayatByNoRMFiltered($no_rkm_medis, $dari_tgl, $sampai_tgl)
+    {
+        if (!$no_rkm_medis || !$dari_tgl || !$sampai_tgl)
+            return [];
+
+        $this->db->select('
+            rp.no_rkm_medis, rp.no_rawat,
+            pr.tgl_perawatan, pr.jam_rawat,
+            pr.keluhan, pr.pemeriksaan, pr.penilaian, pr.rtl,
+            pr.instruksi, pr.evaluasi, pr.alergi,
+            pr.kesadaran, pr.suhu_tubuh, pr.tensi, pr.nadi, pr.respirasi,
+            pr.berat, pr.tinggi, pr.spo2, pr.gcs,
+            pr.nip, pg.nama AS nm_petugas
+        ');
+        $this->db->from('reg_periksa rp');
+        $this->db->join($this->table . ' pr', 'rp.no_rawat = pr.no_rawat', 'inner');
+        $this->db->join('pegawai pg', 'pr.nip = pg.nik', 'left');
+        $this->db->where('rp.no_rkm_medis', $no_rkm_medis);
+        $this->db->where('pr.tgl_perawatan >=', $dari_tgl);
+        $this->db->where('pr.tgl_perawatan <=', $sampai_tgl);
+        $this->db->order_by('pr.tgl_perawatan', 'DESC');
+        $this->db->order_by('pr.jam_rawat', 'DESC');
+        return $this->db->get()->result_array();
+    }
+
     /* =========================================================
      * ------------------------ GET SINGLE ---------------------
      * ========================================================= */
 
     public function getById($id)
     {
-        if(!$id) return null;
-        return $this->db->get_where($this->table, ['id'=>$id])->row_array();
+        if (!$id)
+            return null;
+        return $this->db->get_where($this->table, ['id' => $id])->row_array();
     }
 
     /**
@@ -382,8 +424,9 @@ class SoapRalanModel extends CI_Model
      */
     public function getByNoRawat($no_rawat, $tgl_perawatan, $jam_rawat)
     {
-        if(!$no_rawat || !$tgl_perawatan || !$jam_rawat) return null;
-        
+        if (!$no_rawat || !$tgl_perawatan || !$jam_rawat)
+            return null;
+
         $this->db->select('
             no_rawat, tgl_perawatan, jam_rawat,
             keluhan, pemeriksaan, penilaian, rtl, instruksi, evaluasi,
@@ -391,9 +434,9 @@ class SoapRalanModel extends CI_Model
             tinggi, berat, spo2, gcs, kesadaran, nip
         ');
         return $this->db->get_where($this->table, [
-            'no_rawat'      => $no_rawat,
+            'no_rawat' => $no_rawat,
             'tgl_perawatan' => $tgl_perawatan,
-            'jam_rawat'     => $jam_rawat
+            'jam_rawat' => $jam_rawat
         ])->row_array();
     }
 }

@@ -21,6 +21,11 @@ $route['antrian/api/menunggu'] = 'AntrianController/get_antrian_menunggu';
 $route['antrian/api/doctor_queues'] = 'AntrianController/get_doctor_queues';
 $route['antrian/api/reset'] = 'AntrianController/reset_antrian';
 $route['antrian/api/poli_list'] = 'AntrianController/get_poli_list';
+$route['antrian/pengaturanDisplayPoli'] = 'DisplaySettingsController/index';
+$route['antrian/pengaturanDisplayPoli/update_global_settings'] = 'DisplaySettingsController/update_global_settings';
+$route['antrian/pengaturanDisplayPoli/upload_foto_dokter'] = 'DisplaySettingsController/upload_foto_dokter';
+$route['antrian/pengaturanDisplayPoli/delete_foto_dokter'] = 'DisplaySettingsController/delete_foto_dokter';
+$route['antrian/pengaturanDisplayPoli/toggle_dokter_display'] = 'DisplaySettingsController/toggle_dokter_display';
 
 /* ===================== PRINT CONTROLLER ===================== */
 // $route['print/riwayat_pasien/(:any)'] = 'PrintController/riwayat_pasien/$1';
@@ -191,6 +196,19 @@ $route['admin/PasienRajal/get_data'] = 'PasienRajal/get_data';
 
 $route['admin/rekammedis/getPasienData'] = 'RekamMedisRalanController/getPasienData';
 
+/* ===================== LAPORAN REKAM MEDIS RAWAT JALAN (CHAT INTERACTIVE) ===================== */
+$route['laporan/RekamMedisRawaJalan'] = 'LaporanRekamMedisRawaJalanController/index';
+$route['laporan/RekamMedisRawaJalan/index'] = 'LaporanRekamMedisRawaJalanController/index';
+$route['laporan/RekamMedisRawaJalan/process_chat'] = 'LaporanRekamMedisRawaJalanController/process_chat';
+$route['laporan/RekamMedisRawaJalan/export_excel'] = 'LaporanRekamMedisRawaJalanController/export_excel';
+$route['laporan/RekamMedisRawaJalan/export_pdf'] = 'LaporanRekamMedisRawaJalanController/export_pdf';
+$route['laporan/RekamMedisRawaJalan/get_doctors'] = 'LaporanRekamMedisRawaJalanController/get_doctors';
+$route['laporan/RekamMedisRawaJalan/get_penjamin'] = 'LaporanRekamMedisRawaJalanController/get_penjamin';
+$route['laporan/RekamMedisRawaJalan/get_poli'] = 'LaporanRekamMedisRawaJalanController/get_poli';
+/* Also support the typo version for compatibility */
+$route['laporan/RekamMedisRawatJalan'] = 'LaporanRekamMedisRawaJalanController/index';
+$route['laporan/RekamMedisRawatJalan/(:any)'] = 'LaporanRekamMedisRawaJalanController/$1';
+
 /* ===================== CONTAINER RME (CANONICAL) ===================== */
 
 /* spesifik dengan context */
@@ -222,6 +240,7 @@ $route['soap-ralan/get-last-ttv'] = 'SoapRalanController/get_last_ttv';
 $route['soap-ralan/save'] = 'SoapRalanController/save';
 $route['soap-ralan/update'] = 'SoapRalanController/update';
 $route['soap-ralan/delete'] = 'SoapRalanController/delete';
+$route['soap-ralan/print-pdf'] = 'SoapRalanController/print_pdf';
 
 /* ===================== DOKTER (ROOT CONTROLLER) ===================== */
 // Listing (menu sidebar) & legacy alias

@@ -7,6 +7,122 @@
     <title>Dashboard Antrian Pasien</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+
+    <?php
+    // Define theme colors based on setting
+    $theme = isset($theme_color) ? $theme_color : 'pink-purple';
+
+    // Theme color definitions
+    $themes = [
+        'pink-purple' => [
+            'bg_gradient' => 'linear-gradient(-45deg, #4c1d95, #6d28d9, #7c3aed, #a855f7)',
+            'primary_gradient' => 'linear-gradient(135deg, #ec4899, #f472b6)',
+            'primary_shadow' => 'rgba(236, 72, 153, 0.4)',
+            'secondary_gradient' => 'linear-gradient(135deg, #7c3aed, #a855f7)',
+            'secondary_shadow' => 'rgba(124, 58, 237, 0.4)',
+            'text_color' => '#ffffff',
+        ],
+        'blue' => [
+            'bg_gradient' => 'linear-gradient(-45deg, #0c4a6e, #0369a1, #0284c7, #0ea5e9)',
+            'primary_gradient' => 'linear-gradient(135deg, #0284c7, #38bdf8)',
+            'primary_shadow' => 'rgba(2, 132, 199, 0.4)',
+            'secondary_gradient' => 'linear-gradient(135deg, #0369a1, #0ea5e9)',
+            'secondary_shadow' => 'rgba(3, 105, 161, 0.4)',
+            'text_color' => '#ffffff',
+        ],
+        'teal' => [
+            'bg_gradient' => 'linear-gradient(-45deg, #134e4a, #0f766e, #14b8a6, #2dd4bf)',
+            'primary_gradient' => 'linear-gradient(135deg, #14b8a6, #5eead4)',
+            'primary_shadow' => 'rgba(20, 184, 166, 0.4)',
+            'secondary_gradient' => 'linear-gradient(135deg, #0f766e, #2dd4bf)',
+            'secondary_shadow' => 'rgba(15, 118, 110, 0.4)',
+            'text_color' => '#ffffff',
+        ],
+        'orange-red' => [
+            'bg_gradient' => 'linear-gradient(-45deg, #7c2d12, #c2410c, #ea580c, #fb923c)',
+            'primary_gradient' => 'linear-gradient(135deg, #f97316, #fb923c)',
+            'primary_shadow' => 'rgba(249, 115, 22, 0.4)',
+            'secondary_gradient' => 'linear-gradient(135deg, #dc2626, #f87171)',
+            'secondary_shadow' => 'rgba(220, 38, 38, 0.4)',
+            'text_color' => '#ffffff',
+        ],
+        'green' => [
+            'bg_gradient' => 'linear-gradient(-45deg, #14532d, #15803d, #16a34a, #22c55e)',
+            'primary_gradient' => 'linear-gradient(135deg, #22c55e, #4ade80)',
+            'primary_shadow' => 'rgba(34, 197, 94, 0.4)',
+            'secondary_gradient' => 'linear-gradient(135deg, #16a34a, #22c55e)',
+            'secondary_shadow' => 'rgba(22, 163, 74, 0.4)',
+            'text_color' => '#ffffff',
+        ],
+        'indigo' => [
+            'bg_gradient' => 'linear-gradient(-45deg, #312e81, #4338ca, #6366f1, #818cf8)',
+            'primary_gradient' => 'linear-gradient(135deg, #6366f1, #818cf8)',
+            'primary_shadow' => 'rgba(99, 102, 241, 0.4)',
+            'secondary_gradient' => 'linear-gradient(135deg, #4338ca, #6366f1)',
+            'secondary_shadow' => 'rgba(67, 56, 202, 0.4)',
+            'text_color' => '#ffffff',
+        ],
+        'rose-gold' => [
+            'bg_gradient' => 'linear-gradient(-45deg, #881337, #be123c, #e11d48, #fb7185)',
+            'primary_gradient' => 'linear-gradient(135deg, #f59e0b, #fbbf24)',
+            'primary_shadow' => 'rgba(245, 158, 11, 0.4)',
+            'secondary_gradient' => 'linear-gradient(135deg, #e11d48, #fb7185)',
+            'secondary_shadow' => 'rgba(225, 29, 72, 0.4)',
+            'text_color' => '#ffffff',
+        ],
+        'cyan' => [
+            'bg_gradient' => 'linear-gradient(-45deg, #164e63, #0e7490, #06b6d4, #22d3ee)',
+            'primary_gradient' => 'linear-gradient(135deg, #06b6d4, #22d3ee)',
+            'primary_shadow' => 'rgba(6, 182, 212, 0.4)',
+            'secondary_gradient' => 'linear-gradient(135deg, #0e7490, #06b6d4)',
+            'secondary_shadow' => 'rgba(14, 116, 144, 0.4)',
+            'text_color' => '#ffffff',
+        ],
+        'lime' => [
+            'bg_gradient' => 'linear-gradient(-45deg, #365314, #4d7c0f, #65a30d, #84cc16)',
+            'primary_gradient' => 'linear-gradient(135deg, #84cc16, #a3e635)',
+            'primary_shadow' => 'rgba(132, 204, 22, 0.4)',
+            'secondary_gradient' => 'linear-gradient(135deg, #65a30d, #84cc16)',
+            'secondary_shadow' => 'rgba(101, 163, 13, 0.4)',
+            'text_color' => '#ffffff',
+        ],
+        'amber' => [
+            'bg_gradient' => 'linear-gradient(-45deg, #78350f, #b45309, #d97706, #f59e0b)',
+            'primary_gradient' => 'linear-gradient(135deg, #f59e0b, #fbbf24)',
+            'primary_shadow' => 'rgba(245, 158, 11, 0.4)',
+            'secondary_gradient' => 'linear-gradient(135deg, #d97706, #f59e0b)',
+            'secondary_shadow' => 'rgba(217, 119, 6, 0.4)',
+            'text_color' => '#ffffff',
+        ],
+        'emerald' => [
+            'bg_gradient' => 'linear-gradient(-45deg, #064e3b, #047857, #059669, #10b981)',
+            'primary_gradient' => 'linear-gradient(135deg, #10b981, #34d399)',
+            'primary_shadow' => 'rgba(16, 185, 129, 0.4)',
+            'secondary_gradient' => 'linear-gradient(135deg, #059669, #10b981)',
+            'secondary_shadow' => 'rgba(5, 150, 105, 0.4)',
+            'text_color' => '#ffffff',
+        ],
+        'fuchsia' => [
+            'bg_gradient' => 'linear-gradient(-45deg, #701a75, #a21caf, #c026d3, #d946ef)',
+            'primary_gradient' => 'linear-gradient(135deg, #d946ef, #e879f9)',
+            'primary_shadow' => 'rgba(217, 70, 239, 0.4)',
+            'secondary_gradient' => 'linear-gradient(135deg, #c026d3, #d946ef)',
+            'secondary_shadow' => 'rgba(192, 38, 211, 0.4)',
+            'text_color' => '#ffffff',
+        ],
+        'violet' => [
+            'bg_gradient' => 'linear-gradient(-45deg, #4c1d95, #6d28d9, #7c3aed, #8b5cf6)',
+            'primary_gradient' => 'linear-gradient(135deg, #8b5cf6, #a78bfa)',
+            'primary_shadow' => 'rgba(139, 92, 246, 0.4)',
+            'secondary_gradient' => 'linear-gradient(135deg, #7c3aed, #8b5cf6)',
+            'secondary_shadow' => 'rgba(124, 58, 237, 0.4)',
+            'text_color' => '#ffffff',
+        ],
+    ];
+
+    $colors = $themes[$theme];
+    ?>
+
     <style>
         * {
             margin: 0;
@@ -16,7 +132,9 @@
 
         body {
             font-family: 'Inter', sans-serif;
-            background: linear-gradient(-45deg, #4c1d95, #6d28d9, #7c3aed, #a855f7);
+            background:
+                <?php echo $colors['bg_gradient']; ?>
+            ;
             background-size: 400% 400%;
             animation: gradientShift 20s ease infinite;
             color: #fff;
@@ -46,7 +164,9 @@
 
         /* HEADER */
         .header {
-            background: linear-gradient(135deg, #ec4899, #f472b6);
+            background:
+                <?php echo $colors['primary_gradient']; ?>
+            ;
             backdrop-filter: blur(20px);
             padding: 12px 25px;
             border-radius: 12px;
@@ -80,7 +200,7 @@
         /* MIDDLE ROW */
         .middle {
             display: grid;
-            grid-template-columns: 28% 72%;
+            grid-template-columns: 40% 60%;
             gap: 8px;
             overflow: hidden;
         }
@@ -95,7 +215,9 @@
 
         /* CURRENT CALL - PINK */
         .current-call {
-            background: linear-gradient(135deg, #ec4899, #f472b6);
+            background:
+                <?php echo $colors['primary_gradient']; ?>
+            ;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -171,7 +293,9 @@
 
         /* VIDEO - BLUE */
         .video-card {
-            background: linear-gradient(135deg, #7c3aed, #a855f7);
+            background:
+                <?php echo $colors['secondary_gradient']; ?>
+            ;
             display: flex;
             flex-direction: column;
         }
@@ -200,7 +324,9 @@
 
         /* BOTTOM - DOCTOR CARDS - BLUE */
         .bottom {
-            background: linear-gradient(135deg, #7c3aed, #a855f7);
+            background:
+                <?php echo $colors['secondary_gradient']; ?>
+            ;
             border-radius: 12px;
             padding: 12px;
             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
@@ -240,13 +366,16 @@
         }
 
         .doctor-header {
-            background: linear-gradient(135deg, #ec4899, #f472b6);
+            background:
+                <?php echo $colors['primary_gradient']; ?>
+            ;
             color: white;
             padding: 10px;
             border-radius: 10px;
-            text-align: center;
             margin-bottom: 8px;
             box-shadow: 0 4px 15px rgba(236, 72, 153, 0.4);
+            display: flex;
+            align-items: center;
         }
 
         .doctor-name {
@@ -270,7 +399,9 @@
         }
 
         .patient-list-inner {
-            animation: scrollUp 60s linear infinite;
+            animation: scrollUp
+                <?php echo $scroll_duration; ?>
+                s linear infinite;
         }
 
         .patient-list-inner:hover {
@@ -301,7 +432,9 @@
 
         /* WAITING - PINK */
         .patient-item.waiting {
-            background: linear-gradient(135deg, #ec4899, #f472b6);
+            background:
+                <?php echo $colors['primary_gradient']; ?>
+            ;
             color: white;
             border-left: 3px solid white;
             box-shadow: 0 3px 12px rgba(236, 72, 153, 0.4);
@@ -309,7 +442,9 @@
 
         /* CALLED - BLUE */
         .patient-item.called {
-            background: linear-gradient(135deg, #7c3aed, #a855f7);
+            background:
+                <?php echo $colors['secondary_gradient']; ?>
+            ;
             color: white;
             border-left: 3px solid white;
             box-shadow: 0 3px 12px rgba(168, 85, 247, 0.4);
@@ -354,7 +489,9 @@
 
         /* FOOTER TICKER - PINK */
         .footer-ticker {
-            background: linear-gradient(135deg, #ec4899, #f472b6);
+            background:
+                <?php echo $colors['primary_gradient']; ?>
+            ;
             backdrop-filter: blur(20px);
             padding: 10px 20px;
             border-radius: 12px;
@@ -430,14 +567,14 @@
                 </div>
             </div>
 
-            <!-- VIDEO - BLUE -->
+            <!-- VIDEO - PURPLE -->
             <div class="card video-card">
                 <div class="video-title">
-                    <i class="fas fa-video"></i> Video Informatif
+                    <i class="fas fa-video"></i> <?php echo isset($video_title) ? $video_title : 'Video Informatif'; ?>
                 </div>
                 <div class="video-container">
                     <iframe id="youtubeVideo" loading="lazy"
-                        data-src="https://www.youtube.com/embed/jfKfPfyJRdk?autoplay=1&mute=1&loop=1&playlist=jfKfPfyJRdk&controls=0&modestbranding=1"
+                        data-src="<?php echo isset($youtube_url) ? $youtube_url : 'https://www.youtube.com/embed/jfKfPfyJRdk?autoplay=1&mute=1&loop=1&playlist=jfKfPfyJRdk&controls=0&modestbranding=1'; ?>"
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                         allowfullscreen>
                     </iframe>
@@ -462,8 +599,12 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         const API_URL = '<?php echo base_url("antrian/"); ?>';
-        const REFRESH_INTERVAL = 3000;
-        const CAROUSEL_INTERVAL = 15000;
+        const REFRESH_INTERVAL = <?php echo $auto_refresh_interval; ?>;
+        const CAROUSEL_INTERVAL = <?php echo $carousel_interval; ?>;
+        const SCROLL_DURATION = <?php echo $scroll_duration; ?>;
+        const MAX_PATIENTS_DISPLAY = <?php echo $max_patients_display; ?>;
+        const TTS_ENABLED = <?php echo ($tts_enabled == 'Ya') ? 'true' : 'false'; ?>;
+        const TTS_RATE = <?php echo $tts_rate; ?>;
 
         let lastCallId = null;
         let allDoctorQueues = [];
@@ -573,11 +714,17 @@
 
             let html = '';
             doctorsToShow.forEach(doctor => {
+                const fotoUrl = doctor.foto_path ? '<?php echo base_url(); ?>' + doctor.foto_path : '<?php echo base_url("assets/dist/img/user1-128x128.jpg"); ?>';
+
                 html += `
                     <div class="doctor-card">
                         <div class="doctor-header">
-                            <div class="doctor-name">${doctor.nm_dokter}</div>
-                            <div class="doctor-poli">${doctor.nm_poli}</div>
+                            <img src="${fotoUrl}" class="doctor-photo" alt="${doctor.nm_dokter}" 
+                                 style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover; margin-right: 12px; border: 3px solid white; box-shadow: 0 4px 8px rgba(0,0,0,0.2);">
+                            <div style="flex: 1;">
+                                <div class="doctor-name">${doctor.nm_dokter}</div>
+                                <div class="doctor-poli">${doctor.nm_poli}</div>
+                            </div>
                         </div>
                         <div class="patient-list">
                 `;
@@ -654,6 +801,7 @@
         }
 
         function speakPanggilan(call) {
+            if (!TTS_ENABLED) return;
             if (!('speechSynthesis' in window)) return;
             window.speechSynthesis.cancel();
 
@@ -665,7 +813,7 @@
             if (indonesianVoice) utterance.voice = indonesianVoice;
 
             utterance.lang = 'id-ID';
-            utterance.rate = 0.65;
+            utterance.rate = TTS_RATE;
             utterance.pitch = 1.0;
             utterance.volume = 1.0;
 

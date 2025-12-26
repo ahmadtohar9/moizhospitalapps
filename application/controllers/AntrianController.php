@@ -13,26 +13,34 @@ class AntrianController extends CI_Controller
     /**
      * Dashboard display untuk TV
      */
-    public function dashboard()
+    public function index()
     {
-        // Get hospital name only (skip logo for now)
-        $this->db->select('nama_instansi');
+        // Load DisplaySettings model
+        $this->load->model('DisplaySettings_model');
+
+        // Get hospital info from settings
+        $this->db->select('nama_instansi, logo');
         $this->db->from('setting');
         $this->db->limit(1);
         $query = $this->db->get();
 
         $result = $query->row_array();
-        $data['hospital_name'] = $result['nama_instansi'] ?? 'Rumah Sakit';
+
+        // Get display settings from database
+        $data['hospital_name'] = $this->DisplaySettings_model->get_setting_value('hospital_name', $result['nama_instansi'] ?? 'Rumah Sakit');
+        $data['youtube_url'] = $this->DisplaySettings_model->get_setting_value('youtube_url', 'https://www.youtube.com/embed/jfKfPfyJRdk?autoplay=1&mute=1&loop=1&playlist=jfKfPfyJRdk&controls=0&modestbranding=1');
+        $data['show_video'] = $this->DisplaySettings_model->get_setting_value('show_video', 'Ya');
+        $data['video_title'] = $this->DisplaySettings_model->get_setting_value('video_title', 'Video Informatif');
+        $data['theme_color'] = $this->DisplaySettings_model->get_setting_value('theme_color', 'pink-purple');
+        $data['auto_refresh_interval'] = $this->DisplaySettings_model->get_setting_value('auto_refresh_interval', '3000');
+        $data['carousel_interval'] = $this->DisplaySettings_model->get_setting_value('carousel_interval', '15000');
+        $data['scroll_duration'] = $this->DisplaySettings_model->get_setting_value('scroll_duration', '60');
+        $data['max_patients_display'] = $this->DisplaySettings_model->get_setting_value('max_patients_display', '10');
+        $data['show_ticker'] = $this->DisplaySettings_model->get_setting_value('show_ticker', 'Ya');
+        $data['tts_enabled'] = $this->DisplaySettings_model->get_setting_value('tts_enabled', 'Ya');
+        $data['tts_rate'] = $this->DisplaySettings_model->get_setting_value('tts_rate', '0.65');
 
         $this->load->view('antrian/dashboard_display', $data);
-    }
-
-    /**
-     * Index - alias to dashboard
-     */
-    public function index()
-    {
-        $this->dashboard();
     }
 
     /**
@@ -188,6 +196,8 @@ class AntrianController extends CI_Controller
      */
     public function get_doctor_queues()
     {
+        // Load DisplaySettings model
+        $this->load->model('DisplaySettings_model');
         // Get all unique doctor-poli combinations with patients today
         $sql = "
             SELECT DISTINCT
@@ -204,8 +214,10 @@ class AntrianController extends CI_Controller
 
         $doctors = $this->db->query($sql)->result_array();
 
-        // For each doctor-poli combination, get their patients
+        // For each doctor-poli combination, get their patients and foto
         foreach ($doctors as &$doctor) {
+            // Get foto dokter from display settings
+            $doctor['foto_path'] = $this->DisplaySettings_model->get_dokter_foto($doctor['kd_dokter']);
             $sql_patients = "
                 SELECT
                     r.no_rawat,

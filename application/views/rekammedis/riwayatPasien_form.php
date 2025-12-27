@@ -215,6 +215,7 @@
     RP_ASESMEN_GERIATRI: '<?= site_url("admin/riwayatPasien/detail_asesmen_geriatri") ?>',
     RP_ASESMEN_REHAB_MEDIK: '<?= site_url("admin/riwayatPasien/detail_asesmen_rehab_medik") ?>',
     RP_ASESMEN_UROLOGI: '<?= site_url("admin/riwayatPasien/detail_asesmen_urologi") ?>',
+    RP_ASESMEN_UMUM: '<?= site_url("admin/riwayatPasien/detail_penilaian_medis_umum") ?>',
     RP_LAPORAN_TINDAKAN: '<?= site_url("admin/riwayatPasien/detail_laporan_tindakan") ?>',
     RP_INFO: '<?= site_url("admin/riwayatPasien/info") ?>'
   };

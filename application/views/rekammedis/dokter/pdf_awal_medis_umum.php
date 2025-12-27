@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>Asesmen Awal IGD</title>
+    <title>Asesmen Awal Umum</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -70,14 +70,15 @@
                     <h2 style="margin:0; font-size:18px;"><?= strtoupper($setting['nama_instansi']) ?></h2>
                     <p style="margin:2px 0; font-size:12px;"><?= $setting['alamat_instansi'] ?></p>
                     <p style="margin:0; font-size:12px;">Telp: <?= $setting['kontak'] ?> | Email:
-                        <?= $setting['email'] ?></p>
+                        <?= $setting['email'] ?>
+                    </p>
                 </td>
                 <td width="10%" align="right" style="vertical-align:middle;"></td>
             </tr>
         </table>
     </div>
 
-    <div class="title">ASESMEN AWAL MEDIS GAWAT DARURAT</div>
+    <div class="title">ASESMEN AWAL MEDIS UMUM</div>
 
     <table>
         <tr>
@@ -164,15 +165,15 @@
     <table class="table-bor">
         <tr>
             <td><strong>Kepala:</strong> <?= $asesment['kepala']; ?></td>
-            <td><strong>Mata:</strong> <?= $asesment['mata']; ?></td>
             <td><strong>Gigi & Mulut:</strong> <?= $asesment['gigi'] ?? '-'; ?></td>
-            <td><strong>Leher:</strong> <?= $asesment['leher'] ?? '-'; ?></td>
+            <td><strong>THT:</strong> <?= $asesment['tht'] ?? '-'; ?></td>
+            <td><strong>Thoraks:</strong> <?= $asesment['thoraks']; ?></td>
         </tr>
         <tr>
-            <td><strong>Thoraks:</strong> <?= $asesment['thoraks']; ?></td>
             <td><strong>Abdomen:</strong> <?= $asesment['abdomen']; ?></td>
             <td><strong>Genital:</strong> <?= $asesment['genital'] ?? '-'; ?></td>
             <td><strong>Ekstremitas:</strong> <?= $asesment['ekstremitas']; ?></td>
+            <td><strong>Kulit:</strong> <?= $asesment['kulit'] ?? '-'; ?></td>
         </tr>
     </table>
     <div style="margin-top: 5px;"><strong>Ket. Fisik Lain:</strong> <?= nl2br($asesment['ket_fisik']); ?></div>
@@ -189,26 +190,18 @@
     <div><strong>Keterangan:</strong> <?= nl2br($asesment['ket_lokalis'] ?? ''); ?></div>
 
     <div class="section-title">IV. PEMERIKSAAN PENUNJANG</div>
-    <table>
-        <tr>
-            <td class="row-label">EKG</td>
-            <td>: <?= nl2br($asesment['ekg']); ?></td>
-        </tr>
-        <tr>
-            <td class="row-label">Radiologi</td>
-            <td>: <?= nl2br($asesment['rad']); ?></td>
-        </tr>
-        <tr>
-            <td class="row-label">Laboratorium</td>
-            <td>: <?= nl2br($asesment['lab']); ?></td>
-        </tr>
-    </table>
+    <div style="padding:5px; border:1px solid #000; min-height:50px;">
+        <?= nl2br($asesment['penunjang'] ?? '-'); ?>
+    </div>
 
     <div class="section-title">V. DIAGNOSIS / ASESMEN</div>
     <div><?= nl2br($asesment['diagnosis']); ?></div>
 
     <div class="section-title">VI. TATALAKSANA</div>
-    <div><?= nl2br($asesment['tata'] ?? ($asesment['tata_laksana'] ?? '')); ?></div>
+    <div><?= nl2br($asesment['tata'] ?? ''); ?></div>
+    <?php if (!empty($asesment['konsulrujuk'])): ?>
+        <div style="margin-top:5px;"><strong>Konsul / Rujukan:</strong><br><?= nl2br($asesment['konsulrujuk']); ?></div>
+    <?php endif; ?>
 
     <table style="margin-top: 50px;">
         <tr>

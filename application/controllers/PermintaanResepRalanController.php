@@ -84,6 +84,41 @@ class PermintaanResepRalanController extends CI_Controller
         echo json_encode(['status' => 'success', 'data' => $data]);
     }
 
+    /**
+     * Check if medicine was already prescribed today in other poli
+     */
+    public function checkDuplicateMedicine()
+    {
+        $no_rkm_medis = $this->input->post('no_rkm_medis');
+        $no_rawat = $this->input->post('no_rawat');
+        $medicines = $this->input->post('medicines'); // Array of kode_brng
+
+        if (!$no_rkm_medis || !$no_rawat || empty($medicines)) {
+            echo json_encode(['status' => 'error', 'message' => 'Data tidak lengkap.']);
+            return;
+        }
+
+        $duplicates = $this->PermintaanResepRalan_model->checkDuplicateMedicine(
+            $no_rkm_medis,
+            $no_rawat,
+            $medicines,
+            date('Y-m-d') // Today
+        );
+
+        if (!empty($duplicates)) {
+            echo json_encode([
+                'status' => 'warning',
+                'has_duplicate' => true,
+                'duplicates' => $duplicates
+            ]);
+        } else {
+            echo json_encode([
+                'status' => 'success',
+                'has_duplicate' => false
+            ]);
+        }
+    }
+
     public function save()
     {
         $this->load->helper('resep');

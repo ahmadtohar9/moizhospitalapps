@@ -94,6 +94,46 @@ class PermintaanResepRalan_model extends CI_Model
             ->delete('resep_dokter');
     }
 
+    /**
+     * Check if medicines were already prescribed today in other poli
+     * @param string $no_rkm_medis Patient medical record number
+     * @param string $no_rawat Current visit number (to exclude)
+     * @param array $medicines Array of kode_brng to check
+     * @param string $date Date to check (default today)
+     * @return array Array of duplicate medicines with details
+     */
+    public function checkDuplicateMedicine($no_rkm_medis, $no_rawat, $medicines, $date)
+    {
+        if (empty($medicines)) {
+            return [];
+        }
+
+        $this->db->select("
+                resep_dokter.kode_brng,
+                databarang.nama_brng,
+                resep_dokter.jml,
+                resep_dokter.aturan_pakai,
+                resep_obat.tgl_peresepan,
+                resep_obat.jam_peresepan,
+                poliklinik.nm_poli,
+                dokter.nm_dokter
+            ")
+            ->from('resep_obat')
+            ->join('resep_dokter', 'resep_obat.no_resep = resep_dokter.no_resep')
+            ->join('databarang', 'resep_dokter.kode_brng = databarang.kode_brng')
+            ->join('reg_periksa', 'resep_obat.no_rawat = reg_periksa.no_rawat')
+            ->join('poliklinik', 'reg_periksa.kd_poli = poliklinik.kd_poli')
+            ->join('dokter', 'resep_obat.kd_dokter = dokter.kd_dokter')
+            ->where('reg_periksa.no_rkm_medis', $no_rkm_medis)
+            ->where('resep_obat.tgl_peresepan', $date)
+            ->where('resep_obat.no_rawat !=', $no_rawat) // Exclude current visit
+            ->where_in('resep_dokter.kode_brng', $medicines);
+
+        $result = $this->db->get()->result_array();
+
+        return $result;
+    }
+
     // ✅ Hapus seluruh resep berdasarkan no_resep
     public function deleteAllByNoResep($no_resep)
     {

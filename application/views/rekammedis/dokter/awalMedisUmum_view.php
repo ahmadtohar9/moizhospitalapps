@@ -1,4 +1,4 @@
-<!-- ASESMEN AWAL MEDIS IGD - COMPLETE CLEAN VERSION -->
+<!-- ASESMEN AWAL MEDIS UMUM - Sesuai Tabel penilaian_medis_ralan -->
 <style>
     .section-header {
         background: linear-gradient(135deg, #ec407a 0%, #d81b60 100%);
@@ -34,7 +34,7 @@
 </style>
 
 <div class="container-fluid">
-    <form id="formIGDAssessment" autocomplete="off">
+    <form id="formUmumAssessment" autocomplete="off">
         <input type="hidden" name="no_rawat" value="<?= $no_rawat ?>">
         <input type="hidden" name="kd_dokter" value="<?= $kd_dokter ?>">
 
@@ -70,8 +70,8 @@
             <div class="col-md-6" id="hubunganContainer" style="display:none;">
                 <div class="form-group">
                     <label>Hubungan dengan Pasien</label>
-                    <input type="text" class="form-control" name="hubungan" value=""
-                        placeholder="Contoh: Ibu kandung, Ayah">
+                    <input type="text" class="form-control" name="hubungan" value="" maxlength="30"
+                        placeholder="Contoh: Ibu kandung">
                 </div>
             </div>
         </div>
@@ -109,7 +109,7 @@
 
         <div class="form-group">
             <label>Riwayat Alergi</label>
-            <input type="text" class="form-control" name="alergi" value="">
+            <input type="text" class="form-control" name="alergi" value="" maxlength="50" placeholder="Maks 50 karakter">
         </div>
 
         <!-- II. PEMERIKSAAN FISIK -->
@@ -144,13 +144,13 @@
             <div class="col-md-3">
                 <div class="form-group">
                     <label>GCS <span class="text-danger">*</span></label>
-                    <input type="text" class="form-control" name="gcs" value="" required placeholder="E4V5M6">
+                    <input type="text" class="form-control" name="gcs" value="" required placeholder="E4V5M6" maxlength="10">
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="form-group">
                     <label>SpO₂ (%)</label>
-                    <input type="text" class="form-control" name="spo" value="" placeholder="98">
+                    <input type="text" class="form-control" name="spo" value="" placeholder="98" maxlength="5">
                 </div>
             </div>
         </div>
@@ -159,37 +159,37 @@
             <div class="col-md-2">
                 <div class="form-group">
                     <label>TD (mmHg)</label>
-                    <input type="text" class="form-control" name="td" value="" placeholder="120/80">
+                    <input type="text" class="form-control" name="td" value="" placeholder="120/80" maxlength="8">
                 </div>
             </div>
             <div class="col-md-2">
                 <div class="form-group">
                     <label>Nadi (x/mnt)</label>
-                    <input type="text" class="form-control" name="nadi" value="" placeholder="80">
+                    <input type="text" class="form-control" name="nadi" value="" placeholder="80" maxlength="5">
                 </div>
             </div>
             <div class="col-md-2">
                 <div class="form-group">
                     <label>RR (x/mnt)</label>
-                    <input type="text" class="form-control" name="rr" value="" placeholder="20">
+                    <input type="text" class="form-control" name="rr" value="" placeholder="20" maxlength="5">
                 </div>
             </div>
             <div class="col-md-2">
                 <div class="form-group">
                     <label>Suhu (°C)</label>
-                    <input type="text" class="form-control" name="suhu" value="" placeholder="36.5">
+                    <input type="text" class="form-control" name="suhu" value="" placeholder="36.5" maxlength="5">
                 </div>
             </div>
             <div class="col-md-2">
                 <div class="form-group">
-                    <label>BB (kg) <span class="text-danger">*</span></label>
-                    <input type="text" class="form-control" name="bb" value="" required>
+                    <label>BB (kg)</label>
+                    <input type="text" class="form-control" name="bb" value="" maxlength="5">
                 </div>
             </div>
             <div class="col-md-2">
                 <div class="form-group">
-                    <label>TB (cm) <span class="text-danger">*</span></label>
-                    <input type="text" class="form-control" name="tb" value="" required>
+                    <label>TB (cm)</label>
+                    <input type="text" class="form-control" name="tb" value="" maxlength="5">
                 </div>
             </div>
         </div>
@@ -201,24 +201,8 @@
                 <div class="form-group">
                     <label>Kepala</label>
                     <select class="form-control" name="kepala">
-                        <option value="">-- Pilih --</option>
-                        <option value="Normal">
-                            Normal</option>
-                        <option value="Abnormal">
-                            Abnormal</option>
-                        <option value="Tidak Diperiksa">Tidak Diperiksa</option>
-                    </select>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="form-group">
-                    <label>Mata</label>
-                    <select class="form-control" name="mata">
-                        <option value="">-- Pilih --</option>
-                        <option value="Normal">Normal
-                        </option>
-                        <option value="Abnormal">Abnormal
-                        </option>
+                        <option value="Normal">Normal</option>
+                        <option value="Abnormal">Abnormal</option>
                         <option value="Tidak Diperiksa">Tidak Diperiksa</option>
                     </select>
                 </div>
@@ -227,11 +211,18 @@
                 <div class="form-group">
                     <label>Gigi & Mulut</label>
                     <select class="form-control" name="gigi">
-                        <option value="">-- Pilih --</option>
-                        <option value="Normal">Normal
-                        </option>
-                        <option value="Abnormal">Abnormal
-                        </option>
+                        <option value="Normal">Normal</option>
+                        <option value="Abnormal">Abnormal</option>
+                        <option value="Tidak Diperiksa">Tidak Diperiksa</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label>THT (Telinga, Hidung, Tenggorok)</label>
+                    <select class="form-control" name="tht">
+                        <option value="Normal">Normal</option>
+                        <option value="Abnormal">Abnormal</option>
                         <option value="Tidak Diperiksa">Tidak Diperiksa</option>
                     </select>
                 </div>
@@ -241,26 +232,10 @@
         <div class="row">
             <div class="col-md-4">
                 <div class="form-group">
-                    <label>Leher</label>
-                    <select class="form-control" name="leher">
-                        <option value="">-- Pilih --</option>
-                        <option value="Normal">Normal
-                        </option>
-                        <option value="Abnormal">Abnormal
-                        </option>
-                        <option value="Tidak Diperiksa">Tidak Diperiksa</option>
-                    </select>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="form-group">
                     <label>Thoraks</label>
                     <select class="form-control" name="thoraks">
-                        <option value="">-- Pilih --</option>
-                        <option value="Normal">
-                            Normal</option>
-                        <option value="Abnormal">
-                            Abnormal</option>
+                        <option value="Normal">Normal</option>
+                        <option value="Abnormal">Abnormal</option>
                         <option value="Tidak Diperiksa">Tidak Diperiksa</option>
                     </select>
                 </div>
@@ -269,11 +244,18 @@
                 <div class="form-group">
                     <label>Abdomen</label>
                     <select class="form-control" name="abdomen">
-                        <option value="">-- Pilih --</option>
-                        <option value="Normal">
-                            Normal</option>
-                        <option value="Abnormal">
-                            Abnormal</option>
+                        <option value="Normal">Normal</option>
+                        <option value="Abnormal">Abnormal</option>
+                        <option value="Tidak Diperiksa">Tidak Diperiksa</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label>Genital</label>
+                    <select class="form-control" name="genital">
+                        <option value="Normal">Normal</option>
+                        <option value="Abnormal">Abnormal</option>
                         <option value="Tidak Diperiksa">Tidak Diperiksa</option>
                     </select>
                 </div>
@@ -283,26 +265,20 @@
         <div class="row">
             <div class="col-md-4">
                 <div class="form-group">
-                    <label>Genital</label>
-                    <select class="form-control" name="genital">
-                        <option value="">-- Pilih --</option>
-                        <option value="Normal">
-                            Normal</option>
-                        <option value="Abnormal">
-                            Abnormal</option>
+                    <label>Ekstremitas</label>
+                    <select class="form-control" name="ekstremitas">
+                        <option value="Normal">Normal</option>
+                        <option value="Abnormal">Abnormal</option>
                         <option value="Tidak Diperiksa">Tidak Diperiksa</option>
                     </select>
                 </div>
             </div>
             <div class="col-md-4">
                 <div class="form-group">
-                    <label>Ekstremitas</label>
-                    <select class="form-control" name="ekstremitas">
-                        <option value="">-- Pilih --</option>
-                        <option value="Normal">
-                            Normal</option>
-                        <option value="Abnormal">
-                            Abnormal</option>
+                    <label>Kulit</label>
+                    <select class="form-control" name="kulit">
+                        <option value="Normal">Normal</option>
+                        <option value="Abnormal">Abnormal</option>
                         <option value="Tidak Diperiksa">Tidak Diperiksa</option>
                     </select>
                 </div>
@@ -311,7 +287,7 @@
 
         <div class="form-group">
             <label>Keterangan Pemeriksaan Fisik</label>
-            <textarea class="form-control" name="ket_fisik" rows="2" <></textarea>
+            <textarea class="form-control" name="ket_fisik" rows="2"></textarea>
         </div>
 
         <!-- IV. STATUS LOKALIS -->
@@ -335,7 +311,7 @@
                             <button type="button" class="btn btn-sm btn-warning" onclick="clearCanvas()"><i
                                     class="fa fa-eraser"></i> Hapus</button>
                         </div>
-                        <canvas id="igdCanvas" width="600" height="350"></canvas>
+                        <canvas id="umumCanvas" width="600" height="350"></canvas>
                         <input type="hidden" name="lokalis_image" id="lokalisImage">
                     </div>
                 </div>
@@ -353,33 +329,26 @@
 
         <!-- V. PEMERIKSAAN PENUNJANG -->
         <div class="section-header"><i class="fa fa-flask"></i> V. PEMERIKSAAN PENUNJANG</div>
-
         <div class="form-group">
-            <label>EKG</label>
-            <textarea class="form-control" name="ekg" rows="2" placeholder="Hasil pemeriksaan EKG..."></textarea>
-        </div>
-
-        <div class="form-group">
-            <label>Radiologi</label>
-            <textarea class="form-control" name="rad" rows="2" placeholder="Hasil pemeriksaan radiologi..."></textarea>
-        </div>
-
-        <div class="form-group">
-            <label>Laboratorium</label>
-            <textarea class="form-control" name="lab" rows="2"
-                placeholder="Hasil pemeriksaan laboratorium..."></textarea>
+            <label>Pemeriksaan Penunjang (Lab, Rad, EKG, dll)</label>
+            <textarea class="form-control" name="penunjang" rows="3"></textarea>
         </div>
 
         <!-- VI. DIAGNOSIS & TATALAKSANA -->
         <div class="section-header"><i class="fa fa-notes-medical"></i> VI. DIAGNOSIS & TATALAKSANA</div>
         <div class="form-group">
             <label>Diagnosis <span class="text-danger">*</span></label>
-            <textarea class="form-control" name="diagnosis" rows="2" required<></textarea>
+            <textarea class="form-control" name="diagnosis" rows="2" required></textarea>
         </div>
 
         <div class="form-group">
             <label>Tatalaksana <span class="text-danger">*</span></label>
             <textarea class="form-control" name="tata" rows="3" required></textarea>
+        </div>
+
+        <div class="form-group">
+            <label>Konsul / Rujukan</label>
+            <textarea class="form-control" name="konsulrujuk" rows="2" placeholder="Jika ada"></textarea>
         </div>
 
         <!-- BUTTON SAVE -->
@@ -393,7 +362,7 @@
 <!-- HISTORY SECTION -->
 <div class="container-fluid" style="margin-top:30px;">
     <div class="section-header" style="background: linear-gradient(135deg, #ec407a 0%, #d81b60 100%);"><i
-            class="fa fa-history"></i> RIWAYAT ASESMEN IGD</div>
+            class="fa fa-history"></i> RIWAYAT ASESMEN UMUM</div>
 
     <div class="row" style="margin-bottom:20px;">
         <div class="col-md-4">
@@ -431,10 +400,10 @@
 
     // Canvas
     var canvas, ctx, isDrawing = false, currentColor = 'red', lastX = 0, lastY = 0;
-    var backgroundURL = '<?= base_url("assets/images/status_lokalis_igd.png") ?>';
+    var backgroundURL = '<?= base_url("assets/images/status_lokalis_igd.png") ?>'; 
 
     setTimeout(function () {
-        canvas = document.getElementById('igdCanvas');
+        canvas = document.getElementById('umumCanvas'); 
         if (!canvas) return;
 
         ctx = canvas.getContext('2d');
@@ -477,7 +446,7 @@
 
     window.setDrawColor = function (color) { currentColor = color; };
     window.clearCanvas = function () {
-        if (!ctx || !canvas) return; // Safety check
+        if (!ctx || !canvas) return; 
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         var img = new Image();
         img.onload = function () { ctx.drawImage(img, 0, 0, canvas.width, canvas.height); };
@@ -487,7 +456,7 @@
 
     // Helper function to reset form and button
     window.resetFormAndButton = function () {
-        document.getElementById('formIGDAssessment').reset();
+        document.getElementById('formUmumAssessment').reset();
         if (typeof clearCanvas === 'function') clearCanvas();
         document.getElementById('btnSubmit').innerHTML = '<i class="fa fa-save"></i> Simpan Asesmen';
     };
@@ -499,11 +468,11 @@
     };
 
     // Form Submit
-    document.getElementById('formIGDAssessment').addEventListener('submit', function (e) {
+    document.getElementById('formUmumAssessment').addEventListener('submit', function (e) {
         e.preventDefault();
         const formData = new FormData(this);
 
-        fetch('<?= base_url("AwalMedisIGDController/save") ?>', {
+        fetch('<?= base_url("AwalMedisUmumController/save") ?>', {
             method: 'POST',
             body: formData
         })
@@ -535,7 +504,7 @@
 
         container.innerHTML = '<div style="text-align:center; padding:40px;"><i class="fa fa-spinner fa-spin" style="font-size:32px;"></i></div>';
 
-        fetch('<?= base_url("AwalMedisIGDController/get_history") ?>?no_rkm_medis=' + noRkm + '&start_date=' + startDate + '&end_date=' + endDate)
+        fetch('<?= base_url("AwalMedisUmumController/get_history") ?>?no_rkm_medis=' + noRkm + '&start_date=' + startDate + '&end_date=' + endDate)
             .then(res => res.json())
             .then(data => {
                 if (data.status === 'success' && data.data.length > 0) {
@@ -566,7 +535,7 @@
     }
 
     function viewDetail(noRawat) {
-        fetch('<?= base_url("AwalMedisIGDController/get_detail") ?>?no_rawat=' + noRawat)
+        fetch('<?= base_url("AwalMedisUmumController/get_detail") ?>?no_rawat=' + noRawat)
             .then(res => res.json())
             .then(data => {
                 if (data.status === 'success') {
@@ -608,13 +577,15 @@
                     html += '<h5 style="margin:0 0 10px 0; color:#f59e0b;"><i class="fa fa-user-md"></i> III. PEMERIKSAAN SISTEMIK</h5>';
                     html += '<div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:10px; font-size:13px;">';
                     html += '<p><strong>Kepala:</strong> ' + (d.kepala || '-') + '</p>';
-                    html += '<p><strong>Mata:</strong> ' + (d.mata || '-') + '</p>';
+                    // Removed Mata, Added THT
                     html += '<p><strong>Gigi:</strong> ' + (d.gigi || '-') + '</p>';
-                    html += '<p><strong>Leher:</strong> ' + (d.leher || '-') + '</p>';
+                    html += '<p><strong>THT:</strong> ' + (d.tht || '-') + '</p>';
                     html += '<p><strong>Thoraks:</strong> ' + (d.thoraks || '-') + '</p>';
                     html += '<p><strong>Abdomen:</strong> ' + (d.abdomen || '-') + '</p>';
                     html += '<p><strong>Genital:</strong> ' + (d.genital || '-') + '</p>';
-                    html += '<p><strong>Ekstremitas:</strong> ' + (d.ekstremitas || '-') + '</p></div>';
+                    html += '<p><strong>Ekstremitas:</strong> ' + (d.ekstremitas || '-') + '</p>';
+                    html += '<p><strong>Kulit:</strong> ' + (d.kulit || '-') + '</p>';
+                    html += '</div>';
                     if (d.ket_fisik) html += '<p><strong>Keterangan Fisik:</strong><br>' + d.ket_fisik + '</p>';
                     html += '</div>';
 
@@ -623,18 +594,14 @@
                     html += '<h5 style="margin:0 0 10px 0; color:#ec407a;"><i class="fa fa-image"></i> IV. STATUS LOKALIS</h5>';
                     if (d.ket_lokalis) html += '<p><strong>Keterangan:</strong><br>' + d.ket_lokalis + '</p>';
                     var imgFile = 'lokalis_' + d.no_rawat.replace(/\//g, '') + '.png';
-                    var imgUrl = '<?= base_url("assets/images/lokalis_igd/") ?>' + imgFile;
-                    console.log('🖼️ Lokalis Image URL:', imgUrl);
-                    console.log('📁 Image File:', imgFile);
+                    var imgUrl = '<?= base_url("assets/images/lokalis_resumemedis/") ?>' + imgFile;
                     html += '<div style="text-align:center; margin-top:10px;"><img src="' + imgUrl + '" style="max-width:100%; border-radius:8px; border:2px solid #ddd;" onerror="console.error(\'❌ Image failed to load:\', this.src); this.style.display=' + "'none'" + '"></div>';
                     html += '</div>';
 
-                    if (d.ekg || d.rad || d.lab) {
+                    if (d.penunjang) {
                         html += '<div style="background:#f8fafc; padding:15px; border-radius:8px; margin-bottom:15px; border-left:4px solid #8b5cf6;">';
                         html += '<h5 style="margin:0 0 10px 0; color:#8b5cf6;"><i class="fa fa-flask"></i> V. PEMERIKSAAN PENUNJANG</h5>';
-                        if (d.ekg) html += '<p><strong>EKG:</strong><br>' + d.ekg + '</p>';
-                        if (d.rad) html += '<p><strong>Radiologi:</strong><br>' + d.rad + '</p>';
-                        if (d.lab) html += '<p><strong>Laboratorium:</strong><br>' + d.lab + '</p>';
+                        html += '<p>' + nl2br(d.penunjang) + '</p>';
                         html += '</div>';
                     }
 
@@ -642,10 +609,11 @@
                     html += '<h5 style="margin:0 0 10px 0; color:#ec407a;"><i class="fa fa-notes-medical"></i> VI. DIAGNOSIS & TATALAKSANA</h5>';
                     html += '<p><strong>Diagnosis:</strong><br>' + (d.diagnosis || '-') + '</p>';
                     html += '<p><strong>Tatalaksana:</strong><br>' + (d.tata || '-') + '</p>';
+                    if(d.konsulrujuk) html += '<p><strong>Konsul/Rujuk:</strong><br>' + d.konsulrujuk + '</p>';
                     html += '</div></div>';
 
                     typeof Swal !== "undefined" && Swal.fire({
-                        title: '<span style="color:#d81b60;"><i class="fa fa-file-medical"></i> Detail Asesmen IGD</span>',
+                        title: '<span style="color:#d81b60;"><i class="fa fa-file-medical"></i> Detail Asesmen Umum</span>',
                         html: html,
                         width: '900px',
                         confirmButtonText: '<i class="fa fa-times"></i> Tutup',
@@ -655,22 +623,24 @@
             });
     }
 
+    function nl2br(str) {
+        if (!str) return '';
+        return str.replace(/(?:\r\n|\r|\n)/g, '<br>');
+    }
+
     function editAssessment(noRawat) {
-        fetch('<?= base_url("AwalMedisIGDController/get_detail") ?>?no_rawat=' + noRawat)
+        fetch('<?= base_url("AwalMedisUmumController/get_detail") ?>?no_rawat=' + noRawat)
             .then(res => res.json())
             .then(data => {
                 if (data.status === 'success') {
                     const d = data.data;
 
-                    // Parse tanggal dan jam dari datetime
                     if (d.tanggal) {
-                        // Format dari database: "2025-12-21 12:00:41"
-                        // Split menjadi date dan time
                         const parts = d.tanggal.split(' ');
                         if (parts.length >= 2) {
-                            const dateStr = parts[0]; // YYYY-MM-DD
+                            const dateStr = parts[0]; 
                             const timeParts = parts[1].split(':');
-                            const timeStr = timeParts[0] + ':' + timeParts[1] + ':' + timeParts[2]; // HH:MM:SS
+                            const timeStr = timeParts[0] + ':' + timeParts[1] + ':' + timeParts[2];
                             document.querySelector('[name="tanggal"]').value = dateStr;
                             document.querySelector('[name="jam"]').value = timeStr;
                         }
@@ -678,8 +648,9 @@
 
                     const fields = ['no_rawat', 'anamnesis', 'hubungan', 'keluhan_utama', 'rps', 'rpd', 'rpk', 'rpo', 'alergi',
                         'keadaan', 'kesadaran', 'gcs', 'spo', 'td', 'nadi', 'rr', 'suhu', 'bb', 'tb',
-                        'kepala', 'mata', 'gigi', 'leher', 'thoraks', 'abdomen', 'genital', 'ekstremitas',
-                        'ket_fisik', 'ket_lokalis', 'ekg', 'rad', 'lab', 'diagnosis', 'tata'];
+                        'kepala', 'gigi', 'tht', 'thoraks', 'abdomen', 'genital', 'ekstremitas', 'kulit',
+                        'ket_fisik', 'ket_lokalis', 'penunjang', 'diagnosis', 'tata', 'konsulrujuk'];
+                        
                     fields.forEach(f => {
                         const el = document.querySelector('[name="' + f + '"]');
                         if (el && d[f]) el.value = d[f];
@@ -693,7 +664,7 @@
     }
 
     function printSinglePDF(noRawat) {
-        window.open('<?= base_url("AwalMedisIGDController/print_pdf?no_rawat=") ?>' + noRawat, '_blank');
+        window.open('<?= base_url("AwalMedisUmumController/print_pdf?no_rawat=") ?>' + noRawat, '_blank');
     }
 
     function deleteAssessmentHistory(noRawat) {
@@ -707,7 +678,7 @@
             cancelButtonText: 'Batal'
         }).then((result) => {
             if (result.isConfirmed) {
-                fetch('<?= base_url("AwalMedisIGDController/delete") ?>', {
+                fetch('<?= base_url("AwalMedisUmumController/delete") ?>', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                     body: 'no_rawat=' + noRawat
@@ -725,7 +696,6 @@
         });
     }
 
-    // Auto-load history
     (function () {
         let attempts = 0;
         const checkAndLoad = setInterval(function () {
@@ -742,37 +712,26 @@
         }, 500);
     })();
 
-    // Force clear form on page load (prevent browser autocomplete)
     (function () {
         setTimeout(function () {
-            const form = document.getElementById('formIGDAssessment');
+            const form = document.getElementById('formUmumAssessment');
             if (form) {
-                // Reset the entire form
                 form.reset();
-
-                // Explicitly clear all text inputs and textareas
                 form.querySelectorAll('input[type="text"], textarea').forEach(function (el) {
                     el.value = '';
                 });
-
-                // Reset all selects to first option (empty option)
                 form.querySelectorAll('select').forEach(function (el) {
                     el.selectedIndex = 0;
                 });
-
-                // Clear canvas if exists
                 if (typeof clearCanvas === 'function') {
                     clearCanvas();
                 }
-
-                // Reset button text
                 const btnSubmit = document.getElementById('btnSubmit');
                 if (btnSubmit) {
                     btnSubmit.innerHTML = '<i class="fa fa-save"></i> Simpan Asesmen';
                 }
-
                 console.log('✅ Form forcefully cleared on page load - all fields reset');
             }
-        }, 800); // Run AFTER canvas init and all other scripts
+        }, 800); 
     })();
 </script>

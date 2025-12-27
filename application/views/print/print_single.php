@@ -6,70 +6,119 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title>Riwayat Medis Pasien</title>
 
-    <!-- MINIMAL CSS FOR mPDF -->
+    <!-- MINIMAL CSS FOR mPDF & BROWSER PRINT -->
     <style>
+        @page {
+            size: A4;
+            margin: 10mm 15mm;
+        }
+
         body {
             font-family: Arial, sans-serif;
-            font-size: 11pt;
-            line-height: 1.4;
+            font-size: 10pt;
+            line-height: 1.3;
             margin: 0;
             padding: 0;
+            background-color: #fff;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        /* Container to simulate A4 in browser */
+        .page-container {
+            width: 100%;
+            max-width: 210mm;
+            margin: 0 auto;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            margin: 10px 0;
+            margin: 8px 0;
         }
 
         th,
         td {
             border: 1px solid #000;
-            padding: 5px;
+            padding: 4px 6px;
+            vertical-align: top;
             text-align: left;
         }
 
         th {
-            background-color: #f0f0f0;
+            background-color: #f3f4f6 !important;
             font-weight: bold;
         }
 
         h1,
         h2,
         h3 {
-            margin: 10px 0;
+            margin: 3px 0 5px 0;
+            page-break-after: avoid;
         }
 
         .print-section {
-            margin: 15px 0;
-            page-break-inside: avoid;
+            margin: 5px 0;
+            page-break-inside: auto;
         }
 
-        /* PRINT SPECIFIC STYLES */
+        /* Prevent orphan headers */
+        h3 {
+            page-break-after: avoid;
+        }
+
+        table {
+            page-break-inside: auto;
+        }
+
+        tr {
+            page-break-inside: avoid;
+            page-break-after: auto;
+        }
+
+        /* Utility */
+        .text-center {
+            text-align: center;
+        }
+
+        .no-border {
+            border: none !important;
+        }
+
+        .no-border td {
+            border: none !important;
+        }
+
+        .print-footer {
+            margin-top: 20px;
+            border-top: 1px solid #ccc;
+            padding-top: 5px;
+            font-size: 8pt;
+            color: #666;
+            text-align: right;
+            font-style: italic;
+        }
+
         @media print {
             body {
-                margin: 0 !important;
-                padding: 0 !important;
-            }
-
-            table {
-                margin: 5px 0 !important;
-            }
-
-            h1 {
-                margin: 5px 0 !important;
-            }
-
-            hr {
-                margin: 3px 0 !important;
-            }
-
-            .print-section {
-                margin: 10px 0 !important;
+                margin: 0;
             }
 
             .no-print {
                 display: none !important;
+            }
+
+            /* Force compact spacing in print */
+            .print-section {
+                margin: 3px 0 !important;
+            }
+
+            h3 {
+                margin: 2px 0 4px 0 !important;
+            }
+
+            table {
+                margin-bottom: 4px !important;
             }
         }
     </style>
@@ -78,70 +127,77 @@
 <body>
 
     <!-- ==================== HEADER RUMAH SAKIT ==================== -->
-    <table style="width: 100%; border: none; margin-bottom: 10px;">
+    <table class="no-border" style="margin-bottom: 10px;">
         <tr>
-            <td style="width: 80px; border: none; vertical-align: top;">
+            <td style="width: 80px;" class="no-border">
                 <?php if (!empty($hospital->logo)): ?>
                     <img src="data:image/jpeg;base64,<?= base64_encode($hospital->logo) ?>"
                         style="width: 70px; height: auto;" alt="Logo RS">
                 <?php endif; ?>
             </td>
-            <td style="border: none; vertical-align: top; text-align: center;">
+            <td class="text-center no-border">
                 <h2 style="margin: 0; font-size: 16pt; font-weight: bold;">
-                    <?= $hospital->nama_instansi ?? 'RUMAH SAKIT' ?>
+                    <?= strtoupper($hospital->nama_instansi ?? 'RUMAH SAKIT') ?>
                 </h2>
-                <p style="margin: 2px 0; font-size: 10pt;">
+                <p style="margin: 2px 0; font-size: 9pt;">
                     <?= $hospital->alamat_instansi ?? '' ?>, <?= $hospital->kabupaten ?? '' ?>,
                     <?= $hospital->propinsi ?? '' ?>
                 </p>
-                <p style="margin: 2px 0; font-size: 10pt;">
+                <p style="margin: 2px 0; font-size: 9pt;">
                     Kontak: <?= $hospital->kontak ?? '-' ?> | Email: <?= $hospital->email ?? '-' ?>
                 </p>
             </td>
+            <td style="width: 80px;" class="no-border"></td>
         </tr>
     </table>
 
-    <hr style="border: 2px solid #000; margin: 5px 0;">
+    <div style="border-bottom: 3px double #000; margin-bottom: 15px;"></div>
 
     <!-- ==================== JUDUL DOKUMEN ==================== -->
-    <h1 style="text-align: center; font-size: 14pt; font-weight: bold; margin: 10px 0; text-transform: uppercase;">
-        RIWAYAT MEDIS LENGKAP
-    </h1>
+    <div class="text-center" style="margin-bottom: 20px;">
+        <h1 style="font-size: 14pt; margin: 0; text-transform: uppercase; text-decoration: underline;">
+            RIWAYAT MEDIS LENGKAP
+        </h1>
+    </div>
 
     <!-- ==================== IDENTITAS PASIEN ==================== -->
-    <table style="width: 100%; margin-bottom: 10px; border: 2px solid #000;">
-        <tr style="background-color: #e0e0e0;">
-            <th colspan="4" style="text-align: center; padding: 8px; font-size: 12pt; border: none;">
-                IDENTITAS PASIEN
-            </th>
-        </tr>
-        <tr>
-            <td style="width: 25%; padding: 5px; font-weight: bold; border-right: 1px solid #000;">No. Rekam Medis</td>
-            <td style="width: 25%; padding: 5px; border-right: 1px solid #000;">: <?= $pasien->no_rkm_medis ?? '-' ?>
-            </td>
-            <td style="width: 25%; padding: 5px; font-weight: bold; border-right: 1px solid #000;">Nama Pasien</td>
-            <td style="width: 25%; padding: 5px;">: <?= $pasien->nm_pasien ?? '-' ?></td>
-        </tr>
-        <tr>
-            <td style="padding: 5px; font-weight: bold; border-right: 1px solid #000;">Tanggal Lahir</td>
-            <td style="padding: 5px; border-right: 1px solid #000;">: <?= $pasien->tgl_lahir ?? '-' ?></td>
-            <td style="padding: 5px; font-weight: bold; border-right: 1px solid #000;">Jenis Kelamin</td>
-            <td style="padding: 5px;">: <?= $pasien->jk ?? '-' ?></td>
-        </tr>
-        <tr>
-            <td style="padding: 5px; font-weight: bold; border-right: 1px solid #000;">Alamat</td>
-            <td colspan="3" style="padding: 5px;">: <?= $pasien->alamat ?? '-' ?></td>
-        </tr>
-        <tr>
-            <td style="padding: 5px; font-weight: bold; border-right: 1px solid #000;">No. Telepon</td>
-            <td style="padding: 5px; border-right: 1px solid #000;">: -</td>
-            <td style="padding: 5px; font-weight: bold; border-right: 1px solid #000;">Pekerjaan</td>
-            <td style="padding: 5px;">: -</td>
-        </tr>
+    <table style="border: 2px solid #000; margin-bottom: 20px;">
+        <thead>
+            <tr>
+                <th colspan="4" class="text-center"
+                    style="font-size: 11pt; padding: 6px; border-bottom: 1px solid #000; background-color: #f3f4f6;">
+                    IDENTITAS PASIEN
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td style="width: 20%; font-weight: bold;">No. Rekam Medis</td>
+                <td style="width: 30%;">: <?= $pasien->no_rkm_medis ?? '-' ?></td>
+                <td style="width: 20%; font-weight: bold;">Nama Pasien</td>
+                <td style="width: 30%;">: <?= $pasien->nm_pasien ?? '-' ?></td>
+            </tr>
+            <tr>
+                <td style="font-weight: bold;">Tanggal Lahir</td>
+                <td>: <?= $pasien->tgl_lahir ?? '-' ?></td>
+                <td style="font-weight: bold;">Jenis Kelamin</td>
+                <td>: <?= ($pasien->jk ?? '') === 'L' ? 'Laki-laki' : 'Perempuan' ?></td>
+            </tr>
+            <tr>
+                <td style="font-weight: bold;">Alamat</td>
+                <td colspan="3">: <?= $pasien->alamat ?? '-' ?></td>
+            </tr>
+            <tr>
+                <td style="font-weight: bold;">No. Telepon</td>
+                <td>: -</td>
+                <td style="font-weight: bold;">Pekerjaan</td>
+                <td>: -</td>
+            </tr>
+        </tbody>
     </table>
 
     <!-- ==================== INFO KUNJUNGAN ==================== -->
-    <table style="width: 100%; margin: 10px 0; border: 2px solid #0066cc; background-color: #e3f2fd;">
+    <table style="width: 100%; margin: 5px 0; border: 2px solid #0066cc; background-color: #e3f2fd;">
         <tr>
             <td style="padding: 8px; border: none;">
                 <h3 style="margin: 0; color: #0066cc; font-size: 13pt;">
@@ -246,6 +302,11 @@
     // 5.12 Urologi
     if (!empty($d->asesmenUrologi)) {
         include APPPATH . 'views/print/sections/asesmen_urologi.php';
+    }
+
+    // 5.13 UMUM (GENERAL)
+    if (!empty($d->umum)) {
+        include APPPATH . 'views/print/sections/asesmen_umum.php';
     }
 
 

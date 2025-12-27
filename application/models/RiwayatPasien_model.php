@@ -938,7 +938,37 @@ class RiwayatPasien_model extends CI_Model
         // 23. Asesmen Urologi
         $data['asesmen_urologi'] = $this->get_asesmen_urologi_by_norawat($no_rawat);
 
+        // 24. Asesmen Umum
+        $data['asesmen_umum'] = $this->get_penilaian_medis_umum_by_norawat($no_rawat);
+
         return $data;
+    }
+
+    /**
+     * Get Penilaian Medis Umum by no_rawat
+     */
+    public function get_penilaian_medis_umum_by_norawat($no_rawat)
+    {
+        $row = $this->db->select("
+            pm.*,
+            d.nm_dokter
+        ")
+            ->from('penilaian_medis_ralan pm')
+            ->join('dokter d', 'd.kd_dokter = pm.kd_dokter', 'left')
+            ->where('pm.no_rawat', $no_rawat)
+            ->get()->row_array();
+
+        if ($row) {
+            $clean_no_rawat = str_replace('/', '', $no_rawat);
+            $path = 'assets/images/lokalis_resumemedis/lokalis_' . $clean_no_rawat . '.png';
+            if (file_exists(FCPATH . $path)) {
+                $row['lokalis_url'] = base_url($path);
+            } else {
+                $row['lokalis_url'] = null;
+            }
+        }
+
+        return $row;
     }
 
     /**

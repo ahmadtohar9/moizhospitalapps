@@ -178,6 +178,12 @@ $route['medis-urologi/save'] = 'AwalMedisUrologiController/save';
 $route['medis-urologi/delete'] = 'AwalMedisUrologiController/delete';
 $route['medis-urologi/print'] = 'AwalMedisUrologiController/print_pdf';
 
+// 14. UMUM (General)
+$route['medis-umum'] = 'AwalMedisUmumController/index';
+$route['medis-umum/save'] = 'AwalMedisUmumController/save';
+$route['medis-umum/delete'] = 'AwalMedisUmumController/delete';
+$route['medis-umum/print'] = 'AwalMedisUmumController/print_pdf';
+
 /* ===================== END AUTO-GENERATED ROUTES ===================== */
 
 
@@ -422,6 +428,7 @@ $route['admin/riwayatPasien/detail_asesmen_gawat_darurat_psikiatri'] = 'RiwayatP
 $route['admin/riwayatPasien/detail_asesmen_geriatri'] = 'RiwayatPasienController/detail_asesmen_geriatri';
 $route['admin/riwayatPasien/detail_asesmen_rehab_medik'] = 'RiwayatPasienController/detail_asesmen_rehab_medik';
 $route['admin/riwayatPasien/detail_asesmen_urologi'] = 'RiwayatPasienController/detail_asesmen_urologi';
+$route['admin/riwayatPasien/detail_penilaian_medis_umum'] = 'RiwayatPasienController/detail_penilaian_medis_umum';
 $route['admin/riwayatPasien/info'] = 'RiwayatPasienController/info';
 $route['RiwayatPasien/get_detail'] = 'RiwayatPasienController/get_detail';
 
@@ -633,6 +640,15 @@ $route['pendaftaran/reg_periksa/search_poli'] = 'Pendaftaran/RegPeriksaControlle
 $route['pendaftaran/reg_periksa/search_pasien'] = 'Pendaftaran/RegPeriksaController/search_pasien';
 $route['pendaftaran/reg_periksa/search_penjab'] = 'Pendaftaran/RegPeriksaController/search_penjab';
 $route['pendaftaran/reg_periksa/save'] = 'Pendaftaran/RegPeriksaController/save';
+
+/* ===================== PERMINTAAN RESEP RALAN ===================== */
+$route['permintaanResepRalan/checkDuplicateMedicine'] = 'PermintaanResepRalanController/checkDuplicateMedicine';
+$route['permintaanResepRalan/save'] = 'PermintaanResepRalanController/save';
+$route['permintaanResepRalan/delete'] = 'PermintaanResepRalanController/delete';
+$route['permintaanResepRalan/deleteAllResep'] = 'PermintaanResepRalanController/deleteAllResep';
+$route['permintaanResepRalan/getObatList'] = 'PermintaanResepRalanController/getObatList';
+$route['permintaanResepRalan/getHasilResep'] = 'PermintaanResepRalanController/getHasilResep';
+$route['permintaanResepRalan/getRiwayatObatByNorm'] = 'PermintaanResepRalanController/getRiwayatObatByNorm';
 
 /* ===================== END ===================== */
 

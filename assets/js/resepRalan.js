@@ -194,14 +194,14 @@ $(document).ready(function () {
       if (isOver) {
         const selisih = total - BUDGET_LIMIT;
         html += `
-        <div class="alert shadow-sm mb-4" style="background-color: #d32f2f; color: #ffffff; border: none; border-radius: 6px; padding: 20px;">
+        <div class="alert shadow-sm mb-3" style="background-color: #d32f2f; color: #ffffff; border: none; border-radius: 8px; padding: 15px 20px;">
           <div class="d-flex align-items-center">
-            <i class="fa fa-exclamation-triangle fa-2x me-4" style="color: #fff; margin-right: 15px;"></i>
+            <i class="fa fa-exclamation-triangle me-4" style="color: #fff; font-size: 3em;"></i>
             <div>
-              <h4 class="alert-heading text-white mb-2" style="font-weight: 700; margin-top: 0;">Over Budget BPJS</h4>
-              <p class="mb-0" style="font-size: 1.1em;">
+              <h5 class="alert-heading text-white mb-0" style="font-weight: 800; font-size: 1.8rem; line-height: 1;">Over Budget BPJS</h5>
+              <p class="mb-0" style="font-size: 1.25rem; line-height: 1.2; margin-top: 5px; font-weight: 500;">
                 Total resep <strong>${formatRupiah(total)}</strong> melebihi limit <strong>${formatRupiah(BUDGET_LIMIT)}</strong> 
-                sebesar <strong style="text-decoration: underline;">${formatRupiah(selisih)}</strong>. Mohon tinjau kembali.
+                sebesar <strong style="text-decoration: underline; color: #ffeb3b;">${formatRupiah(selisih)}</strong>. Mohon tinjau kembali.
               </p>
             </div>
           </div>
@@ -223,31 +223,31 @@ $(document).ready(function () {
 
         html += `
         <div class="card mb-3 shadow-sm ${borderClass}" style="border-radius: 8px; overflow: hidden; border: 1px solid #ddd;">
-          <div class="card-header ${headerClass} d-flex justify-content-between align-items-center px-4 py-3">
+          <div class="card-header ${headerClass} d-flex justify-content-between align-items-center px-3 py-2">
             <div>
-              <h5 class="mb-0 fw-bold"><i class="fa fa-file-prescription me-2"></i> No. Resep: ${noResep}</h5>
+              <h6 class="mb-0 fw-bold"><i class="fa fa-file-prescription me-2"></i> No. Resep: ${noResep}</h6>
             </div>
             <div class="d-flex align-items-center gap-2">
                ${statusBadge}
-               <span class="badge bg-dark text-white shadow-sm px-2 py-1" style="font-size: 0.95rem;">${formatRupiah(subtotalGroup)}</span>
+               <span class="badge bg-dark text-white shadow-sm px-2 py-1" style="font-size: 0.85rem;">${formatRupiah(subtotalGroup)}</span>
                ${!isValid ? `
-               <button class="btn btn-sm btn-danger ms-3 px-3 py-1 delete-resep-group" data-no_resep="${noResep}" title="Hapus Satu Resep Full">
+               <button class="btn btn-sm btn-danger ms-2 px-2 py-1 delete-resep-group" data-no_resep="${noResep}" title="Hapus Satu Resep Full">
                  <i class="fa fa-trash"></i> Hapus
                </button>` : ''}
             </div>
           </div>
           <div class="card-body p-0">
             <div class="table-responsive">
-              <table class="table table-hover table-striped mb-0" style="font-size: 1rem;">
+              <table class="table table-hover table-striped mb-0">
                 <thead class="bg-light text-secondary">
                   <tr>
-                    <th class="ps-4 py-3" style="width:5%">No</th>
-                    <th class="py-3" style="width:15%">Kode</th>
-                    <th class="py-3">Nama Obat</th>
-                    <th class="text-center py-3" style="width:10%">Jml</th>
-                    <th class="text-end py-3" style="width:15%">Harga</th>
-                    <th class="py-3" style="width:25%">Signa</th>
-                    <th class="text-center py-3" style="width:8%">Aksi</th>
+                    <th class="ps-3 py-2" style="width:5%">No</th>
+                    <th class="py-2" style="width:15%">Kode</th>
+                    <th class="py-2">Nama Obat</th>
+                    <th class="text-center py-2" style="width:8%">Jml</th>
+                    <th class="text-end py-2" style="width:15%">Harga</th>
+                    <th class="py-2" style="width:25%">Signa</th>
+                    <th class="text-center py-2" style="width:8%">Aksi</th>
                   </tr>
                 </thead>
                 <tbody>`;
@@ -255,16 +255,16 @@ $(document).ready(function () {
         items.forEach((item, i) => {
           html += `
           <tr>
-            <td class="ps-4 py-3">${i + 1}</td>
-            <td class="py-3"><span style="font-weight: 500; font-family: monospace; font-size: 1.05em;">${item.kode_brng}</span></td>
-            <td class="fw-bold text-dark py-3" style="font-size: 1.05em;">${item.nama_brng}</td>
-            <td class="text-center py-3"><span class="badge bg-info text-dark" style="font-size: 0.95em;">${item.jumlah}</span></td>
-            <td class="text-end fw-bold text-secondary py-3" style="font-size: 1em;">${formatRupiah(item.total)}</td>
-            <td class="py-3"><span class="text-primary fst-italic" style="font-size: 1em;">${item.signa}</span></td>
-            <td class="text-center py-3">
+            <td class="ps-3 py-2">${i + 1}</td>
+            <td class="py-2"><span style="font-weight: 500; font-family: monospace;">${item.kode_brng}</span></td>
+            <td class="fw-semibold text-dark py-2">${item.nama_brng}</td>
+            <td class="text-center py-2"><span class="badge bg-info text-dark">${item.jumlah}</span></td>
+            <td class="text-end fw-semibold text-secondary py-2">${formatRupiah(item.total)}</td>
+            <td class="py-2"><span class="text-primary fst-italic">${item.signa}</span></td>
+            <td class="text-center py-2">
               ${!isValid ? `
               <button class="btn btn-sm btn-outline-danger delete-resep" data-kode="${item.kode_brng}" data-jumlah="${item.jumlah}" title="Hapus Item" style="padding: 2px 8px;">
-                <i class="fa fa-times fa-lg"></i>
+                <i class="fa fa-times"></i>
               </button>` : '<i class="fa fa-lock text-muted"></i>'}
             </td>
           </tr>`;
@@ -314,7 +314,7 @@ $(document).ready(function () {
         const tglResep = items[0].tgl_peresepan ? items[0].tgl_peresepan : (items[0].tgl_perawatan || '-');
 
         html += `
-        <div class="card mb-3 border bg-light">
+          <div class="card mb-3 border bg-light">
            <div class="card-header bg-white d-flex justify-content-between align-items-center py-2">
               <div class="form-check m-0">
                 <input class="form-check-input check-group" type="checkbox" id="chk_${noResep}" data-group="${noResep}" style="transform: scale(1.2);">
@@ -367,18 +367,18 @@ $(document).ready(function () {
         if (!showAllRiwayat) {
           const remaining = allGroups.length - 3;
           html += `
-           <div class="text-center mt-3">
-             <button class="btn btn-outline-primary shadow-sm rounded-pill px-4" id="btnToggleRiwayat">
-               <i class="fa fa-chevron-down me-1"></i> Tampilkan ${remaining} Riwayat Lainnya
-             </button>
-           </div>`;
+          <div class="text-center mt-3">
+            <button class="btn btn-outline-primary shadow-sm rounded-pill px-4" id="btnToggleRiwayat">
+              <i class="fa fa-chevron-down me-1"></i> Tampilkan ${remaining} Riwayat Lainnya
+            </button>
+          </div>`;
         } else {
           html += `
-           <div class="text-center mt-3">
-             <button class="btn btn-outline-secondary shadow-sm rounded-pill px-4" id="btnToggleRiwayat">
-               <i class="fa fa-chevron-up me-1"></i> Sembunyikan Riwayat Lama
-             </button>
-           </div>`;
+          <div class="text-center mt-3">
+            <button class="btn btn-outline-secondary shadow-sm rounded-pill px-4" id="btnToggleRiwayat">
+              <i class="fa fa-chevron-up me-1"></i> Sembunyikan Riwayat Lama
+            </button>
+          </div>`;
         }
       }
 
@@ -404,7 +404,7 @@ $(document).ready(function () {
 
   $(document).on('change', '.check-group', function () {
     const group = $(this).data('group');
-    $(`.checkbox-copy-obat[data-group='${group}']`).prop('checked', this.checked);
+    $(`.checkbox - copy - obat[data - group='${group}']`).prop('checked', this.checked);
   });
 
   $('#btnCopyResepSelected').on('click', function () {
@@ -443,6 +443,13 @@ $(document).ready(function () {
       jumlah: $(this).data('jumlah')
     }, function (res) {
       if (res.status === 'success') {
+        Swal.fire({
+          icon: 'success',
+          title: 'Terhapus',
+          text: 'Item resep berhasil dihapus.',
+          timer: 3000,
+          showConfirmButton: false
+        });
         loadHasilResep();
         loadRiwayatResepPasien();
       }
@@ -450,15 +457,33 @@ $(document).ready(function () {
   });
 
   $(document).on('click', '.delete-resep-group', function () {
-    $.post(`${BASE_URL}permintaanResepRalan/deleteAllResep`, {
-      no_resep: $(this).data('no_resep')
-    }, function (res) {
-      if (res.status === 'success') {
-        Swal.fire({ icon: 'success', title: 'Sukses', text: 'Resep berhasil dihapus.', timer: 3000, showConfirmButton: false });
-        loadHasilResep();
-        loadRiwayatResepPasien();
+    Swal.fire({
+      title: 'Hapus Resep?',
+      text: "Seluruh item dalam resep ini akan dihapus permanen.",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Ya, Hapus Semua!'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        $.post(`${BASE_URL}permintaanResepRalan/deleteAllResep`, {
+          no_resep: $(this).data('no_resep')
+        }, function (res) {
+          if (res.status === 'success') {
+            Swal.fire({
+              icon: 'success',
+              title: 'Terhapus',
+              text: 'Seluruh resep berhasil dihapus.',
+              timer: 3000,
+              showConfirmButton: false
+            });
+            loadHasilResep();
+            loadRiwayatResepPasien();
+          }
+        }, 'json');
       }
-    }, 'json');
+    });
   });
 
   $('#saveResep').on('click', function () {
@@ -474,46 +499,105 @@ $(document).ready(function () {
       return Swal.fire('Peringatan', 'Tidak ada obat yang diisi.', 'warning');
     }
 
-    // Cek over budget sebelum kirim
-    const draft = calcDraftTotal();
-    const combined = sumExisting + draft;
+    // Extract kode_brng for duplicate check
+    const medicines = resep.map(r => r.kode_brng);
 
-    const doSave = () => {
-      $.post(`${BASE_URL}permintaanResepRalan/save`, {
-        no_rawat: noRawat,
-        kd_dokter: kdDokter,
-        tgl_peresepan: tglPeresepan,
-        jam_peresepan: jamPeresepan,
-        resep
-      }, function (res) {
-        if (res.status === 'success') {
-          const afterMsg = combined > BUDGET_LIMIT
-            ? 'Resep berhasil disimpan. ⚠️ (Over Budget BPJS)'
-            : 'Resep berhasil disimpan.';
-          Swal.fire({ icon: 'success', title: 'Sukses', text: afterMsg, timer: 3000, showConfirmButton: false });
+    // Check for duplicates first
+    $.post(`${BASE_URL}permintaanResepRalan/checkDuplicateMedicine`, {
+      no_rkm_medis: noRkmMedis,
+      no_rawat: noRawat,
+      medicines: medicines
+    }, function (checkRes) {
+      // If there are duplicates, show warning
+      if (checkRes.has_duplicate && checkRes.duplicates && checkRes.duplicates.length > 0) {
+        let duplicateList = '<ul style="text-align: left; margin-top: 10px;">';
+        checkRes.duplicates.forEach(dup => {
+          duplicateList += `
+          <li style="margin-bottom: 10px;">
+              <strong>${dup.nama_brng}</strong><br>
+              <small>
+                <i class="fa fa-hospital"></i> ${dup.nm_poli} - 
+                <i class="fa fa-user-md"></i> ${dup.nm_dokter}<br>
+                <i class="fa fa-clock"></i> ${dup.tgl_peresepan} ${dup.jam_peresepan} - 
+                <i class="fa fa-pills"></i> ${dup.jml} - 
+                <i class="fa fa-prescription"></i> ${dup.aturan_pakai}
+              </small>
+            </li>`;
+        });
+        duplicateList += '</ul>';
 
-          inputCache = {};
-          $('#searchObat').val('');
-          // reload agar banner dan badge over budget muncul di list tersimpan
-          loadObat();
-          loadHasilResep();
-          loadRiwayatResepPasien();
-        }
-      }, 'json');
-    };
+        Swal.fire({
+          icon: 'warning',
+          title: '⚠️ Peringatan Duplikasi Obat!',
+          html: `
+          <div style="text-align: left;">
+            <p>Obat berikut sudah diberikan hari ini di poli lain:</p>
+              ${duplicateList}
+            <p style="margin-top: 15px;"><strong>Apakah tetap ingin menambahkan obat ini?</strong></p>
+          </div>
+          `,
+          showCancelButton: true,
+          confirmButtonText: '<i class="fa fa-check"></i> Tetap Tambahkan',
+          cancelButtonText: '<i class="fa fa-times"></i> Batal',
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          width: '600px'
+        }).then((result) => {
+          if (result.isConfirmed) {
+            // User confirmed, proceed with budget check
+            proceedWithBudgetCheck(resep);
+          }
+        });
+      } else {
+        // No duplicates, proceed with budget check
+        proceedWithBudgetCheck(resep);
+      }
+    }, 'json').fail(function () {
+      // If check fails, proceed anyway (don't block)
+      proceedWithBudgetCheck(resep);
+    });
 
-    if (combined > BUDGET_LIMIT) {
-      const selisih = combined - BUDGET_LIMIT;
-      Swal.fire({
-        icon: 'warning',
-        title: 'Over Budget BPJS',
-        html: `Total resep sementara <b>${formatRupiah(combined)}</b> melebihi limit <b>${formatRupiah(BUDGET_LIMIT)}</b> sebesar <b>${formatRupiah(selisih)}</b>.<br>Ingin tetap menyimpan?`,
-        showCancelButton: true,
-        confirmButtonText: 'Tetap Simpan',
-        cancelButtonText: 'Batal'
-      }).then((r) => { if (r.isConfirmed) doSave(); });
-    } else {
-      doSave();
+    // Function to check budget and save
+    function proceedWithBudgetCheck(resep) {
+      const draft = calcDraftTotal();
+      const combined = sumExisting + draft;
+
+      const doSave = () => {
+        $.post(`${BASE_URL}permintaanResepRalan/save`, {
+          no_rawat: noRawat,
+          kd_dokter: kdDokter,
+          tgl_peresepan: tglPeresepan,
+          jam_peresepan: jamPeresepan,
+          resep
+        }, function (res) {
+          if (res.status === 'success') {
+            const afterMsg = combined > BUDGET_LIMIT
+              ? 'Resep berhasil disimpan. ⚠️ (Over Budget BPJS)'
+              : 'Resep berhasil disimpan.';
+            Swal.fire({ icon: 'success', title: 'Sukses', text: afterMsg, timer: 3000, showConfirmButton: false });
+
+            inputCache = {};
+            $('#searchObat').val('');
+            loadObat();
+            loadHasilResep();
+            loadRiwayatResepPasien();
+          }
+        }, 'json');
+      };
+
+      if (combined > BUDGET_LIMIT) {
+        const selisih = combined - BUDGET_LIMIT;
+        Swal.fire({
+          icon: 'warning',
+          title: 'Over Budget BPJS',
+          html: `Total resep sementara <b>${formatRupiah(combined)}</b> melebihi limit <b>${formatRupiah(BUDGET_LIMIT)}</b> sebesar <b>${formatRupiah(selisih)}</b>.<br>Ingin tetap menyimpan?`,
+          showCancelButton: true,
+          confirmButtonText: 'Tetap Simpan',
+          cancelButtonText: 'Batal'
+        }).then((r) => { if (r.isConfirmed) doSave(); });
+      } else {
+        doSave();
+      }
     }
   });
 

@@ -496,6 +496,7 @@ class RiwayatPasienController extends CI_Controller
                 'operasi' => $this->RiwayatPasien_model->get_operasi_by_no_rawat($no_rawat),
                 'penunjang' => $this->RiwayatPasien_model->get_penunjang_by_norawat($no_rawat),
                 'laptind' => $this->RiwayatPasien_model->get_laporan_tindakan_by_norawat($no_rawat),
+                'umum' => $this->RiwayatPasien_model->get_penilaian_medis_umum_by_norawat($no_rawat),
             ];
 
             echo json_encode(['success' => true, 'data' => $data]);
@@ -503,6 +504,11 @@ class RiwayatPasienController extends CI_Controller
             log_message('error', 'get_detail error: ' . $e->getMessage());
             echo json_encode(['success' => false, 'message' => 'Terjadi kesalahan sistem']);
         }
+    }
+
+    public function detail_penilaian_medis_umum()
+    {
+        $this->_get_detail('get_penilaian_medis_umum_by_norawat');
     }
 
     private function _get_detail($method)

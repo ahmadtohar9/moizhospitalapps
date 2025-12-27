@@ -10,51 +10,114 @@
   }
 
   .box {
-    border: 1px solid #dee2e6;
-    border-radius: 5px;
-    margin-bottom: 1rem;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    border: none;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
   }
 
   .box-header {
-    padding: 0.5rem 1rem;
-    font-weight: bold;
-    border-bottom: 1px solid #ddd;
+    padding: 12px 20px;
+    font-weight: 600;
+    font-size: 15px;
+    color: white;
+    display: flex;
+    align-items: center;
+    gap: 8px;
   }
 
   .box-body {
-    padding: 1rem;
+    padding: 1.25rem;
     background-color: #fff;
   }
 
   .box-footer {
-    padding: 0.5rem 1rem;
-    border-top: 1px solid #dee2e6;
-    background: #f1f1f1;
+    padding: 0.75rem 1.25rem;
+    border-top: 1px solid #e5e7eb;
+    background: #f9fafb;
+  }
+
+  /* Modern Gradient Headers */
+  .box-header.bg-success {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
   }
 
   .box-header.bg-light-blue {
-    background-color: #e9f7fe;
-    color: #0b5ed7;
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
   }
 
   .box-header.bg-red {
-    background-color: #f8d7da;
-    color: #842029;
+    background: linear-gradient(135deg, #ec4899 0%, #db2777 100%);
   }
 
   .box-header.bg-blue {
-    background-color: #d1ecf1;
-    color: #0c5460;
+    background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+  }
+
+  /* Action Buttons */
+  .resep-action-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    border: none;
+    cursor: pointer;
+    margin-right: 4px;
+    vertical-align: middle;
+  }
+
+  .resep-action-edit {
+    background: #3b82f6;
+    color: white;
+  }
+
+  .resep-action-edit:hover {
+    background: #2563eb;
+    box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);
+  }
+
+  .resep-action-delete {
+    background: #ef4444;
+    color: white;
+  }
+
+  .resep-action-delete:hover {
+    background: #dc2626;
+    box-shadow: 0 2px 4px rgba(239, 68, 68, 0.3);
+  }
+
+  /* Total Harga */
+  .total-harga-box {
+    background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+    border: 2px solid #10b981;
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin-top: 12px;
+  }
+
+  .total-harga-box strong {
+    color: #065f46;
+    font-size: 14px;
+  }
+
+  .total-harga-box .amount {
+    color: #059669;
+    font-size: 18px;
+    font-weight: 700;
   }
 </style>
 
 <!-- 0. Data SOAP Terakhir -->
 <?php if (!empty($last_soap)): ?>
   <div class="box">
-    <div class="box-header bg-success" style="background-color: #d1e7dd; color: #0f5132;">
+    <div class="box-header bg-success">
       <i class="fa fa-stethoscope"></i> Resume Medis Terakhir (SOAP)
-      <span class="float-right" style="font-size: 12px; font-weight: normal;">
+      <span class="ml-auto" style="font-size: 12px; font-weight: normal;">
         <?= date('d-m-Y', strtotime($last_soap->tgl_perawatan)) ?>   <?= $last_soap->jam_rawat ?>
       </span>
     </div>
@@ -110,8 +173,11 @@
     <input type="hidden" id="jam_peresepan" value="<?= date('H:i:s') ?>">
 
     <div class="form-group">
-      <label>Cari Obat</label>
-      <input type="text" id="searchObat" class="form-control" placeholder="Nama obat...">
+      <label><i class="fa fa-search"></i> Cari Obat</label>
+      <div class="input-group">
+        <span class="input-group-text"><i class="fa fa-search"></i></span>
+        <input type="text" id="searchObat" class="form-control" placeholder="Ketik nama obat...">
+      </div>
     </div>
 
     <div class="table-scroll">
@@ -147,8 +213,8 @@
     <div class="table-scroll">
       <div id="hasilResepGrouped"></div>
     </div>
-    <div class="text-right mt-2">
-      <strong>Total Harga Obat: </strong><span id="totalHargaObat">Rp 0</span>
+    <div class="total-harga-box text-right">
+      <strong>Total Harga Obat: </strong><span id="totalHargaObat" class="amount">Rp 0</span>
     </div>
   </div>
 </div>

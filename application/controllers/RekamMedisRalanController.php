@@ -140,6 +140,7 @@ class RekamMedisRalanController extends CI_Controller
         // 6) Peta controller → model & view (yang memang perlu model)
         $form_map = [
             'AwalMedisIGDController/index' => ['model' => 'AwalMedisIGDModel', 'view' => 'rekammedis/dokter/awalMedisIGD_view'], // MENU IGD BARU
+            'AwalMedisUmumController/index' => ['model' => 'AwalMedisUmumModel', 'view' => 'rekammedis/dokter/awalMedisUmum_view'], // MENU UMUM BARU
             'AwalMedisPenyakitDalamController/index' => [
                 'model' => 'AwalMedisPenyakitDalamModel',
                 'view' => 'rekammedis/dokter/awalMedisPenyakitDalam_view'
@@ -289,7 +290,8 @@ class RekamMedisRalanController extends CI_Controller
                 'AwalMedisPsikiatrikController/index' => 'AwalMedisPsikiatrikModel',
                 'AwalMedisRehabMedikController/index' => 'AwalMedisRehabMedikModel',
                 'AwalMedisTHTController/index' => 'AwalMedisTHTModel',
-                'AwalMedisUrologiController/index' => 'AwalMedisUrologiModel'
+                'AwalMedisUrologiController/index' => 'AwalMedisUrologiModel',
+                'AwalMedisUmumController/index' => 'AwalMedisUmumModel'
             ];
 
             if (isset($new_modules[$decodedUrl])) {

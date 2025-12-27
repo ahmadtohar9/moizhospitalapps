@@ -2481,11 +2481,12 @@ $(function () {
             $.get(API_URLS.RP_ASESMEN_IGD_PSIKIATRI, { no_rawat: norawat }),
             $.get(API_URLS.RP_ASESMEN_GERIATRI, { no_rawat: norawat }),
             $.get(API_URLS.RP_ASESMEN_REHAB_MEDIK, { no_rawat: norawat }),
-            $.get(API_URLS.RP_ASESMEN_UROLOGI, { no_rawat: norawat })
+            $.get(API_URLS.RP_ASESMEN_UROLOGI, { no_rawat: norawat }),
+            $.get(API_URLS.RP_ASESMEN_UMUM, { no_rawat: norawat })
         ).done(function (
             summaryRes, soapRes, diagRes, procRes, tindRes, resepRes,
             labRes, radRes, rdocsRes, berkasRes, operasiRes, penunjangRes, laptindRes, igdRes, pdRes, orthoRes, kfrRes, rehabRes, mataRes, kandunganRes, anakRes, bedahRes, thtRes, jantungRes, kulitdankelaminRes, neurologiRes, paruRes, psikiatrikRes,
-            igdPsikiatriRes, geriatriRes, asesmenRehabMedikRes, asesmenUrologiRes
+            igdPsikiatriRes, geriatriRes, asesmenRehabMedikRes, asesmenUrologiRes, umumRes
         ) {
             const J = x => { try { return (typeof x[0] === 'string') ? JSON.parse(x[0]) : x[0]; } catch (_) { return {}; } };
 
@@ -2498,6 +2499,7 @@ $(function () {
             const geriatri = J(geriatriRes);
             const asesmenRehabMedik = J(asesmenRehabMedikRes);
             const asesmenUrologi = J(asesmenUrologiRes);
+            const umum = J(umumRes);
 
             // Debug: Check if KFR and Rehab data exist
             console.log('KFR Data:', kfr);
@@ -2507,7 +2509,7 @@ $(function () {
             const printPayload = {
                 summary, soapRaw, diag, proc, tind, resep, lab, rad,
                 rdocs, berkas, operasi, penunjang, laptind, igd, pd, ortho, kfr, rehab, mata,
-                psikiatrik, igdPsikiatri, geriatri, asesmenRehabMedik, asesmenUrologi,
+                psikiatrik, igdPsikiatri, geriatri, asesmenRehabMedik, asesmenUrologi, umum,
                 base: base
             };
             window.currentPrintData = printPayload;
@@ -3829,6 +3831,142 @@ $(function () {
 
                     cardsToShow.push(cardWrap('paru', 'Asesmen Awal Medis Paru (Pulmonologi)', html));
                 }
+            }
+
+
+            // === RENDER PENILAIAN MEDIS UMUM ===
+            function renderAsesmenUmum() {
+                const u = umum.data || umum || {};
+
+                // Cek data (minimal anamnesis, fisik, atau diagnosis)
+                if (!hasKeys(u, ['keluhan_utama', 'diagnosis', 'rps', 'ket_fisik', 'tht'])) return;
+
+                const fisikRow = (lbl, val) => '<tr><td style="width:150px;color:#525f7f;padding:6px 0;font-weight:600;">' + escHtml(lbl) + '</td><td style="padding:6px 0 6px 15px;color:#32325d;">' + escHtml(val || '-') + '</td></tr>';
+                const ttvItem = (lbl, val, unit) => '<div style="text-align:center;border:1px solid #e9ecef;padding:8px;border-radius:4px;background:#f8f9fa;"><div style="font-size:10px;color:#8898aa;text-transform:uppercase;margin-bottom:3px;">' + lbl + '</div><div style="font-weight:700;color:#32325d;font-size:15px;">' + escHtml(val || '-') + ' <small style="font-weight:400;color:#888;">' + unit + '</small></div></div>';
+                const row = (lbl, val) => '<tr><td style="width:150px;color:#525f7f;padding:8px 0;vertical-align:top;border-bottom:1px solid #f6f9fc;font-weight:600;">' + escHtml(lbl) + '</td><td style="padding:8px 0 8px 15px;vertical-align:top;color:#32325d;border-bottom:1px solid #f6f9fc;line-height:1.6;">' + escHtml(val || '-') + '</td></tr>';
+
+                // LAYOUT 1 KOLOM PENUH (VERTICAL)
+                let html = '<div style="max-width:100%;">';
+
+                // 1. ANAMNESIS
+                html += '<div style="margin-bottom:24px;">' +
+                    '<h5 style="font-size:13px;font-weight:700;color:#5e72e4;text-transform:uppercase;border-bottom:2px solid #5e72e4;padding-bottom:6px;display:inline-block;margin-bottom:12px;">' +
+                    '<i class="fa fa-history"></i> Anamnesis' +
+                    '</h5>' +
+                    '<table style="width:100%;font-size:13px;border-collapse:collapse;">' +
+                    row('Keluhan Utama', u.keluhan_utama) +
+                    row('RPS', u.rps) +
+                    row('RPD', u.rpd) +
+                    row('RPK', u.rpk) +
+                    row('RPO', u.rpo) +
+                    row('Alergi', u.alergi) +
+                    '</table>' +
+                    '</div>';
+
+                // 2. TANDA VITAL
+                html += '<div style="margin-bottom:24px;">' +
+                    '<h5 style="font-size:13px;font-weight:700;color:#2dce89;text-transform:uppercase;border-bottom:2px solid #2dce89;padding-bottom:6px;display:inline-block;margin-bottom:12px;">' +
+                    '<i class="fa fa-heartbeat"></i> Tanda Vital' +
+                    '</h5>' +
+                    '<div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(120px, 1fr));gap:10px;margin-bottom:12px;">' +
+                    ttvItem('TD', u.td, 'mmHg') +
+                    ttvItem('Nadi', u.nadi, 'x/m') +
+                    ttvItem('RR', u.rr, 'x/m') +
+                    ttvItem('Suhu', u.suhu, '°C') +
+                    ttvItem('SpO2', u.spo, '%') +
+                    ttvItem('BB', u.bb, 'Kg') +
+                    ttvItem('TB', u.tb, 'cm') +
+                    '</div>' +
+                    '<div style="background:#f8f9fa;padding:10px;border-radius:6px;font-size:13px;border-left:3px solid #2dce89;">' +
+                    '<b>Kesadaran:</b> ' + escHtml(u.kesadaran || '-') + ' &nbsp;|&nbsp; <b>GCS:</b> ' + escHtml(u.gcs || '-') +
+                    '</div>' +
+                    '</div>';
+
+                // 3. PEMERIKSAAN FISIK
+                html += '<div style="margin-bottom:24px;">' +
+                    '<h5 style="font-size:13px;font-weight:700;color:#11cdef;text-transform:uppercase;border-bottom:2px solid #11cdef;padding-bottom:6px;display:inline-block;margin-bottom:12px;">' +
+                    '<i class="fa fa-user-md"></i> Pemeriksaan Fisik' +
+                    '</h5>' +
+                    '<table style="width:100%;font-size:13px;border-collapse:collapse;">' +
+                    fisikRow('Kepala', u.kepala) +
+                    fisikRow('Gigi & Mulut', u.gigi) +
+                    fisikRow('THT', u.tht) +
+                    fisikRow('Thoraks', u.thoraks) +
+                    fisikRow('Abdomen', u.abdomen) +
+                    fisikRow('Genital', u.genital) +
+                    fisikRow('Ekstremitas', u.ekstremitas) +
+                    fisikRow('Kulit', u.kulit) +
+                    '</table>';
+
+                if (u.ket_fisik) {
+                    html += '<div style="margin-top:10px;background:#f6f9fc;padding:10px;border-radius:6px;font-size:13px;border-left:3px solid #11cdef;">' +
+                        '<strong>Keterangan Fisik Lain:</strong><br>' + escHtml(u.ket_fisik) +
+                        '</div>';
+                }
+                html += '</div>';
+
+                // 4. STATUS LOKALIS (jika ada)
+                if (u.lokalis_url) {
+                    html += '<div style="margin-bottom:24px;">' +
+                        '<h5 style="font-size:13px;font-weight:700;color:#fb6340;text-transform:uppercase;border-bottom:2px solid #fb6340;padding-bottom:6px;display:inline-block;margin-bottom:12px;">' +
+                        '<i class="fa fa-male"></i> Status Lokalis' +
+                        '</h5>' +
+                        '<div style="text-align:center;border:1px solid #e9ecef;padding:15px;border-radius:8px;background:#fff;margin-bottom:10px;">' +
+                        '<img src="' + u.lokalis_url + '" style="max-width:100%;max-height:300px;border-radius:4px;">' +
+                        '</div>';
+
+                    if (u.ket_lokalis) {
+                        html += '<div style="background:#fff5f5;padding:10px;border-radius:6px;border-left:3px solid #fb6340;font-size:13px;color:#525f7f;">' +
+                            escHtml(u.ket_lokalis) +
+                            '</div>';
+                    }
+                    html += '</div>';
+                }
+
+                // 5. PEMERIKSAAN PENUNJANG (jika ada)
+                if (u.penunjang) {
+                    html += '<div style="margin-bottom:24px;">' +
+                        '<h5 style="font-size:13px;font-weight:700;color:#5e72e4;text-transform:uppercase;border-bottom:2px solid #5e72e4;padding-bottom:6px;display:inline-block;margin-bottom:12px;">' +
+                        '<i class="fa fa-flask"></i> Pemeriksaan Penunjang' +
+                        '</h5>' +
+                        '<div style="background:#f4f5f7;padding:12px;border-radius:6px;font-size:13px;line-height:1.6;border-left:3px solid #5e72e4;">' +
+                        escHtml(u.penunjang).replace(/\n/g, '<br>') +
+                        '</div>' +
+                        '</div>';
+                }
+
+                // 6. DIAGNOSIS & TATALAKSANA
+                html += '<div style="margin-bottom:24px;">' +
+                    '<h5 style="font-size:13px;font-weight:700;color:#f5365c;text-transform:uppercase;border-bottom:2px solid #f5365c;padding-bottom:6px;display:inline-block;margin-bottom:12px;">' +
+                    '<i class="fa fa-stethoscope"></i> Diagnosis & Tatalaksana' +
+                    '</h5>' +
+                    '<div style="background:#fff0f3;border:1px solid #fecdd3;border-radius:6px;padding:14px;margin-bottom:12px;">' +
+                    '<div style="font-size:11px;font-weight:700;color:#e11d48;text-transform:uppercase;margin-bottom:6px;">Diagnosis</div>' +
+                    '<div style="font-size:15px;font-weight:700;color:#881337;">' + escHtml(u.diagnosis || '-') + '</div>' +
+                    '</div>' +
+                    '<div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:6px;padding:14px;margin-bottom:12px;">' +
+                    '<div style="font-size:11px;font-weight:700;color:#16a34a;text-transform:uppercase;margin-bottom:6px;">Tatalaksana</div>' +
+                    '<div style="font-size:13px;color:#14532d;line-height:1.6;">' + escHtml(u.tata || '-') + '</div>' +
+                    '</div>';
+
+                if (u.konsulrujuk) {
+                    html += '<div style="background:#fffbeb;border:1px solid #fde68a;border-radius:6px;padding:14px;">' +
+                        '<div style="font-size:11px;font-weight:700;color:#d97706;text-transform:uppercase;margin-bottom:6px;">Konsul / Rujuk</div>' +
+                        '<div style="font-size:13px;color:#b45309;line-height:1.6;">' + escHtml(u.konsulrujuk) + '</div>' +
+                        '</div>';
+                }
+
+                html += '</div></div>'; // End sections and wrapper
+
+                // Tambahkan timestamp jika ada
+                let footer = '';
+                if (u.tanggal) {
+                    footer = '<div style="margin-top:10px;padding-top:10px;border-top:1px solid #e9ecef;font-size:12px;color:#8898aa;">' +
+                        '<i class="fa fa-clock-o"></i> ' + escHtml(u.tanggal) +
+                        '</div>';
+                }
+
+                cardsToShow.push(cardWrap('umum', 'Asesmen Awal Medis Umum', html + footer));
             }
 
 
@@ -6087,6 +6225,7 @@ $(function () {
             }
 
             // ================== EXECUTE ALL RENDER FUNCTIONS ==================
+            renderAsesmenUmum();
             renderAsesmenPD();
             renderAsesmenOrtho();
             renderPenilaianMata();

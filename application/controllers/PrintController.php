@@ -119,6 +119,16 @@ class PrintController extends CI_Controller
             }
         }
 
+        // 5.0 ASESMEN UMUM (GENERAL)
+        $d->umum = $this->db->get_where('penilaian_medis_ralan', ['no_rawat' => $no_rawat])->row();
+        if ($d->umum) {
+            $clean_no_rawat = str_replace('/', '', $no_rawat);
+            $path = 'assets/images/lokalis_resumemedis/lokalis_' . $clean_no_rawat . '.png';
+            if (file_exists(FCPATH . $path)) {
+                $d->umum->lokalis_url = base_url($path);
+            }
+        }
+
         // --- TAMBAHAN ASESMEN BARU ---
 
         // 5.1 ASESMEN ANAK
@@ -584,6 +594,16 @@ class PrintController extends CI_Controller
                 }
             }
 
+            // 5.1 ASESMEN UMUM (GENERAL)
+            $d->umum = $this->db->get_where('penilaian_medis_ralan', ['no_rawat' => $no_rawat])->row();
+            if ($d->umum) {
+                $clean_no_rawat = str_replace('/', '', $no_rawat);
+                $path = 'assets/images/lokalis_resumemedis/lokalis_' . $clean_no_rawat . '.png';
+                if (file_exists(FCPATH . $path)) {
+                    $d->umum->lokalis_url = base_url($path);
+                }
+            }
+
             // 6. RESUME MEDIS
             $d->resume = $this->db->get_where('resume_pasien', ['no_rawat' => $no_rawat])->row();
 
@@ -807,7 +827,7 @@ class PrintController extends CI_Controller
                 'kfr' => 'formulir_kfr.php',
                 'rehab_medik' => 'program_rehab_medik.php',
                 'asesmen_keperawatan' => 'asesmen_keperawatan.php',
-                'resume' => 'resume_medis.php',
+                'umum' => 'asesmen_umum.php', // Add General Assessment
                 'soap' => 'soap.php',
                 'diagnosa' => 'diagnosa.php',
                 'prosedur' => 'prosedur.php',
@@ -816,7 +836,8 @@ class PrintController extends CI_Controller
                 'lab' => 'lab.php',
                 'radiologi' => 'radiologi.php',
                 'operasi' => 'operasi.php',
-                'berkas_digital' => 'berkas_digital.php'
+                'berkas_digital' => 'berkas_digital.php',
+                'resume' => 'resume_medis.php' // MOVED TO LAST
             ];
 
             foreach ($section_map as $key => $view_file) {
@@ -1099,6 +1120,16 @@ class PrintController extends CI_Controller
             // ASESMEN ANAK (PEDIATRI)
             $d->anak = $this->db->get_where('penilaian_medis_ralan_anak', ['no_rawat' => $no_rawat])->row();
 
+            // ASESMEN UMUM (GENERAL)
+            $d->umum = $this->db->get_where('penilaian_medis_ralan', ['no_rawat' => $no_rawat])->row();
+            if ($d->umum) {
+                $clean_no_rawat = str_replace('/', '', $no_rawat);
+                $path = 'assets/images/lokalis_resumemedis/lokalis_' . $clean_no_rawat . '.png';
+                if (file_exists(FCPATH . $path)) {
+                    $d->umum->lokalis_url = base_url($path);
+                }
+            }
+
             // ASESMEN BEDAH
             $d->bedah = $this->db->get_where('penilaian_medis_ralan_bedah', ['no_rawat' => $no_rawat])->row();
 
@@ -1140,6 +1171,7 @@ class PrintController extends CI_Controller
                 'penyakit_dalam' => 'asesmen_penyakit_dalam.php',
                 'orthopedi' => 'asesmen_orthopedi.php',
                 'anak' => 'asesmen_anak.php',
+                'umum' => 'asesmen_umum.php', // Add General Assessment
                 'bedah' => 'asesmen_bedah.php',
                 'tht' => 'asesmen_tht.php',
                 'jantung' => 'asesmen_jantung.php',
@@ -1154,7 +1186,6 @@ class PrintController extends CI_Controller
                 'kfr' => 'formulir_kfr.php',
                 'rehab_medik' => 'program_rehab_medik.php',
                 'asesmen_keperawatan' => 'asesmen_keperawatan.php',
-                'resume' => 'resume_medis.php',
                 'soap' => 'soap.php',
                 'diagnosa' => 'diagnosa.php',
                 'prosedur' => 'prosedur.php',
@@ -1163,7 +1194,8 @@ class PrintController extends CI_Controller
                 'lab' => 'lab.php',
                 'radiologi' => 'radiologi.php',
                 'operasi' => 'operasi.php',
-                'berkas_digital' => 'berkas_digital.php'
+                'berkas_digital' => 'berkas_digital.php',
+                'resume' => 'resume_medis.php' // MOVED TO LAST
             ];
 
             foreach ($section_map as $key => $view_file) {
